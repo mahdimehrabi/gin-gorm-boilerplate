@@ -5,6 +5,7 @@ import (
 	"boilerplate/api/routes"
 	"boilerplate/infrastructure"
 	"context"
+	"fmt"
 
 	"go.uber.org/fx"
 )
@@ -28,7 +29,7 @@ func bootstrap(lifecycle fx.Lifecycle, router infrastructure.Router, routes rout
 		OnStart: func(context.Context) error {
 			logger.Zap.Info("Starting Application")
 			logger.Zap.Info("------------------------")
-			logger.Zap.Info("------ Boilerplate 📺 ------")
+			logger.Zap.Info(fmt.Sprintf("------ %s  ------", env.AppName))
 			logger.Zap.Info("------------------------")
 			routes.Setup()
 			go func() {
