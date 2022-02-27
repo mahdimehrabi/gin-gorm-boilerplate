@@ -3,6 +3,7 @@ package repositories
 import (
 	"boilerplate/infrastructure"
 	"boilerplate/models"
+	"boilerplate/utils"
 
 	"gorm.io/gorm"
 )
