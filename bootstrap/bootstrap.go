@@ -1,6 +1,8 @@
 package bootstrap
 
 import (
+	"boilerplate/api/controllers"
+	"boilerplate/api/routes"
 	"boilerplate/infrastructure"
 	"context"
 
@@ -9,10 +11,12 @@ import (
 
 var Module = fx.Options(
 	infrastructure.Module,
+	routes.Module,
+	controllers.Module,
 	fx.Invoke(bootstrap),
 )
 
-func bootstrap(lifecycle fx.Lifecycle, router infrastructure.Router, env infrastructure.Env, logger infrastructure.Logger) {
+func bootstrap(lifecycle fx.Lifecycle, router infrastructure.Router, routes routes.Routes, env infrastructure.Env, logger infrastructure.Logger) {
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application")
 		/*conn, _ := database.DB.DB()
@@ -26,6 +30,7 @@ func bootstrap(lifecycle fx.Lifecycle, router infrastructure.Router, env infrast
 			logger.Zap.Info("------------------------")
 			logger.Zap.Info("------ Boilerplate 📺 ------")
 			logger.Zap.Info("------------------------")
+			routes.Setup()
 			go func() {
 				if env.ServerPort == "" {
 					router.Gin.Run(":5000")

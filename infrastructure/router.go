@@ -1,8 +1,6 @@
 package infrastructure
 
 import (
-	"net/http"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -20,10 +18,6 @@ func NewRouter(env Env) Router {
 		AllowHeaders:     []string{"*"},
 		AllowCredentials: true,
 	}))
-
-	httpRouter.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "Pong 🏓"})
-	})
 
 	return Router{
 		Gin: httpRouter,
