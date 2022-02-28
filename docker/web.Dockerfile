@@ -28,4 +28,7 @@ WORKDIR /clean_web
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go mod download -x -json
 RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go mod vendor
 
-CMD go run .
+
+RUN go get github.com/go-delve/delve/cmd/dlv@master
+
+CMD sh /clean_web/docker/web.sh
