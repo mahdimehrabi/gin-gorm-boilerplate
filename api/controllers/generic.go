@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"boilerplate/api/responses"
 	"boilerplate/infrastructure"
 	"net/http"
 
@@ -22,5 +23,5 @@ func NewGenericController(logger infrastructure.Logger,
 }
 
 func (uc GenericController) Ping(ctx *gin.Context) {
-	ctx.String(http.StatusOK, "Pong 🏓")
+	responses.JSON(ctx, http.StatusOK, gin.H{"pingpong": "🏓🏓🏓🏓🏓🏓"}, "pong")
 }
