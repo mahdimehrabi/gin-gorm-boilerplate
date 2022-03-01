@@ -40,17 +40,17 @@ func (cc UserController) CreateUser(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] (ShouldBindJson) : ", err)
-		responses.ErrorJSON(c, http.StatusBadRequest, "Failed To Create User")
+		responses.ErrorJSON(c, http.StatusBadRequest, err.Error(), "")
 		return
 	}
 
 	if err := cc.userService.WithTrx(trx).CreateUser(user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] [db CreateUser]: ", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, "Failed To Create User")
+		responses.ErrorJSON(c, http.StatusInternalServerError, "Failed To Create User", "")
 		return
 	}
 
-	responses.SuccessJSON(c, http.StatusOK, "User Created Sucessfully")
+	responses.JSON(c, http.StatusOK, nil, "User Created Sucessfully")
 }
 
 // GetAllUser -> Get All User
@@ -60,9 +60,9 @@ func (cc UserController) GetAllUsers(c *gin.Context) {
 
 	if err != nil {
 		cc.logger.Zap.Error("Error finding user records", err.Error())
-		responses.ErrorJSON(c, http.StatusBadRequest, "Failed to Find users")
+		responses.ErrorJSON(c, http.StatusBadRequest, "Failed to Find users", "")
 		return
 	}
 
-	responses.JSONCount(c, http.StatusOK, users, count)
+	responses.JSONCount(c, http.StatusOK, users, "", count)
 }
