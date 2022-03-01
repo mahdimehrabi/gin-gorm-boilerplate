@@ -39,8 +39,7 @@ func (cc UserController) CreateUser(c *gin.Context) {
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		cc.logger.Zap.Error("Error [CreateUser] (ShouldBindJson) : ", err)
-		responses.ErrorJSON(c, http.StatusBadRequest, err.Error(), "")
+		responses.ValidationErrorsJSON(c, err, "")
 		return
 	}
 
