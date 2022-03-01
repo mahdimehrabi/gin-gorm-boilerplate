@@ -2,8 +2,8 @@ package models
 
 type User struct {
 	Base
-	Email    string `json:"email"`
-	FullName string `json:"full_name"`
+	Email    string `json:"email" binding:"required"`
+	FullName string `json:"fullName" binding:"required"`
 }
 
 // TableName gives table name of model
