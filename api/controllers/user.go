@@ -49,7 +49,7 @@ func (cc UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	responses.JSON(c, http.StatusOK, nil, "User Created Sucessfully")
+	responses.JSON(c, http.StatusOK, user, "User Created Sucessfully")
 }
 
 // GetAllUser -> Get All User
