@@ -11,6 +11,7 @@ server.log
 clean-gin
 __debug_bin
 gin-bin
+debug.test
 
 #editor based
 .idea
