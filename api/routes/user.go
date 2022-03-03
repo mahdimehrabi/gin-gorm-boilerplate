@@ -17,7 +17,7 @@ type UserRoutes struct {
 // Setup user routes
 func (i UserRoutes) Setup() {
 	i.logger.Zap.Info(" Setting up user routes")
-	users := i.router.Gin.Group("/users")
+	users := i.router.Gin.Group("/api/users")
 	{
 		users.GET("", i.userController.GetAllUsers)
 		users.POST("", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
