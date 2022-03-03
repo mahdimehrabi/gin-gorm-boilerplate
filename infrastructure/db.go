@@ -30,7 +30,7 @@ func NewDatabase(zapLogger Logger, env Env) Database {
 	)
 	zapLogger.Zap.Info(env)
 	if env.Environment == "test" {
-		CreateDB(logger, zapLogger, env, "")
+		CreateDB(zapLogger, env, "")
 	}
 	return GetDB(logger, zapLogger, env)
 }
@@ -61,12 +61,9 @@ func GetDB(logger logger.Interface, zapLogger Logger, env Env) Database {
 }
 
 //create database
-func CreateDB(logger logger.Interface, zapLogger Logger, env Env, DBName string) {
-	url := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable",
-		env.DBHost, env.DBPort, env.DBUsername, env.DBPassword)
-	db, err := sql.Open("postgres", url)
+func CreateDB(zapLogger Logger, env Env, DBName string) {
+	db, err := ConnectDBSQL(env)
 	if err != nil {
-		zapLogger.Zap.Info(url)
 		zapLogger.Zap.Panic(err)
 	}
 	defer db.Close()
@@ -77,7 +74,15 @@ func CreateDB(logger logger.Interface, zapLogger Logger, env Env, DBName string)
 
 	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", DBName))
 	if err != nil {
-		zapLogger.Zap.Info(url)
 		zapLogger.Zap.Panic(err)
 	}
+}
+
+//connect to database without passing database name and with database/sql package
+//useful for doing general database sql statements that not related to a specefic database
+//be sure to defer db.Close() in using function
+func ConnectDBSQL(env Env) (*sql.DB, error) {
+	url := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable",
+		env.DBHost, env.DBPort, env.DBUsername, env.DBPassword)
+	return sql.Open("postgres", url)
 }
