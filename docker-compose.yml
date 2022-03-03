@@ -7,7 +7,8 @@ services:
       dockerfile: ./docker/web.Dockerfile
     ports:
       - ${ServerPort}:${ServerPort}
-      - 2345:2345
+      - 2345:2345 #delve debug normal
+      - 4000:4000 #delve debug tests
     volumes:
       - .:/clean_web
     env_file: .env
