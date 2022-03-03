@@ -7,7 +7,6 @@ import (
 	"boilerplate/api/routes"
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -29,22 +28,16 @@ func NewTestSuiteEnv(router infrastructure.Router) TestSuiteEnv {
 
 // Tests are run before they start
 func (suite *TestSuiteEnv) SetupSuite() {
-	fmt.Println("router=------------")
-	// routes.Setup()
-	// fmt.Println(router)
-	// suite.router = router
-	// middlewares.Setup()
+
 }
 
 // Running after each test
 func (suite *TestSuiteEnv) TearDownTest() {
-	fmt.Println("teart down test")
 	// database.ClearTable()
 }
 
 // Running after all tests are completed
 func (suite *TestSuiteEnv) TearDownSuite() {
-	fmt.Println("test suite tear down----")
 	// os.Exit(0)
 	// suite.db.Close()
 }
@@ -67,6 +60,9 @@ func TestSuite(t *testing.T) {
 	).Done()
 }
 
-func Setup(t *testing.T, tse TestSuiteEnv, lc fx.Lifecycle) {
+func Setup(t *testing.T, tse TestSuiteEnv, lc fx.Lifecycle,
+	routes routes.Routes, middlewares middlewares.Middlewares) {
+	routes.Setup()
+	middlewares.Setup()
 	suite.Run(t, &tse)
 }
