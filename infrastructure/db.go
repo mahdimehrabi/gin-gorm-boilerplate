@@ -30,6 +30,7 @@ func NewDatabase(zapLogger Logger, env Env) Database {
 	)
 	zapLogger.Zap.Info(env)
 	if env.Environment == "test" {
+		RemoveDB(zapLogger, env, "")
 		CreateDB(zapLogger, env, "")
 	}
 	return GetDB(logger, zapLogger, env)
@@ -60,7 +61,7 @@ func GetDB(logger logger.Interface, zapLogger Logger, env Env) Database {
 	}
 }
 
-//create database
+//create database if no DBName passed , it automaticaly use dbname of environment varible
 func CreateDB(zapLogger Logger, env Env, DBName string) {
 	db, err := ConnectDBSQL(env)
 	if err != nil {
@@ -73,6 +74,24 @@ func CreateDB(zapLogger Logger, env Env, DBName string) {
 	}
 
 	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", DBName))
+	if err != nil {
+		zapLogger.Zap.Panic(err)
+	}
+}
+
+//remove passed database if no DBName passed , it automaticaly use dbname of environment varible
+func RemoveDB(zapLogger Logger, env Env, DBName string) {
+	db, err := ConnectDBSQL(env)
+	if err != nil {
+		zapLogger.Zap.Panic(err)
+	}
+	defer db.Close()
+
+	if DBName == "" {
+		DBName = env.DBName
+	}
+
+	_, err = db.Exec(fmt.Sprintf("DROP DATABASE %s;", DBName))
 	if err != nil {
 		zapLogger.Zap.Panic(err)
 	}
