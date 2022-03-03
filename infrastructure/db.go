@@ -1,11 +1,13 @@
 package infrastructure
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
+	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -27,11 +29,14 @@ func NewDatabase(zapLogger Logger, env Env) Database {
 		},
 	)
 	zapLogger.Zap.Info(env)
-
-	return getNormalDB(logger, zapLogger, env)
+	if env.Environment == "test" {
+		CreateDB(logger, zapLogger, env, "")
+	}
+	return GetDB(logger, zapLogger, env)
 }
 
-func getNormalDB(logger logger.Interface, zapLogger Logger, env Env) Database {
+// connect to database and return Database object
+func GetDB(logger logger.Interface, zapLogger Logger, env Env) Database {
 	url := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s TimeZone=Europe/London",
 		env.DBHost, env.DBUsername, env.DBPassword, env.DBName,
 		env.DBPort)
@@ -55,6 +60,24 @@ func getNormalDB(logger logger.Interface, zapLogger Logger, env Env) Database {
 	}
 }
 
-// func createGetTestDB() Database {
+//create database
+func CreateDB(logger logger.Interface, zapLogger Logger, env Env, DBName string) {
+	url := fmt.Sprintf("host=%s port=%s user=%s password=%s sslmode=disable",
+		env.DBHost, env.DBPort, env.DBUsername, env.DBPassword)
+	db, err := sql.Open("postgres", url)
+	if err != nil {
+		zapLogger.Zap.Info(url)
+		zapLogger.Zap.Panic(err)
+	}
+	defer db.Close()
 
-// }
+	if DBName == "" {
+		DBName = env.DBName
+	}
+
+	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE %s;", DBName))
+	if err != nil {
+		zapLogger.Zap.Info(url)
+		zapLogger.Zap.Panic(err)
+	}
+}
