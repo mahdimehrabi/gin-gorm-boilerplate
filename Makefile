@@ -24,7 +24,7 @@ crud:
 	bash automate/scripts/crud.sh
 
 test_all:
-	docker-compose exec web go test ./tests 
+	docker-compose exec web go test ./tests/...
 
 test_all_debugger:
 	docker-compose exec web dlv test ./tests --headless --listen=:4000 --api-version=2 --accept-multiclient 
