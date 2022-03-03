@@ -19,10 +19,21 @@ type TestSuiteEnv struct {
 	router infrastructure.Router
 }
 
+func NewTestSuiteEnv(router infrastructure.Router) TestSuiteEnv {
+	suite := new(suite.Suite)
+	return TestSuiteEnv{
+		*suite,
+		router,
+	}
+}
+
 // Tests are run before they start
-func (suite *TestSuiteEnv) SetupSuite(routes routes.Routes, middlewares middlewares.Middlewares) {
-	routes.Setup()
-	middlewares.Setup()
+func (suite *TestSuiteEnv) SetupSuite() {
+	fmt.Println("router=------------")
+	// routes.Setup()
+	// fmt.Println(router)
+	// suite.router = router
+	// middlewares.Setup()
 }
 
 // Running after each test
@@ -49,12 +60,13 @@ func TestSuite(t *testing.T) {
 			services.Module,
 			repositories.Module,
 			middlewares.Module,
+			fx.Provide(NewTestSuiteEnv),
 			fx.Supply(t),
 			fx.Invoke(Setup),
 		),
 	).Done()
 }
 
-func Setup(t *testing.T, lc fx.Lifecycle) {
-	suite.Run(t, new(TestSuiteEnv))
+func Setup(t *testing.T, tse TestSuiteEnv, lc fx.Lifecycle) {
+	suite.Run(t, &tse)
 }
