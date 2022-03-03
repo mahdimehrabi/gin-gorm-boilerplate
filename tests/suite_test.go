@@ -9,20 +9,24 @@ import (
 	"boilerplate/infrastructure"
 	"testing"
 
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/fx"
 )
 
 type TestSuiteEnv struct {
 	suite.Suite
-	router infrastructure.Router
+	router   infrastructure.Router
+	database infrastructure.Database
 }
 
-func NewTestSuiteEnv(router infrastructure.Router) TestSuiteEnv {
+func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Database,
+	logger infrastructure.Logger) TestSuiteEnv {
 	suite := new(suite.Suite)
 	return TestSuiteEnv{
 		*suite,
 		router,
+		database,
 	}
 }
 
@@ -44,7 +48,10 @@ func (suite *TestSuiteEnv) TearDownSuite() {
 
 // This gets run automatically by `go test` so we call `suite.Run` inside it
 func TestSuite(t *testing.T) {
-	// This is what actually runs our suite
+	err := godotenv.Overload("../.env.test")
+	if err != nil {
+		panic(err)
+	}
 	fx.New(
 		fx.Options(
 			infrastructure.Module,
