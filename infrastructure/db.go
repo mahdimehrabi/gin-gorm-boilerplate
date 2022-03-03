@@ -17,9 +17,8 @@ type Database struct {
 }
 
 // NewDatabase creates a new database instance
-func NewDatabase(Zaplogger Logger, env Env) Database {
-
-	newLogger := logger.New(
+func NewDatabase(zapLogger Logger, env Env) Database {
+	logger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
 			SlowThreshold: time.Second, // Slow SQL threshold
@@ -27,9 +26,12 @@ func NewDatabase(Zaplogger Logger, env Env) Database {
 			Colorful:      true,        // Disable color
 		},
 	)
+	zapLogger.Zap.Info(env)
 
-	Zaplogger.Zap.Info(env)
+	return getNormalDB(logger, zapLogger, env)
+}
 
+func getNormalDB(logger logger.Interface, zapLogger Logger, env Env) Database {
 	url := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s TimeZone=Europe/London",
 		env.DBHost, env.DBUsername, env.DBPassword, env.DBName,
 		env.DBPort)
@@ -40,15 +42,19 @@ func NewDatabase(Zaplogger Logger, env Env) Database {
 			env.DBPort)
 	}
 
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{Logger: newLogger})
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{Logger: logger})
 	if err != nil {
-		Zaplogger.Zap.Info("Url: ", url)
-		Zaplogger.Zap.Panic(err)
+		zapLogger.Zap.Info("Url: ", url)
+		zapLogger.Zap.Panic(err)
 	}
 
-	Zaplogger.Zap.Info("Database connection established ✔️")
+	zapLogger.Zap.Info("Database connection established ✔️")
 
 	return Database{
 		DB: db,
 	}
 }
+
+// func createGetTestDB() Database {
+
+// }
