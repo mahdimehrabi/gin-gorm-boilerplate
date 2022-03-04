@@ -42,7 +42,7 @@ func GetDB(logger logger.Interface, zapLogger Logger, env Env) Database {
 		env.DBHost, env.DBUsername, env.DBPassword, env.DBName,
 		env.DBPort)
 
-	if env.Environment != "local" {
+	if env.Environment != "development" {
 		url = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Europe/London",
 			env.DBHost, env.DBUsername, env.DBPassword, env.DBName,
 			env.DBPort)

@@ -15,7 +15,7 @@ func NewLogger(env Env) Logger {
 
 	config := zap.NewDevelopmentConfig()
 
-	if env.Environment == "local" {
+	if env.Environment == "development" {
 		config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	}
 

@@ -38,7 +38,7 @@ func (m Migrations) Migrate() {
 
 	dsn := fmt.Sprintf("%s:%s@%s:%s/%s", USER, PASS, HOST, PORT, DBNAME)
 
-	if ENVIRONMENT != "local" {
+	if ENVIRONMENT != "development" {
 		dsn = fmt.Sprintf("%s:%s@%s:%s/%s?sslmode=disable", USER, PASS, HOST, PORT, DBNAME)
 	}
 
