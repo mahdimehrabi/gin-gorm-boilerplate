@@ -31,4 +31,4 @@ RUN --mount=type=cache,mode=0755,target=/go/pkg/mod go mod vendor
 
 RUN go get github.com/go-delve/delve/cmd/dlv@master
 
-CMD sh /clean_web/docker/web.sh
+CMD sh /clean_web/docker/dev/web.sh
