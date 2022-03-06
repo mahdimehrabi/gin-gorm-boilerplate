@@ -9,6 +9,7 @@ type Env struct {
 	ServerPort  string
 	Environment string
 	AppName     string
+	BasePath    string
 	LogOutput   string
 	DBUsername  string
 	DBPassword  string
@@ -36,6 +37,7 @@ func (env *Env) LoadEnv() {
 	env.ServerPort = os.Getenv("ServerPort")
 	env.Environment = os.Getenv("Environment")
 	env.AppName = os.Getenv("AppName")
+	env.BasePath = os.Getenv("BasePath")
 	env.LogOutput = os.Getenv("LogOutput")
 
 	env.DBUsername = os.Getenv("DBUsername")
