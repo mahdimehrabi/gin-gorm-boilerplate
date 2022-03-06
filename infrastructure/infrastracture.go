@@ -7,4 +7,5 @@ var Module = fx.Options(
 	fx.Provide(NewEnv),
 	fx.Provide(NewDatabase),
 	fx.Provide(NewRouter),
+	fx.Provide(NewMigrations),
 )

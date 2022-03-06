@@ -2,11 +2,13 @@ package tests
 
 import (
 	"boilerplate/models"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 )
 
 func (suite TestSuiteEnv) TestUser() {
+	fmt.Println("---------------afsfsafas------------------")
 	router := suite.router.Gin
 	db := suite.database.DB
 	a := suite.Assert()

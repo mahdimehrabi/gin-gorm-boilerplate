@@ -93,7 +93,7 @@ func RemoveDB(zapLogger Logger, env Env, DBName string) {
 
 	_, err = db.Exec(fmt.Sprintf("DROP DATABASE %s;", DBName))
 	if err != nil {
-		zapLogger.Zap.Panic(err)
+		zapLogger.Zap.Warn(err)
 	}
 }
 

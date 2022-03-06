@@ -42,11 +42,16 @@ func (m Migrations) Migrate() {
 		dsn = fmt.Sprintf("%s:%s@%s:%s/%s?sslmode=disable", USER, PASS, HOST, PORT, DBNAME)
 	}
 
-	migrations, err := migrate.New("file://migration/", "postgres://"+dsn)
+	migrations, err := migrate.New("file://"+m.env.BasePath+"/migrations", "postgres://"+dsn)
+	m.logger.Zap.Info(m.env.BasePath + "/migrations")
+	if err != nil {
+		m.logger.Zap.Error("Error loading migration file: ", err.Error())
+	}
 
 	m.logger.Zap.Info("--- Running Migration ---")
 	err = migrations.Steps(1000)
 	if err != nil {
 		m.logger.Zap.Error("Error in migration: ", err.Error())
 	}
+	m.logger.Zap.Info("--- Migration Completed ---")
 }

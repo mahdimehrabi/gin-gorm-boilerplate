@@ -21,8 +21,9 @@ type TestSuiteEnv struct {
 }
 
 func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Database,
-	logger infrastructure.Logger) TestSuiteEnv {
+	logger infrastructure.Logger, migrations infrastructure.Migrations) TestSuiteEnv {
 	suite := new(suite.Suite)
+	migrations.Migrate()
 	return TestSuiteEnv{
 		*suite,
 		router,
