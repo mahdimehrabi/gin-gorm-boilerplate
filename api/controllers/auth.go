@@ -4,9 +4,7 @@ import (
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
-	"crypto/sha256"
-	"database/sql"
-	"encoding/hex"
+	"boilerplate/utils"
 	"net/http"
 	"os"
 	"time"
@@ -43,27 +41,6 @@ func CreateTokens(userID int) (string, string, error) {
 	return accessToken, refreshToken, err
 }
 
-//TODO:remove
-func NullStr2Str(str string) (nullStr sql.NullString) {
-	if str == "" {
-		nullStr.String = ""
-		nullStr.Valid = false
-	} else {
-		nullStr.String = str
-		nullStr.Valid = true
-	}
-	return nullStr
-}
-
-//TODO:move to utils
-func EncodePassword(password string) string {
-	hash := sha256.New()
-	hash.Write([]byte(password))
-	md := hash.Sum(nil)
-	encodedPassword := hex.EncodeToString(md)
-	return encodedPassword
-}
-
 type AuthController struct {
 	logger      infrastructure.Logger
 	env         infrastructure.Env
@@ -92,7 +69,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	}
 
 	var user models.User
-	encodedPassword := EncodePassword(userData.Password)
+	encodedPassword := utils.Sha256Encrypt(userData.Password)
 	user.Password = encodedPassword
 	user.FullName = userData.FullName
 	user.Email = userData.Email
