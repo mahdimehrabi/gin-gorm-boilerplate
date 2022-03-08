@@ -30,4 +30,5 @@ func (gr AuthRoutes) Setup() {
 	gr.router.Gin.POST("/api/auth/register", gr.AuthController.Register)
 	gr.router.Gin.POST("/api/auth/login", gr.AuthController.Login)
 	gr.router.Gin.POST("/api/auth/access-token-verify", gr.AuthController.AccessTokenVerify)
+	gr.router.Gin.POST("/api/auth/renew-access-token", gr.AuthController.RenewToken)
 }

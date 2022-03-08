@@ -8,8 +8,10 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 type AuthController struct {
@@ -111,18 +113,18 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 }
 
-type accessTokenRequest struct {
+type accessTokenReqRes struct {
 	AccessToken string `json:"accessToken" binding:"required"`
 }
 
 func (ac AuthController) AccessTokenVerify(c *gin.Context) {
-	atr := accessTokenRequest{}
-	if err := c.ShouldBindJSON(&atr); err != nil {
+	at := accessTokenReqRes{}
+	if err := c.ShouldBindJSON(&at); err != nil {
 		responses.ValidationErrorsJSON(c, err, "")
 		return
 	}
 
-	accessToken := atr.AccessToken
+	accessToken := at.AccessToken
 	accessSecret := "access" + ac.env.Secret
 	valid, _, err := services.DecodeToken(accessToken, accessSecret)
 	if err != nil {
@@ -135,6 +137,42 @@ func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 		return
 	} else {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Access token is not valid")
+		return
+	}
+}
+
+type refreshTokenRequest struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}
+
+func (ac AuthController) RenewToken(c *gin.Context) {
+	rtr := refreshTokenRequest{}
+	if err := c.ShouldBindJSON(&rtr); err != nil {
+		responses.ValidationErrorsJSON(c, err, "")
+		return
+	}
+
+	refreshToken := rtr.RefreshToken
+	var valid bool
+	var atClaims jwt.MapClaims
+	refreshSecret := "refresh" + ac.env.Secret
+	valid, atClaims, err := services.DecodeToken(refreshToken, refreshSecret)
+	if err != nil {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
+		return
+	}
+
+	userID, _ := atClaims["user_id"].(int)
+
+	if valid {
+		var exp int64
+		accessSecret := "refresh" + ac.env.Secret
+		exp = time.Now().Add(time.Hour * 2).Unix()
+		accessToken, _ := ac.authService.CreateToken(userID, exp, accessSecret)
+		responses.JSON(c, http.StatusOK, accessTokenReqRes{AccessToken: accessToken}, "")
+		return
+	} else {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
 		return
 	}
 }
