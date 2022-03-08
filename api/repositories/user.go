@@ -4,6 +4,7 @@ import (
 	"boilerplate/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -35,6 +36,11 @@ func (c UserRepository) WithTrx(trxHandle *gorm.DB) UserRepository {
 // Save -> User
 func (c UserRepository) Create(User *models.User) error {
 	return c.db.DB.Create(User).Error
+}
+
+func (c UserRepository) FindByField(field string, value string) (user models.User, err error) {
+	err = c.db.DB.Where(fmt.Sprintf("%s= ?", field), value).First(&user).Error
+	return
 }
 
 // GetAllUser -> Get All users

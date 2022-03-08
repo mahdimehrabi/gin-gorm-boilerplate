@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"boilerplate/api/repositories"
 	"boilerplate/api/responses"
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
@@ -12,22 +13,25 @@ import (
 )
 
 type AuthController struct {
-	logger      infrastructure.Logger
-	env         infrastructure.Env
-	userService services.UserService
-	authService services.AuthService
+	logger         infrastructure.Logger
+	env            infrastructure.Env
+	userService    services.UserService
+	authService    services.AuthService
+	userRepository repositories.UserRepository
 }
 
 func NewAuthController(logger infrastructure.Logger,
 	env infrastructure.Env,
 	userService services.UserService,
 	authService services.AuthService,
+	userRepository repositories.UserRepository,
 ) AuthController {
 	return AuthController{
-		logger:      logger,
-		env:         env,
-		userService: userService,
-		authService: authService,
+		logger:         logger,
+		env:            env,
+		userService:    userService,
+		authService:    authService,
+		userRepository: userRepository,
 	}
 }
 
@@ -66,4 +70,44 @@ func (ac AuthController) Register(c *gin.Context) {
 	loginResult.User = models.UserResponse(user)
 
 	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
+}
+
+func (ac AuthController) Login(c *gin.Context) {
+	// Data Parse
+	var loginRquest models.LoginRequest
+	err := c.ShouldBindJSON(&loginRquest)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var user models.User
+	user, err = ac.userRepository.FindByField("Email", loginRquest.Email)
+	if err != nil {
+		ac.logger.Zap.Error("Failed to find user", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured during login"})
+		return
+	}
+	encryptedPassword := utils.Sha256Encrypt(loginRquest.Password)
+	if user.Password == encryptedPassword {
+		// login
+		// token
+		var accessToken string
+		var refreshToken string
+		accessToken, refreshToken, err = ac.authService.CreateTokens(int(user.Base.ID))
+		if err != nil {
+			ac.logger.Zap.Error("Failed generate jwt tokens", err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured during login"})
+			return
+		}
+		var loginResult models.LoginResponse
+		loginResult.AccessToken = accessToken
+		loginResult.RefreshToken = refreshToken
+		loginResult.User = models.UserResponse(user)
+
+		c.JSON(http.StatusOK, loginResult)
+		return
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No user found with these credentials"})
+		return
+	}
 }
