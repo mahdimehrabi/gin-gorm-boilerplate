@@ -63,6 +63,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	var loginResult models.LoginResult
 	loginResult.AccessToken = accessToken
 	loginResult.RefreshToken = refreshToken
+	loginResult.User = user
 
 	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
 }
