@@ -75,16 +75,15 @@ func (ac AuthController) Register(c *gin.Context) {
 func (ac AuthController) Login(c *gin.Context) {
 	// Data Parse
 	var loginRquest models.LoginRequest
-	err := c.ShouldBindJSON(&loginRquest)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := c.ShouldBindJSON(&loginRquest); err != nil {
+		responses.ValidationErrorsJSON(c, err, "")
 		return
 	}
 	var user models.User
-	user, err = ac.userRepository.FindByField("Email", loginRquest.Email)
+	user, err := ac.userRepository.FindByField("Email", loginRquest.Email)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to find user", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured during login"})
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 		return
 	}
 	encryptedPassword := utils.Sha256Encrypt(loginRquest.Password)
@@ -96,7 +95,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		accessToken, refreshToken, err = ac.authService.CreateTokens(int(user.Base.ID))
 		if err != nil {
 			ac.logger.Zap.Error("Failed generate jwt tokens", err.Error())
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occured during login"})
+			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 			return
 		}
 		var loginResult models.LoginResponse
@@ -104,10 +103,10 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.RefreshToken = refreshToken
 		loginResult.User = models.UserResponse(user)
 
-		c.JSON(http.StatusOK, loginResult)
+		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FullName+" wellcome back")
 		return
 	} else {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "No user found with these credentials"})
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "No user found with entered credentials")
 		return
 	}
 }
