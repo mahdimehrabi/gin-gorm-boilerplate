@@ -110,3 +110,31 @@ func (ac AuthController) Login(c *gin.Context) {
 		return
 	}
 }
+
+type accessTokenRequest struct {
+	AccessToken string `json:"accessToken" binding:"required"`
+}
+
+func (ac AuthController) AccessTokenVerify(c *gin.Context) {
+	atr := accessTokenRequest{}
+	if err := c.ShouldBindJSON(&atr); err != nil {
+		responses.ValidationErrorsJSON(c, err, "")
+		return
+	}
+
+	accessToken := atr.AccessToken
+	accessSecret := "access" + ac.env.Secret
+	valid, _, err := services.DecodeToken(accessToken, accessSecret)
+	if err != nil {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Access token is not valid")
+		return
+	}
+
+	if valid {
+		responses.JSON(c, http.StatusOK, gin.H{}, "Access token is valid")
+		return
+	} else {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Access token is not valid")
+		return
+	}
+}

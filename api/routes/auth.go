@@ -27,6 +27,7 @@ func NewAuthRoutes(
 
 //Setup -> sets up route for util entities
 func (gr AuthRoutes) Setup() {
-	gr.router.Gin.POST("/api/register", gr.AuthController.Register)
-	gr.router.Gin.POST("/api/login", gr.AuthController.Login)
+	gr.router.Gin.POST("/api/auth/register", gr.AuthController.Register)
+	gr.router.Gin.POST("/api/auth/login", gr.AuthController.Login)
+	gr.router.Gin.POST("/api/auth/access-token-verify", gr.AuthController.AccessTokenVerify)
 }
