@@ -21,6 +21,7 @@ func (i UserRoutes) Setup() {
 	{
 		users.GET("", i.userController.GetAllUsers)
 		users.POST("", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
+		users.DELETE(":id", i.userController.DeleteUser)
 	}
 }
 

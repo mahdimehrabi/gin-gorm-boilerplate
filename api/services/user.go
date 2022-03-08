@@ -36,3 +36,7 @@ func (c UserService) CreateUser(user *models.User) error {
 func (c UserService) GetAllUsers(pagination utils.Pagination) ([]models.User, int64, error) {
 	return c.repositories.GetAllUsers(pagination)
 }
+
+func (c UserService) DeleteUserByID(id uint) error {
+	return c.repositories.DeleteByID(id)
+}

@@ -4,6 +4,7 @@ import (
 	"boilerplate/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
+	"errors"
 	"fmt"
 
 	"gorm.io/gorm"
@@ -41,6 +42,21 @@ func (c UserRepository) Create(User *models.User) error {
 func (c UserRepository) FindByField(field string, value string) (user models.User, err error) {
 	err = c.db.DB.Where(fmt.Sprintf("%s= ?", field), value).First(&user).Error
 	return
+}
+
+func (c UserRepository) DeleteByID(id uint) error {
+	return c.db.DB.Where("id=?", id).Delete(&models.User{}).Error
+}
+
+func (c UserRepository) IsExist(field string, value string) (bool, error) {
+	_, err := c.FindByField(field, value)
+	if err == nil {
+		return true, nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, nil
+	}
+	return false, err
 }
 
 // GetAllUser -> Get All users
