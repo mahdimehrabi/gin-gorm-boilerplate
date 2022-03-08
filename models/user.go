@@ -20,6 +20,13 @@ func (m User) ToMap() map[string]interface{} {
 	}
 }
 
+type UserResponse struct {
+	Base
+	Email    string `json:"email"`
+	FullName string `json:"fullName"`
+	Password string `json:"-"`
+}
+
 type CreateUser struct {
 	Password string `json:"password" binding:"required"`
 	Email    string `json:"email" binding:"required"`
@@ -31,8 +38,8 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-type LoginResult struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	User         User   `json:"user"`
+type LoginResponse struct {
+	AccessToken  string       `json:"access_token"`
+	RefreshToken string       `json:"refresh_token"`
+	User         UserResponse `json:"user"`
 }

@@ -60,10 +60,10 @@ func (ac AuthController) Register(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "your account registerd but failed to make you login")
 		return
 	}
-	var loginResult models.LoginResult
+	var loginResult models.LoginResponse
 	loginResult.AccessToken = accessToken
 	loginResult.RefreshToken = refreshToken
-	loginResult.User = user
+	loginResult.User = models.UserResponse(user)
 
 	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
 }
