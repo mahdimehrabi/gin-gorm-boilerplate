@@ -23,6 +23,8 @@ type Env struct {
 	MailClientSecret string
 	MailAccesstoken  string
 	MailRefreshToken string
+
+	Secret string
 }
 
 // NewEnv creates a new environment
@@ -52,4 +54,6 @@ func (env *Env) LoadEnv() {
 	env.MailClientSecret = os.Getenv("MailClientSecret")
 	env.MailAccesstoken = os.Getenv("MailAccesstoken")
 	env.MailRefreshToken = os.Getenv("MailRefreshToken")
+
+	env.Secret = os.Getenv("Secret")
 }
