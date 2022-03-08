@@ -21,14 +21,14 @@ func (m User) ToMap() map[string]interface{} {
 }
 
 type CreateUser struct {
-	Password string `json:"password" validate:"required"`
-	Email    string `json:"email"`
-	FullName string `json:"fullName"`
+	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	FullName string `json:"fullName" binding:"required"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type LoginResult struct {

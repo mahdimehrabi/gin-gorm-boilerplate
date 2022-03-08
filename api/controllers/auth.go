@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"boilerplate/api/responses"
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
@@ -34,9 +35,8 @@ func (ac AuthController) Register(c *gin.Context) {
 
 	// Data Parse
 	var userData models.CreateUser
-	err := c.ShouldBindJSON(&userData)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	if err := c.ShouldBindJSON(&userData); err != nil {
+		responses.ValidationErrorsJSON(c, err, "")
 		return
 	}
 
@@ -45,9 +45,10 @@ func (ac AuthController) Register(c *gin.Context) {
 	user.Password = encodedPassword
 	user.FullName = userData.FullName
 	user.Email = userData.Email
-	err = ac.userService.CreateUser(user)
+	err := ac.userService.CreateUser(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ac.logger.Zap.Error("Failed to create registered user", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
 
@@ -55,12 +56,13 @@ func (ac AuthController) Register(c *gin.Context) {
 	// token
 	accessToken, refreshToken, err := ac.authService.CreateTokens(int(user.Base.ID))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ac.logger.Zap.Error("Failed to generate registered user token", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "your account registerd but failed to make you login")
 		return
 	}
 	var loginResult models.LoginResult
 	loginResult.AccessToken = accessToken
 	loginResult.RefreshToken = refreshToken
 
-	c.JSON(http.StatusOK, loginResult)
+	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
 }
