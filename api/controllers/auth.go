@@ -8,6 +8,7 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -152,6 +153,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 
+	//Parse and extract claims
 	refreshToken := rtr.RefreshToken
 	var valid bool
 	var atClaims jwt.MapClaims
@@ -162,13 +164,18 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 
-	userID, _ := atClaims["user_id"].(int)
+	//don't allow deleted user renew access token
+	userID := int(atClaims["user_id"].(float64))
+	if exist, _ := ac.userRepository.IsExist("id", strconv.Itoa(userID)); !exist {
+		responses.ErrorJSON(c, 404, gin.H{}, "No user with this refresh token exist")
+		return
+	}
 
 	if valid {
 		var exp int64
 		accessSecret := "refresh" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
-		accessToken, _ := ac.authService.CreateToken(userID, exp, accessSecret)
+		accessToken, _ := ac.authService.CreateToken(int(userID), exp, accessSecret)
 		responses.JSON(c, http.StatusOK, accessTokenReqRes{AccessToken: accessToken}, "")
 		return
 	} else {
