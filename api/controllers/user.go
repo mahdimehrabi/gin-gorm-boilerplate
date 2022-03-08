@@ -43,7 +43,7 @@ func (cc UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	if err := cc.userService.WithTrx(trx).CreateUser(user); err != nil {
+	if err := cc.userService.WithTrx(trx).CreateUser(&user); err != nil {
 		cc.logger.Zap.Error("Error [CreateUser] [db CreateUser]: ", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Failed To Create User")
 		return

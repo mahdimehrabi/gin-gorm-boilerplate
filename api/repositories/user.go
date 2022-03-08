@@ -33,8 +33,8 @@ func (c UserRepository) WithTrx(trxHandle *gorm.DB) UserRepository {
 }
 
 // Save -> User
-func (c UserRepository) Create(User models.User) error {
-	return c.db.DB.Create(&User).Error
+func (c UserRepository) Create(User *models.User) error {
+	return c.db.DB.Create(User).Error
 }
 
 // GetAllUser -> Get All users
