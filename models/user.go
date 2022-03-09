@@ -5,7 +5,7 @@ type User struct {
 	Email    string `json:"email" binding:"required"`
 	FullName string `json:"fullName" binding:"required"`
 	Password string `json:"password" binding:"required"`
-	// Make this field true when user change password or request for logout in other devices and ...
+	// Make this field true when user change password or request for logout in other devices or ...
 	// Make sure you make this field to false on login
 	// Make sure user cannot renew access token if this field is true
 	MustLogout bool `json:"-"`
