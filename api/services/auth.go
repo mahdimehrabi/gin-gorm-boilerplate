@@ -21,7 +21,7 @@ func (as AuthService) CreateToken(userID int, exp int64, secret string) (string,
 	var err error
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
-	atClaims["user_id"] = userID
+	atClaims["userId"] = userID
 	atClaims["exp"] = exp
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(secret))

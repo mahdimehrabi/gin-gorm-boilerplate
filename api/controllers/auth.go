@@ -165,7 +165,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 	}
 
 	//don't allow deleted user renew access token
-	userID := int(atClaims["user_id"].(float64))
+	userID := int(atClaims["userId"].(float64))
 	if exist, _ := ac.userRepository.IsExist("id", strconv.Itoa(userID)); !exist {
 		responses.ErrorJSON(c, 404, gin.H{}, "No user with this refresh token exist")
 		return
