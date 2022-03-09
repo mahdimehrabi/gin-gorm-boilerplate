@@ -106,6 +106,12 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.RefreshToken = refreshToken
 		loginResult.User = models.UserResponse(user)
 
+		//make must_logout false
+		if err = ac.userRepository.UpdateColumn(&user, "must_logout", false); err != nil {
+			ac.logger.Zap.Error("Failed make must_logout false", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
+			return
+		}
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FullName+" wellcome back")
 		return
 	} else {

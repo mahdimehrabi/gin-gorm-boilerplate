@@ -78,3 +78,8 @@ func (c UserRepository) GetAllUsers(pagination utils.Pagination) ([]models.User,
 		Count(&totalRows).Error
 	return users, totalRows, err
 }
+
+//update a single column by user model
+func (c UserRepository) UpdateColumn(user *models.User, column string, value interface{}) error {
+	return c.db.DB.Model(user).Update(column, value).Error
+}
