@@ -51,7 +51,7 @@ func (m AuthMiddleware) AuthHandle() gin.HandlerFunc {
 			accessToken := strs[1]
 			valid, claims, err := services.DecodeToken(accessToken, "access"+m.env.Secret)
 			if valid && err == nil {
-				c.Set("user_id", claims["user_id"])
+				c.Set("userId", claims["user_id"])
 				c.Next()
 				return
 			}
