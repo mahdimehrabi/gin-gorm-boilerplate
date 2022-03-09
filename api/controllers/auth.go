@@ -7,12 +7,14 @@ import (
 	"boilerplate/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"gorm.io/gorm"
 )
 
 type AuthController struct {
@@ -170,10 +172,24 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 
-	//don't allow deleted user renew access token
 	userID := int(atClaims["userId"].(float64))
-	if exist, _ := ac.userRepository.IsExist("id", strconv.Itoa(userID)); !exist {
-		responses.ErrorJSON(c, 404, gin.H{}, "No user with this refresh token exist")
+	user, err := ac.userRepository.FindByField("id", strconv.Itoa(userID))
+
+	//don't allow deleted user renew access token
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
+		return
+	}
+
+	if err != nil {
+		ac.logger.Zap.Error("Error in finding user:", err)
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
+		return
+	}
+
+	//if user must_logout field be true it can't refresh its token
+	if user.MustLogout {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
 		return
 	}
 
