@@ -12,16 +12,17 @@ type UserRoutes struct {
 	router         infrastructure.Router
 	userController controllers.UserController
 	trxMiddleware  middlewares.DBTransactionMiddleware
+	authMiddleware middlewares.AuthMiddleware
 }
 
 // Setup user routes
-func (i UserRoutes) Setup() {
-	i.logger.Zap.Info(" Setting up user routes")
-	users := i.router.Gin.Group("/api/users")
+func (ur UserRoutes) Setup() {
+	ur.logger.Zap.Info("Setting up user routes 👷")
+	users := ur.router.Gin.Group("/api/users").Use(ur.authMiddleware.AuthHandle())
 	{
-		users.GET("", i.userController.GetAllUsers)
-		users.POST("", i.trxMiddleware.DBTransactionHandle(), i.userController.CreateUser)
-		users.DELETE(":id", i.userController.DeleteUser)
+		users.GET("", ur.userController.GetAllUsers)
+		users.POST("", ur.trxMiddleware.DBTransactionHandle(), ur.userController.CreateUser)
+		users.DELETE(":id", ur.userController.DeleteUser)
 	}
 }
 
@@ -31,11 +32,13 @@ func NewUserRoutes(
 	router infrastructure.Router,
 	userController controllers.UserController,
 	trxMiddleware middlewares.DBTransactionMiddleware,
+	authMiddleware middlewares.AuthMiddleware,
 ) UserRoutes {
 	return UserRoutes{
 		router:         router,
 		logger:         logger,
 		userController: userController,
 		trxMiddleware:  trxMiddleware,
+		authMiddleware: authMiddleware,
 	}
 }
