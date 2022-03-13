@@ -88,8 +88,12 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 	var user models.User
 	user, err := ac.userRepository.FindByField("Email", loginRquest.Email)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "No user found with entered credentials")
+		return
+	}
 	if err != nil {
-		ac.logger.Zap.Error("Failed to find user", err.Error())
+		ac.logger.Zap.Error("Error to find user", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 		return
 	}
