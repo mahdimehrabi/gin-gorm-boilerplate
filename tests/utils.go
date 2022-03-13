@@ -5,6 +5,7 @@ import (
 	"boilerplate/utils"
 	"bytes"
 	"encoding/json"
+	"net/http/httptest"
 
 	"gorm.io/gorm"
 )
@@ -25,4 +26,13 @@ func CreateUser(db *gorm.DB) models.User {
 		panic(err)
 	}
 	return user
+}
+
+func ExtractResponseAsMap(w *httptest.ResponseRecorder) map[string]interface{} {
+	response := map[string]interface{}{}
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	if err != nil {
+		panic(err)
+	}
+	return response
 }

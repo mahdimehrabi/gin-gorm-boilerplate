@@ -1,11 +1,12 @@
 package tests
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 )
 
-func (suite TestSuiteEnv) TestLogin() {
+func (suite TestSuiteEnv) TestLoginCorrectCredentials() {
 	router := suite.router.Gin
 	db := suite.database.DB
 	a := suite.Assert()
@@ -19,4 +20,8 @@ func (suite TestSuiteEnv) TestLogin() {
 	req, _ := http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
+	response := ExtractResponseAsMap(w)
+	str := w.Body.String()
+	fmt.Println(response["data"]["accessToken"])
+	fmt.Println(response)
 }
