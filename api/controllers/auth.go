@@ -6,7 +6,6 @@ import (
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
-	"boilerplate/utils"
 	"errors"
 	"net/http"
 	"strconv"
@@ -20,6 +19,7 @@ import (
 type AuthController struct {
 	logger         infrastructure.Logger
 	env            infrastructure.Env
+	encryption     infrastructure.Encryption
 	userService    services.UserService
 	authService    services.AuthService
 	userRepository repositories.UserRepository
@@ -27,6 +27,7 @@ type AuthController struct {
 
 func NewAuthController(logger infrastructure.Logger,
 	env infrastructure.Env,
+	encryption infrastructure.Encryption,
 	userService services.UserService,
 	authService services.AuthService,
 	userRepository repositories.UserRepository,
@@ -34,6 +35,7 @@ func NewAuthController(logger infrastructure.Logger,
 	return AuthController{
 		logger:         logger,
 		env:            env,
+		encryption:     encryption,
 		userService:    userService,
 		authService:    authService,
 		userRepository: userRepository,
@@ -50,8 +52,8 @@ func (ac AuthController) Register(c *gin.Context) {
 	}
 
 	var user models.User
-	encodedPassword := utils.Sha256Encrypt(userData.Password)
-	user.Password = encodedPassword
+	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(userData.Password)
+	user.Password = encryptedPassword
 	user.FullName = userData.FullName
 	user.Email = userData.Email
 	err := ac.userService.CreateUser(&user)
@@ -91,7 +93,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 		return
 	}
-	encryptedPassword := utils.Sha256Encrypt(loginRquest.Password)
+	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(loginRquest.Password)
 	if user.Password == encryptedPassword {
 		// login
 		// token
