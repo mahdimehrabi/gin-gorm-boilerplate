@@ -34,7 +34,6 @@ type authHeader struct {
 	Authorization string `header:"Authorization"`
 }
 
-//Handle -> It setup the database transaction middleware
 func (m AuthMiddleware) AuthHandle() gin.HandlerFunc {
 	m.logger.Zap.Info("setting up auth middleware")
 
