@@ -19,10 +19,14 @@ type TestSuiteEnv struct {
 	router     infrastructure.Router
 	database   infrastructure.Database
 	encryption infrastructure.Encryption
+	logger     infrastructure.Logger
+	env        infrastructure.Env
+	migrations infrastructure.Migrations
 }
 
 func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Database,
-	encryption infrastructure.Encryption, logger infrastructure.Logger, migrations infrastructure.Migrations) TestSuiteEnv {
+	encryption infrastructure.Encryption, logger infrastructure.Logger,
+	migrations infrastructure.Migrations, env infrastructure.Env) TestSuiteEnv {
 	suite := new(suite.Suite)
 	migrations.Migrate()
 	return TestSuiteEnv{
@@ -30,6 +34,9 @@ func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Datab
 		router,
 		database,
 		encryption,
+		logger,
+		env,
+		migrations,
 	}
 }
 
@@ -40,7 +47,18 @@ func (suite *TestSuiteEnv) SetupSuite() {
 
 // Running after each test
 func (suite *TestSuiteEnv) TearDownTest() {
-	// database.ClearTable()
+	err := suite.database.DB.Exec(`
+	DO $$ DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+        EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.tablename) || '';
+    END LOOP;
+END $$;
+	`).Error
+	if err != nil {
+		suite.logger.Zap.Error("Failed to truncate tables", err)
+	}
 }
 
 // Running after all tests are completed
