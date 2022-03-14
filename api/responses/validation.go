@@ -11,6 +11,9 @@ func MsgForTag(tag string) string {
 		return "This field is required"
 	case "email":
 		return "Please email a valid email like example@example.com"
+	case "uniqueDB":
+		return "this must be unique"
 	}
+
 	return "You cannot use this data for this field"
 }

@@ -6,6 +6,7 @@ import (
 	"boilerplate/api/repositories"
 	"boilerplate/api/routes"
 	"boilerplate/api/services"
+	"boilerplate/api/validators"
 	"boilerplate/infrastructure"
 	"context"
 	"fmt"
@@ -20,12 +21,14 @@ var Module = fx.Options(
 	services.Module,
 	repositories.Module,
 	middlewares.Module,
+	validators.Module,
 	fx.Invoke(bootstrap),
 )
 
 func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 	middlewares middlewares.Middlewares, router infrastructure.Router,
-	routes routes.Routes, env infrastructure.Env, logger infrastructure.Logger) {
+	routes routes.Routes, env infrastructure.Env, logger infrastructure.Logger,
+	validators validators.Validators) {
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application 📛")
 		conn, _ := database.DB.DB()
@@ -40,6 +43,7 @@ func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 			logger.Zap.Info(fmt.Sprintf("------ %s  ------", env.AppName))
 			logger.Zap.Info("------------------------")
 			go func() {
+				validators.Setup()
 				routes.Setup()
 				middlewares.Setup()
 				if env.ServerPort == "" {
