@@ -2,7 +2,7 @@ package models
 
 type User struct {
 	Base
-	Email    string `json:"email" binding:"required"`
+	Email    string `json:"email" binding:"required" gorm:"unique"`
 	FullName string `json:"fullName" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	// Make this field true when user change password or request for logout in other devices or ...

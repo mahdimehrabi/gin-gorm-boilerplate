@@ -58,7 +58,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	user.Email = userData.Email
 	err := ac.userService.CreateUser(&user)
 	if err != nil {
-		ac.logger.Zap.Error("Failed to create registered user", err.Error())
+		ac.logger.Zap.Error("Failed to create registered user ", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
