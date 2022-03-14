@@ -16,18 +16,20 @@ import (
 
 type TestSuiteEnv struct {
 	suite.Suite
-	router   infrastructure.Router
-	database infrastructure.Database
+	router     infrastructure.Router
+	database   infrastructure.Database
+	encryption infrastructure.Encryption
 }
 
 func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Database,
-	logger infrastructure.Logger, migrations infrastructure.Migrations) TestSuiteEnv {
+	encryption infrastructure.Encryption, logger infrastructure.Logger, migrations infrastructure.Migrations) TestSuiteEnv {
 	suite := new(suite.Suite)
 	migrations.Migrate()
 	return TestSuiteEnv{
 		*suite,
 		router,
 		database,
+		encryption,
 	}
 }
 

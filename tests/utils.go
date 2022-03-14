@@ -1,8 +1,8 @@
 package tests
 
 import (
+	"boilerplate/infrastructure"
 	"boilerplate/models"
-	"boilerplate/utils"
 	"bytes"
 	"encoding/json"
 	"net/http/httptest"
@@ -18,8 +18,8 @@ func MapToJsonBytesBuffer(mp map[string]interface{}) *bytes.Buffer {
 	return bytes.NewBuffer(j)
 }
 
-func CreateUser(db *gorm.DB) models.User {
-	password := utils.Sha256Encrypt("m12345678")
+func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encryption) models.User {
+	password = encryption.SaltAndSha256Encrypt(password)
 	user := models.User{Email: "mahdi@gmail.com", FullName: "mahdi mehrabi", Password: password}
 	err := db.Create(&user).Error
 	if err != nil {
@@ -29,7 +29,7 @@ func CreateUser(db *gorm.DB) models.User {
 }
 
 func ExtractResponseAsMap(w *httptest.ResponseRecorder) map[string]interface{} {
-	response := map[string]interface{}{}
+	response := make(map[string]interface{})
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	if err != nil {
 		panic(err)
