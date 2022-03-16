@@ -34,7 +34,7 @@ type UserResponse struct {
 
 type CreateUser struct {
 	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required,uniqueDB=users&email"`
+	Email    string `json:"email" binding:"required,uniqueDB=users&email,email"`
 	FullName string `json:"fullName" binding:"required"`
 }
 

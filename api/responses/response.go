@@ -29,14 +29,13 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string) {
 		}
 	}()
 	var ve validator.ValidationErrors
-	errs := make([]ValidationError, 0)
+	errs := make(map[string]string)
 	if errors.As(err, &ve) {
 		for _, fe := range ve {
 			field := fe.Field()
 			field = strings.ToLower(field[0:1]) + field[1:]
-			msg := MsgForTag(fe.Tag())
-			ve := ValidationError{field, msg}
-			errs = append(errs, ve)
+			msg := MsgForTag(fe.Tag(), field)
+			errs[field] = msg
 		}
 	}
 	c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{"errors": errs}, "msg": message, "ok": false})
