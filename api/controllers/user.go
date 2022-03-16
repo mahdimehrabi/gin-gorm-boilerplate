@@ -44,7 +44,7 @@ func (uc UserController) CreateUser(c *gin.Context) {
 	trx := c.MustGet(constants.DBTransaction).(*gorm.DB)
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		responses.ValidationErrorsJSON(c, err, "")
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
 	}
 

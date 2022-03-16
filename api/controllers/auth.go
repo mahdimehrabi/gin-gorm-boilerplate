@@ -6,6 +6,7 @@ import (
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
+	"boilerplate/utils"
 	"errors"
 	"net/http"
 	"strconv"
@@ -47,13 +48,25 @@ func (ac AuthController) Register(c *gin.Context) {
 	// Data Parse
 	var userData models.CreateUser
 	if err := c.ShouldBindJSON(&userData); err != nil {
-		responses.ValidationErrorsJSON(c, err, "")
+		fieldErrors := make(map[string]string, 0)
+		if !utils.IsGoodPassword(userData.Password) {
+			fieldErrors["password"] = "Password must contain at least one alphabet and one number and its length must be 8 characters or more"
+
+		}
+		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
 		return
 	}
-
+	if !utils.IsGoodPassword(userData.Password) {
+		fieldErrors := map[string]string{
+			"password": "Password must contain at least one alphabet and one number and its length must be 8 characters or more",
+		}
+		responses.ManualValidationErrorsJSON(c, fieldErrors, "")
+		return
+	}
 	var user models.User
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(userData.Password)
 	user.Password = encryptedPassword
+
 	user.FullName = userData.FullName
 	user.Email = userData.Email
 	err := ac.userService.CreateUser(&user)
@@ -83,7 +96,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	// Data Parse
 	var loginRquest models.LoginRequest
 	if err := c.ShouldBindJSON(&loginRquest); err != nil {
-		responses.ValidationErrorsJSON(c, err, "")
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
 	}
 	var user models.User
@@ -135,7 +148,7 @@ type accessTokenReqRes struct {
 func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 	at := accessTokenReqRes{}
 	if err := c.ShouldBindJSON(&at); err != nil {
-		responses.ValidationErrorsJSON(c, err, "")
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
 	}
 
@@ -163,7 +176,7 @@ type refreshTokenRequest struct {
 func (ac AuthController) RenewToken(c *gin.Context) {
 	rtr := refreshTokenRequest{}
 	if err := c.ShouldBindJSON(&rtr); err != nil {
-		responses.ValidationErrorsJSON(c, err, "")
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
 	}
 
