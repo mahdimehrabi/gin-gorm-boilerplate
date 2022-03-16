@@ -1,8 +1,6 @@
 package validators
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/fx"
@@ -26,11 +24,7 @@ func NewValidators(uv UniqueValidator) Validators {
 
 // Setup sets up middlewares
 func (val Validators) Setup() {
-	fmt.Println("oooooooooooooooooooooooook")
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		fmt.Println("nooooooooooooooooooooo")
 		v.RegisterValidation("uniqueDB", val.uv.Handler())
-	} else {
-		fmt.Println("fuuuuuuuuuuuuuuuuuuuuuck")
 	}
 }
