@@ -6,6 +6,7 @@ import (
 	"boilerplate/api/repositories"
 	"boilerplate/api/routes"
 	"boilerplate/api/services"
+	"boilerplate/api/validators"
 	"boilerplate/infrastructure"
 	"testing"
 
@@ -81,6 +82,7 @@ func TestSuite(t *testing.T) {
 			services.Module,
 			repositories.Module,
 			middlewares.Module,
+			validators.Module,
 			fx.Provide(NewTestSuiteEnv),
 			fx.Supply(t),
 			fx.Invoke(Setup),
@@ -89,7 +91,8 @@ func TestSuite(t *testing.T) {
 }
 
 func Setup(t *testing.T, tse TestSuiteEnv, lc fx.Lifecycle,
-	routes routes.Routes, middlewares middlewares.Middlewares) {
+	routes routes.Routes, middlewares middlewares.Middlewares, validators validators.Validators) {
+	validators.Setup()
 	routes.Setup()
 	middlewares.Setup()
 	suite.Run(t, &tse)
