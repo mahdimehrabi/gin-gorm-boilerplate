@@ -11,7 +11,7 @@ func MsgForTag(tag string, fieldName string) string {
 	case "uniqueDB":
 		return fmt.Sprintf("Entered %s is already exist", fieldName)
 	case "numeric":
-		return "You must you numeric value for this field"
+		return "You must use numeric value for this field"
 	}
 	return "You cannot use this data for this field"
 }
