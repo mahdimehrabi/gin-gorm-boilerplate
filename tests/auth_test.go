@@ -138,4 +138,17 @@ func (suite TestSuiteEnv) TestRegister() {
 	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
+
+	//test with weak password
+	data = map[string]interface{}{
+		"email":    "mahdi@gmail.com",
+		"password": "12345678",
+		"fullName": "mahdi mehrabi",
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
+	db.Model(models.User{}).Count(&afterUserCount)
+	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 }
