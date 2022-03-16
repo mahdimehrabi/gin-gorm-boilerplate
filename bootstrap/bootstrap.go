@@ -7,9 +7,13 @@ import (
 	"boilerplate/api/routes"
 	"boilerplate/api/services"
 	"boilerplate/api/validators"
+	"boilerplate/docs"
 	"boilerplate/infrastructure"
 	"context"
 	"fmt"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"go.uber.org/fx"
 )
@@ -45,6 +49,9 @@ func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 			go func() {
 				validators.Setup()
 				routes.Setup()
+				docs.SwaggerInfo.BasePath = "/api"
+				router.Gin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
 				middlewares.Setup()
 				if env.ServerPort == "" {
 					router.Gin.Run(":5000")

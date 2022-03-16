@@ -43,6 +43,19 @@ func NewAuthController(logger infrastructure.Logger,
 	}
 }
 
+// @BasePath /api/auth
+
+// @Summary login
+// @Schemes
+// @Description jwt login
+// @Tags generic
+// @Accept json
+// @Produce json
+// @Param email query string true "unique email"
+// @Param password query string true "password that have at least 8 length and contain an alphabet and number "
+// @Param fullName query string true "fullName"
+// @Success 200 {object} swagger.RegisterLoginResponse
+// @Router /register [post]
 func (ac AuthController) Register(c *gin.Context) {
 
 	// Data Parse

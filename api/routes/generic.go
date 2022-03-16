@@ -2,11 +2,7 @@ package routes
 
 import (
 	"boilerplate/api/controllers"
-	docs "boilerplate/docs"
 	"boilerplate/infrastructure"
-
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // GenericRoutes -> utility routes struct
@@ -31,7 +27,5 @@ func NewGenericRoutes(
 
 //Setup -> sets up route for util entities
 func (gr GenericRoutes) Setup() {
-	docs.SwaggerInfo.BasePath = "/api"
 	gr.router.Gin.GET("/api/ping", gr.GenericController.Ping)
-	gr.router.Gin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }
