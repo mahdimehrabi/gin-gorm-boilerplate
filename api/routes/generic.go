@@ -31,7 +31,7 @@ func NewGenericRoutes(
 
 //Setup -> sets up route for util entities
 func (gr GenericRoutes) Setup() {
-	docs.SwaggerInfo.BasePath = "/"
+	docs.SwaggerInfo.BasePath = "/api"
 	gr.router.Gin.GET("/api/ping", gr.GenericController.Ping)
 	gr.router.Gin.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 }

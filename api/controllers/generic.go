@@ -23,6 +23,8 @@ func NewGenericController(logger infrastructure.Logger,
 	}
 }
 
+// @basePath /api
+
 // @Summary ping
 // @Schemes
 // @Description do ping
