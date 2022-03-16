@@ -12,3 +12,5 @@ env
 pagination
 image resizer 
 advanced rest api responses
+password strength validation
+unique field validation + easy custom validator implemention
