@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"boilerplate/api/responses"
+	_ "boilerplate/api/responses/swagger"
 	"boilerplate/infrastructure"
 	"net/http"
 
@@ -22,6 +23,14 @@ func NewGenericController(logger infrastructure.Logger,
 	}
 }
 
+// @Summary ping
+// @Schemes
+// @Description do ping
+// @Tags generic
+// @Accept json
+// @Produce json
+// @Success 200 {object} swagger.PingResponse
+// @Router /ping [get]
 func (uc GenericController) Ping(ctx *gin.Context) {
 	responses.JSON(ctx, http.StatusOK, gin.H{"pingpong": "🏓🏓🏓🏓🏓🏓"}, "pong")
 }

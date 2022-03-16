@@ -1,0 +1,35 @@
+definitions:
+  swagger.PingResponse:
+    properties:
+      data:
+        additionalProperties:
+          type: string
+        example:
+          pingpong: "\U0001F3D3\U0001F3D3\U0001F3D3\U0001F3D3\U0001F3D3\U0001F3D3"
+        type: object
+      msg:
+        example: pong
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.PingResponse'
+      summary: ping
+      tags:
+      - generic
+swagger: "2.0"
