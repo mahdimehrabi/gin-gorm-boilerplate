@@ -28,6 +28,24 @@ func (suite TestSuiteEnv) TestLogin() {
 	a.True(len(accessToken) > 7, "Access token invalid")
 	a.True(len(refreshToken) > 7, "Refresh token invalid")
 
+	//test access token
+	data = map[string]interface{}{
+		"accessToken": accessToken,
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+
+	//test refresh token
+	data = map[string]interface{}{
+		"refreshToken": refreshToken,
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+
 	//test wrong email
 	data = map[string]interface{}{
 		"email":    "mahdi1@gmail.com",
@@ -90,6 +108,25 @@ func (suite TestSuiteEnv) TestRegister() {
 	refreshToken, _ := dt["refreshToken"].(string)
 	a.True(len(accessToken) > 7, "Access token invalid")
 	a.True(len(refreshToken) > 7, "Refresh token invalid")
+
+	//test access token
+	data = map[string]interface{}{
+		"accessToken": accessToken,
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+
+	//test refresh token
+	data = map[string]interface{}{
+		"refreshToken": refreshToken,
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+
 	var afterUserCount int64
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
