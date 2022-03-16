@@ -19,7 +19,8 @@ func ErrorJSON(c *gin.Context, statusCode int, data interface{}, message string)
 	c.JSON(statusCode, gin.H{"data": data, "msg": message, "ok": false})
 }
 
-func ValidationErrorsJSON(c *gin.Context, err error, message string) {
+//automatic validation errors just send validator.ValidationErrors and this func automatic generate response
+func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldErrors map[string]string) {
 	if message == "" {
 		message = "Please review entered data"
 	}
@@ -28,6 +29,7 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string) {
 			c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{}, "msg": message, "ok": false})
 		}
 	}()
+	//auto generate errors from validation erros
 	var ve validator.ValidationErrors
 	errs := make(map[string]string)
 	if errors.As(err, &ve) {
@@ -38,7 +40,20 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string) {
 			errs[field] = msg
 		}
 	}
+
+	//merge errors with extraFieldErrors
+	for k, v := range extraFieldErrors {
+		errs[k] = v
+	}
 	c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{"errors": errs}, "msg": message, "ok": false})
+}
+
+//manual validation errors, please send errors like map[fieldName]errorMsg in second parameter
+func ManualValidationErrorsJSON(c *gin.Context, fieldErrors map[string]string, message string) {
+	if message == "" {
+		message = "Please review entered data"
+	}
+	c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{"errors": fieldErrors}, "msg": message, "ok": false})
 }
 
 // JSONCount : json response function
