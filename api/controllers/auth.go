@@ -45,9 +45,9 @@ func NewAuthController(logger infrastructure.Logger,
 
 // @BasePath /api/auth
 
-// @Summary login
+// @Summary register
 // @Schemes
-// @Description jwt login
+// @Description jwt register
 // @Tags auth
 // @Accept json
 // @Produce json
@@ -55,7 +55,8 @@ func NewAuthController(logger infrastructure.Logger,
 // @Param password query string true "password that have at least 8 length and contain an alphabet and number "
 // @Param fullName query string true "fullName"
 // @Success 200 {object} swagger.RegisterLoginResponse
-// @Router /register [post]
+// @failure 400 {object} swagger.FailedValidationResponse
+// @Router /auth/register [post]
 func (ac AuthController) Register(c *gin.Context) {
 
 	// Data Parse
@@ -105,6 +106,16 @@ func (ac AuthController) Register(c *gin.Context) {
 	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
 }
 
+// @Summary login
+// @Schemes
+// @Description jwt login
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param email query string true "email"
+// @Param password query string true "password"
+// @Success 200 {object} swagger.RegisterLoginResponse
+// @Router /auth/login [post]
 func (ac AuthController) Login(c *gin.Context) {
 	// Data Parse
 	var loginRquest models.LoginRequest
