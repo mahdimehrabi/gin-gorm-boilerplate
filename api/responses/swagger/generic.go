@@ -5,14 +5,14 @@ type EmptyData struct {
 
 //for override
 type SuccessResonse struct {
-	Msg  string    `json:"msg" example:"Operation was successful"`
+	Msg  string    `json:"msg" example:"Successful message"`
 	Ok   bool      `json:"ok" example:"true"`
 	Data EmptyData `json:"data"`
 }
 
 //for override
-type FailedResonse struct {
-	Msg  string    `json:"msg" example:"Operation was not successful"`
+type FailedResponse struct {
+	Msg  string    `json:"msg" example:"Error or warnnig message"`
 	Ok   bool      `json:"ok" example:"false"`
 	Data EmptyData `json:"data"`
 }

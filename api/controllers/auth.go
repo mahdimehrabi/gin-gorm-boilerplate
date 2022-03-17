@@ -3,7 +3,6 @@ package controllers
 import (
 	"boilerplate/api/repositories"
 	"boilerplate/api/responses"
-	"boilerplate/api/responses/swagger"
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
@@ -61,7 +60,7 @@ func NewAuthController(logger infrastructure.Logger,
 func (ac AuthController) Register(c *gin.Context) {
 
 	// Data Parse
-	var userData models.CreateUser
+	var userData models.Register
 	if err := c.ShouldBindJSON(&userData); err != nil {
 		fieldErrors := make(map[string]string, 0)
 		if !utils.IsGoodPassword(userData.Password) {
@@ -107,11 +106,6 @@ func (ac AuthController) Register(c *gin.Context) {
 	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
 }
 
-type failedLoginResponse struct {
-	swagger.FailedResonse
-	Msg string `json:"msg" example:"No user found with entered credentials"`
-}
-
 // @Summary login
 // @Schemes
 // @Description jwt login
@@ -122,7 +116,7 @@ type failedLoginResponse struct {
 // @Param password query string true "password"
 // @Success 200 {object} swagger.RegisterLoginResponse
 // @failure 400 {object} swagger.FailedValidationResponse
-// @failure 401 {object} failedLoginResponse
+// @failure 401 {object} swagger.FailedLoginResponse
 // @Router /auth/login [post]
 func (ac AuthController) Login(c *gin.Context) {
 	// Data Parse
@@ -173,12 +167,19 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 }
 
-type accessTokenReqRes struct {
-	AccessToken string `json:"accessToken" binding:"required"`
-}
-
+// @Summary access token verify
+// @Schemes
+// @Description jwt access token verify
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param accessToken query string true "accessToken"
+// @Success 200 {object} swagger.SuccessVerifyAccessTokenResponse
+// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 401 {object} swagger.FailedResponse
+// @Router /auth/access-token-verify [post]
 func (ac AuthController) AccessTokenVerify(c *gin.Context) {
-	at := accessTokenReqRes{}
+	at := models.AccessTokenReqRes{}
 	if err := c.ShouldBindJSON(&at); err != nil {
 		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
@@ -188,7 +189,7 @@ func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 	accessSecret := "access" + ac.env.Secret
 	valid, _, err := services.DecodeToken(accessToken, accessSecret)
 	if err != nil {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Access token is not valid")
+		responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "Access token is not valid")
 		return
 	}
 
@@ -196,7 +197,7 @@ func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 		responses.JSON(c, http.StatusOK, gin.H{}, "Access token is valid")
 		return
 	} else {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Access token is not valid")
+		responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "Access token is not valid")
 		return
 	}
 }
@@ -249,7 +250,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		accessSecret := "refresh" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
 		accessToken, _ := ac.authService.CreateToken(int(userID), exp, accessSecret)
-		responses.JSON(c, http.StatusOK, accessTokenReqRes{AccessToken: accessToken}, "")
+		responses.JSON(c, http.StatusOK, models.AccessTokenReqRes{AccessToken: accessToken}, "")
 		return
 	} else {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
