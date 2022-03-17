@@ -12,6 +12,7 @@ clean-gin
 __debug_bin
 gin-bin
 debug.test
+docs/*
 
 #editor based
 .idea
