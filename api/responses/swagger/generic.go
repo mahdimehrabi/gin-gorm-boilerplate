@@ -1,17 +1,20 @@
 package swagger
 
+type EmptyData struct {
+}
+
 //for override
 type SuccessResonse struct {
-	Msg  string            `json:"msg" example:"Operation was successful"`
-	Ok   bool              `json:"ok" example:"true"`
-	Data map[string]string //please rewrite this
+	Msg  string    `json:"msg" example:"Operation was successful"`
+	Ok   bool      `json:"ok" example:"true"`
+	Data EmptyData `json:"data"`
 }
 
 //for override
 type FailedResonse struct {
-	Msg  string            `json:"msg" example:"Operation was not successful"`
-	Ok   bool              `json:"ok" example:"false"`
-	Data map[string]string //please rewrite this
+	Msg  string    `json:"msg" example:"Operation was not successful"`
+	Ok   bool      `json:"ok" example:"false"`
+	Data EmptyData `json:"data"`
 }
 
 type validationErrors struct {

@@ -3,6 +3,7 @@ package controllers
 import (
 	"boilerplate/api/repositories"
 	"boilerplate/api/responses"
+	"boilerplate/api/responses/swagger"
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
@@ -106,6 +107,11 @@ func (ac AuthController) Register(c *gin.Context) {
 	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
 }
 
+type failedLoginResponse struct {
+	swagger.FailedResonse
+	Msg string `json:"msg" example:"No user found with entered credentials"`
+}
+
 // @Summary login
 // @Schemes
 // @Description jwt login
@@ -115,6 +121,8 @@ func (ac AuthController) Register(c *gin.Context) {
 // @Param email query string true "email"
 // @Param password query string true "password"
 // @Success 200 {object} swagger.RegisterLoginResponse
+// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 401 {object} failedLoginResponse
 // @Router /auth/login [post]
 func (ac AuthController) Login(c *gin.Context) {
 	// Data Parse
@@ -126,7 +134,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	var user models.User
 	user, err := ac.userRepository.FindByField("Email", loginRquest.Email)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "No user found with entered credentials")
+		responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "No user found with entered credentials")
 		return
 	}
 	if err != nil {
@@ -160,7 +168,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FullName+" wellcome back")
 		return
 	} else {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "No user found with entered credentials")
+		responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "No user found with entered credentials")
 		return
 	}
 }
