@@ -1,0 +1,259 @@
+definitions:
+  models.AccessTokenReqRes:
+    properties:
+      accessToken:
+        type: string
+    required:
+    - accessToken
+    type: object
+  models.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      user:
+        $ref: '#/definitions/models.UserResponse'
+    type: object
+  models.UserResponse:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  swagger.EmptyData:
+    type: object
+  swagger.FailedLoginResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.EmptyData'
+      msg:
+        example: No user found with entered credentials
+        type: string
+      ok:
+        example: false
+        type: boolean
+    type: object
+  swagger.FailedResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.EmptyData'
+      msg:
+        example: Error or warnnig message
+        type: string
+      ok:
+        example: false
+        type: boolean
+    type: object
+  swagger.FailedValidationResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.validationErrors'
+      msg:
+        example: Please review your entered data
+        type: string
+      ok:
+        example: false
+        type: boolean
+    type: object
+  swagger.PingResponse:
+    properties:
+      data:
+        additionalProperties:
+          type: string
+        example:
+          pingpong: "\U0001F3D3\U0001F3D3\U0001F3D3\U0001F3D3\U0001F3D3\U0001F3D3"
+        type: object
+      msg:
+        example: pong
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
+  swagger.RegisterLoginResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.LoginResponse'
+      msg:
+        example: Successful message
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
+  swagger.SuccessVerifyAccessTokenResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.AccessTokenReqRes'
+      msg:
+        example: Successful message
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
+  swagger.validationErrors:
+    properties:
+      errors:
+        additionalProperties:
+          type: string
+        example:
+          field1: This field is required
+          field2: This field must be numeric
+        type: object
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/access-token-verify:
+    post:
+      consumes:
+      - application/json
+      description: jwt access token verify
+      parameters:
+      - description: accessToken
+        in: query
+        name: accessToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessVerifyAccessTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.FailedResponse'
+      summary: access token verify
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: jwt login
+      parameters:
+      - description: email
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: password
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.RegisterLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.FailedLoginResponse'
+      summary: login
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: jwt register
+      parameters:
+      - description: unique email
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: 'password that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: fullName
+        in: query
+        name: fullName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.RegisterLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: register
+      tags:
+      - auth
+  /auth/renew-access-token:
+    post:
+      consumes:
+      - application/json
+      description: jwt renew access token
+      parameters:
+      - description: accessToken
+        in: query
+        name: refreshToken
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessVerifyAccessTokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.FailedResponse'
+      summary: renew access token
+      tags:
+      - auth
+  /ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.PingResponse'
+      summary: ping
+      tags:
+      - generic
+swagger: "2.0"
