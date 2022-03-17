@@ -48,7 +48,7 @@ func NewAuthController(logger infrastructure.Logger,
 // @Summary login
 // @Schemes
 // @Description jwt login
-// @Tags generic
+// @Tags auth
 // @Accept json
 // @Produce json
 // @Param email query string true "unique email"
