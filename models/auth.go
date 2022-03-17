@@ -20,3 +20,7 @@ type LoginResponse struct {
 type AccessTokenReqRes struct {
 	AccessToken string `json:"accessToken" binding:"required"`
 }
+
+type RefreshTokenRequest struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}

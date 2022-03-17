@@ -202,12 +202,19 @@ func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 	}
 }
 
-type refreshTokenRequest struct {
-	RefreshToken string `json:"refreshToken" binding:"required"`
-}
-
+// @Summary renew access token
+// @Schemes
+// @Description jwt renew access token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param refreshToken query string true "accessToken"
+// @Success 200 {object} swagger.SuccessVerifyAccessTokenResponse
+// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 401 {object} swagger.FailedResponse
+// @Router /auth/renew-access-token [post]
 func (ac AuthController) RenewToken(c *gin.Context) {
-	rtr := refreshTokenRequest{}
+	rtr := models.RefreshTokenRequest{}
 	if err := c.ShouldBindJSON(&rtr); err != nil {
 		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
