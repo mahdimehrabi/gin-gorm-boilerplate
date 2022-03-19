@@ -36,7 +36,7 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldE
 		for _, fe := range ve {
 			field := fe.Field()
 			field = strings.ToLower(field[0:1]) + field[1:]
-			msg := MsgForTag(fe.Tag(), field)
+			msg := MsgForTag(fe.Tag(), field, fe.Param())
 			errs[field] = msg
 		}
 	}
