@@ -18,3 +18,8 @@ type SuccessVerifyAccessTokenResponse struct {
 	SuccessResonse
 	Data models.AccessTokenReqRes `json:"data"`
 }
+
+type UnauthenticatedResponse struct {
+	FailedResponse
+	Msg string `json:"msg" example:"You must login first!"`
+}

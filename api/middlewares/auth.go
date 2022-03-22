@@ -31,7 +31,7 @@ func NewAuthMiddleware(
 		authService:    authService,
 		logger:         logger,
 		env:            env,
-		userRepository: repositories.UserRepository,
+		userRepository: userRepository,
 	}
 }
 

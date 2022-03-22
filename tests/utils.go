@@ -1,10 +1,12 @@
 package tests
 
 import (
+	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
 	"bytes"
 	"encoding/json"
+	"net/http"
 	"net/http/httptest"
 
 	"gorm.io/gorm"
@@ -26,6 +28,16 @@ func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encrypti
 		panic(err)
 	}
 	return user
+}
+
+func NewAuthenticatedRequest(as services.AuthService, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, error) {
+	req, err := http.NewRequest(method, url, data)
+	if err != nil {
+		return nil, err
+	}
+	accessToken, _, err := as.CreateTokens(int(user.ID))
+	req.Header.Add("Authorization", "Bearer "+accessToken)
+	return req, err
 }
 
 func ExtractResponseAsMap(w *httptest.ResponseRecorder) map[string]interface{} {

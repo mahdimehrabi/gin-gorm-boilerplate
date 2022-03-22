@@ -26,7 +26,7 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldE
 	}
 	defer func() {
 		if recoveryMessage := recover(); recoveryMessage != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{}, "msg": message, "ok": false})
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"data": gin.H{}, "msg": message, "ok": false})
 		}
 	}()
 	//auto generate errors from validation erros
@@ -53,7 +53,7 @@ func ManualValidationErrorsJSON(c *gin.Context, fieldErrors map[string]string, m
 	if message == "" {
 		message = "Please review entered data"
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{"errors": fieldErrors}, "msg": message, "ok": false})
+	c.JSON(http.StatusUnprocessableEntity, gin.H{"data": gin.H{"errors": fieldErrors}, "msg": message, "ok": false})
 }
 
 // JSONCount : json response function

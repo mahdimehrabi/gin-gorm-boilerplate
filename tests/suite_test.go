@@ -17,17 +17,19 @@ import (
 
 type TestSuiteEnv struct {
 	suite.Suite
-	router     infrastructure.Router
-	database   infrastructure.Database
-	encryption infrastructure.Encryption
-	logger     infrastructure.Logger
-	env        infrastructure.Env
-	migrations infrastructure.Migrations
+	router      infrastructure.Router
+	database    infrastructure.Database
+	encryption  infrastructure.Encryption
+	logger      infrastructure.Logger
+	env         infrastructure.Env
+	migrations  infrastructure.Migrations
+	authService services.AuthService
 }
 
 func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Database,
 	encryption infrastructure.Encryption, logger infrastructure.Logger,
-	migrations infrastructure.Migrations, env infrastructure.Env) TestSuiteEnv {
+	migrations infrastructure.Migrations, env infrastructure.Env,
+	authService services.AuthService) TestSuiteEnv {
 	suite := new(suite.Suite)
 	migrations.Migrate()
 	return TestSuiteEnv{
@@ -38,6 +40,7 @@ func NewTestSuiteEnv(router infrastructure.Router, database infrastructure.Datab
 		logger,
 		env,
 		migrations,
+		authService,
 	}
 }
 

@@ -8,6 +8,11 @@ type Register struct {
 	LastName       string `json:"LastName" binding:"required"`
 }
 
+type ChangePassword struct {
+	Password       string `json:"password" binding:"required"`
+	RepeatPassword string `json:"repeatPassword" binding:"required,eqfield=Password"`
+}
+
 type LoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
