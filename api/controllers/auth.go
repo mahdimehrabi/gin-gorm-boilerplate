@@ -286,5 +286,5 @@ func (ac AuthController) Logout(c *gin.Context) {
 		return
 	}
 
-	responses.JSON(c, http.StatusOK, gin.H{}, "Your password changed successfuly , please login again !")
+	responses.JSON(c, http.StatusOK, gin.H{}, "You logged out successfuly")
 }
