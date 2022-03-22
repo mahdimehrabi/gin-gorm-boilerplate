@@ -4,7 +4,7 @@ type EmptyData struct {
 }
 
 //for override
-type SuccessResonse struct {
+type SuccessResponse struct {
 	Msg  string    `json:"msg" example:"Successful message"`
 	Ok   bool      `json:"ok" example:"true"`
 	Data EmptyData `json:"data"`
