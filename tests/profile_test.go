@@ -27,12 +27,13 @@ func (suite TestSuiteEnv) TestChangePassword() {
 	a.True(user.MustLogout, "must logout problem")
 
 	//test with weak password
-	// data = map[string]interface{}{
-	// 	"password":       "12345678",
-	// 	"repeatPassword": "12345678",
-	// }
-	// w = httptest.NewRecorder()
-	// req, _ = http.NewRequest("POST", "/api/profile/change-password", MapToJsonBytesBuffer(data))
-	// router.ServeHTTP(w, req)
-	// a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
+	user = CreateUser("m12345678", db, suite.encryption)
+	data = map[string]interface{}{
+		"password":       "12345678",
+		"repeatPassword": "12345678",
+	}
+	w = httptest.NewRecorder()
+	req, _ = NewAuthenticatedRequest(suite.authService, user, "POST", "/api/profile/change-password", MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 }
