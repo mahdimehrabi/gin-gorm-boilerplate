@@ -5,7 +5,7 @@ import (
 )
 
 type RegisterLoginResponse struct {
-	SuccessResonse
+	SuccessResponse
 	Data models.LoginResponse `json:"data"`
 }
 
@@ -15,7 +15,7 @@ type FailedLoginResponse struct {
 }
 
 type SuccessVerifyAccessTokenResponse struct {
-	SuccessResonse
+	SuccessResponse
 	Data models.AccessTokenReqRes `json:"data"`
 }
 

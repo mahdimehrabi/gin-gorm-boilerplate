@@ -94,6 +94,17 @@ definitions:
         example: true
         type: boolean
     type: object
+  swagger.SuccessResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.EmptyData'
+      msg:
+        example: Successful message
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
   swagger.SuccessVerifyAccessTokenResponse:
     properties:
       data:
@@ -103,6 +114,17 @@ definitions:
         type: string
       ok:
         example: true
+        type: boolean
+    type: object
+  swagger.UnauthenticatedResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.EmptyData'
+      msg:
+        example: You must login first!
+        type: string
+      ok:
+        example: false
         type: boolean
     type: object
   swagger.validationErrors:
@@ -272,4 +294,45 @@ paths:
       summary: ping
       tags:
       - generic
+  /profile/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Change Password , Login required
+      parameters:
+      - description: unique email
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: 'password that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: 'repeatPassword that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: repeatPassword
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: change-password
+      tags:
+      - profile
 swagger: "2.0"

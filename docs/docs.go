@@ -243,6 +243,64 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/profile/change-password": {
+            "post": {
+                "description": "Change Password , Login required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "change-password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "unique email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "password that have at least 8 length and contain an alphabet and number ",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repeatPassword that have at least 8 length and contain an alphabet and number ",
+                        "name": "repeatPassword",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -387,6 +445,22 @@ const docTemplate = `{
                 }
             }
         },
+        "swagger.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/swagger.EmptyData"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Successful message"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "swagger.SuccessVerifyAccessTokenResponse": {
             "type": "object",
             "properties": {
@@ -400,6 +474,22 @@ const docTemplate = `{
                 "ok": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "swagger.UnauthenticatedResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/swagger.EmptyData"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "You must login first!"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },

@@ -40,10 +40,10 @@ func NewProfileController(logger infrastructure.Logger,
 
 // @BasePath /api/auth
 
-// @Summary ChangePassword
+// @Summary change-password
 // @Schemes
-// @Description ChangePassword
-// @Tags auth
+// @Description Change Password , Login required
+// @Tags profile
 // @Accept json
 // @Produce json
 // @Param email query string true "unique email"
@@ -52,7 +52,7 @@ func NewProfileController(logger infrastructure.Logger,
 // @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.UnauthenticatedResponse
-// @Router /auth/ChangePassword [post]
+// @Router /profile/change-password [post]
 func (ac ProfileController) ChangePassword(c *gin.Context) {
 
 	// Data Parse
