@@ -96,7 +96,8 @@ func (suite TestSuiteEnv) TestRegister() {
 	data := map[string]interface{}{
 		"email":    "mahdi@gmail.com",
 		"password": "m12345678",
-		"fullName": "mahdi mehrabi",
+		"firstName":"mahdi",
+		"lastName":"mehrabi",
 	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
@@ -143,7 +144,8 @@ func (suite TestSuiteEnv) TestRegister() {
 	data = map[string]interface{}{
 		"email":    "mahdi@gmail.com",
 		"password": "12345678",
-		"fullName": "mahdi mehrabi",
+		"firstName":"mahdi",
+		"lastName":"mehrabi",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
