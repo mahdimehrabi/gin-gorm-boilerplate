@@ -42,7 +42,7 @@ func NewProfileController(logger infrastructure.Logger,
 
 // @Summary change-password
 // @Schemes
-// @Description Change Password , Login required
+// @Description Change Password , authentication required
 // @Tags profile
 // @Accept json
 // @Produce json
