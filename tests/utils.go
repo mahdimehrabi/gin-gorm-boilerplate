@@ -4,6 +4,7 @@ import (
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"boilerplate/models"
+	"boilerplate/utils"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -22,7 +23,7 @@ func MapToJsonBytesBuffer(mp map[string]interface{}) *bytes.Buffer {
 
 func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encryption) models.User {
 	password = encryption.SaltAndSha256Encrypt(password)
-	user := models.User{Email: "mahdi@gmail.com", FirstName: "mahdi", LastName: "mehrabi", Password: password}
+	user := models.User{Email: utils.GenerateRandomEmail(7), FirstName: "mahdi", LastName: "mehrabi", Password: password}
 	err := db.Create(&user).Error
 	if err != nil {
 		panic(err)

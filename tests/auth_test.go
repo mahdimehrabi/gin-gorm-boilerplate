@@ -10,11 +10,11 @@ func (suite TestSuiteEnv) TestLogin() {
 	router := suite.router.Gin
 	db := suite.database.DB
 	a := suite.Assert()
-	CreateUser("m12345678", db, suite.encryption)
+	user := CreateUser("m12345678", db, suite.encryption)
 
 	//test correct credentials
 	data := map[string]interface{}{
-		"email":    "mahdi@gmail.com",
+		"email":    user.Email,
 		"password": "m12345678",
 	}
 	w := httptest.NewRecorder()
@@ -143,7 +143,7 @@ func (suite TestSuiteEnv) TestRegister() {
 
 	//test with weak password
 	data = map[string]interface{}{
-		"email":     "mahdi@gmail.com",
+		"email":     "mahdi1@gmail.com",
 		"password":  "12345678",
 		"firstName": "mahdi",
 		"lastName":  "mehrabi",
