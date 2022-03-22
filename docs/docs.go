@@ -45,16 +45,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/swagger.SuccessVerifyAccessTokenResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/swagger.FailedValidationResponse"
-                        }
-                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/swagger.FailedResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
                         }
                     }
                 }
@@ -96,16 +96,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/swagger.RegisterLoginResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/swagger.FailedValidationResponse"
-                        }
-                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/swagger.FailedLoginResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
                         }
                     }
                 }
@@ -168,8 +168,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/swagger.RegisterLoginResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/swagger.FailedValidationResponse"
                         }
@@ -206,16 +206,16 @@ const docTemplate = `{
                             "$ref": "#/definitions/swagger.SuccessVerifyAccessTokenResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/swagger.FailedValidationResponse"
-                        }
-                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/swagger.FailedResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
                         }
                     }
                 }

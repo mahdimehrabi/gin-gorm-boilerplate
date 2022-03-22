@@ -57,7 +57,7 @@ func NewAuthController(logger infrastructure.Logger,
 // @Param firstName query string true "firstName"
 // @Param lastName query string true "lastName"
 // @Success 200 {object} swagger.RegisterLoginResponse
-// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 422 {object} swagger.FailedValidationResponse
 // @Router /auth/register [post]
 func (ac AuthController) Register(c *gin.Context) {
 
@@ -118,7 +118,7 @@ func (ac AuthController) Register(c *gin.Context) {
 // @Param email query string true "email"
 // @Param password query string true "password"
 // @Success 200 {object} swagger.RegisterLoginResponse
-// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.FailedLoginResponse
 // @Router /auth/login [post]
 func (ac AuthController) Login(c *gin.Context) {
@@ -178,7 +178,7 @@ func (ac AuthController) Login(c *gin.Context) {
 // @Produce json
 // @Param accessToken query string true "accessToken"
 // @Success 200 {object} swagger.SuccessVerifyAccessTokenResponse
-// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.FailedResponse
 // @Router /auth/access-token-verify [post]
 func (ac AuthController) AccessTokenVerify(c *gin.Context) {
@@ -213,7 +213,7 @@ func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 // @Produce json
 // @Param refreshToken query string true "accessToken"
 // @Success 200 {object} swagger.SuccessVerifyAccessTokenResponse
-// @failure 400 {object} swagger.FailedValidationResponse
+// @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.FailedResponse
 // @Router /auth/renew-access-token [post]
 func (ac AuthController) RenewToken(c *gin.Context) {

@@ -136,14 +136,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/swagger.SuccessVerifyAccessTokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/swagger.FailedValidationResponse'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/swagger.FailedResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: access token verify
       tags:
       - auth
@@ -170,14 +170,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/swagger.RegisterLoginResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/swagger.FailedValidationResponse'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/swagger.FailedLoginResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: login
       tags:
       - auth
@@ -221,8 +221,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/swagger.RegisterLoginResponse'
-        "400":
-          description: Bad Request
+        "422":
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: register
@@ -246,14 +246,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/swagger.SuccessVerifyAccessTokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/swagger.FailedValidationResponse'
         "401":
           description: Unauthorized
           schema:
             $ref: '#/definitions/swagger.FailedResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: renew access token
       tags:
       - auth
