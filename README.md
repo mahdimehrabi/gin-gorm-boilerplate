@@ -2,15 +2,21 @@
 A boilerplate for gin + gorm + postgres + docker 
 
 ### Features
+clean architecture
+env
+dependency injection
+docker compose implemention for development and production + cache
 delve debugger + source watcher for reload   
-docker compose implemention
-advanced logger 
+jwt authentication + middleware
+change password route 
+password strength validation
+swagger documention generator
+unique field validation + easy custom validator implemention
+logger
 migration versioning 
+testify implemention
 dynamic validation errors
 database transaction middleware
-env
 pagination
 image resizer 
 advanced rest api responses
-password strength validation
-unique field validation + easy custom validator implemention
