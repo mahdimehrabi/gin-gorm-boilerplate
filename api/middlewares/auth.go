@@ -1,10 +1,12 @@
 package middlewares
 
 import (
+	"boilerplate/api/repositories"
 	"boilerplate/api/responses"
 	"boilerplate/api/services"
 	"boilerplate/infrastructure"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -12,9 +14,10 @@ import (
 
 //AuthMiddleware -> struct for transaction
 type AuthMiddleware struct {
-	logger      infrastructure.Logger
-	authService services.AuthService
-	env         infrastructure.Env
+	logger         infrastructure.Logger
+	authService    services.AuthService
+	env            infrastructure.Env
+	userRepository repositories.UserRepository
 }
 
 //NewAuthMiddleware -> new instance of transaction
@@ -22,11 +25,13 @@ func NewAuthMiddleware(
 	logger infrastructure.Logger,
 	authService services.AuthService,
 	env infrastructure.Env,
+	userRepository repositories.UserRepository,
 ) AuthMiddleware {
 	return AuthMiddleware{
-		authService: authService,
-		logger:      logger,
-		env:         env,
+		authService:    authService,
+		logger:         logger,
+		env:            env,
+		userRepository: repositories.UserRepository,
 	}
 }
 
@@ -43,14 +48,21 @@ func (m AuthMiddleware) AuthHandle() gin.HandlerFunc {
 			strs := strings.Split(ah.Authorization, " ")
 			bearer := strs[0]
 			if bearer != "Bearer" {
-				responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "your token dosen't start with 'Bearer '")
+				responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "your token dosen't start with 'Bearer '")
 				c.Abort()
 				return
 			}
 			accessToken := strs[1]
 			valid, claims, err := services.DecodeToken(accessToken, "access"+m.env.Secret)
+			userId := strconv.Itoa(int(claims["userId"].(float64)))
+			user, err := m.userRepository.FindByField("id", userId)
+			if err != nil {
+				responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "your token dosen't start with 'Bearer '")
+				c.Abort()
+				return
+			}
 			if valid && err == nil {
-				c.Set("userId", claims["userId"])
+				c.Set("user", user)
 				c.Next()
 				return
 			}
