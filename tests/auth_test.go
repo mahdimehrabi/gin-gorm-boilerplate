@@ -54,7 +54,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(400, w.Code, "Status code problem")
+	a.Equal(http.StatusUnauthorized, w.Code, "Status code problem")
 
 	//test wrong password
 	data = map[string]interface{}{
@@ -64,7 +64,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(400, w.Code, "Status code problem")
+	a.Equal(http.StatusUnauthorized, w.Code, "Status code problem")
 
 	//test without email
 	data = map[string]interface{}{
@@ -73,7 +73,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(400, w.Code, "Status code problem")
+	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 
 	//test without password
 	data = map[string]interface{}{
@@ -82,7 +82,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(400, w.Code, "Status code problem")
+	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 }
 
 func (suite TestSuiteEnv) TestRegister() {
@@ -94,10 +94,11 @@ func (suite TestSuiteEnv) TestRegister() {
 
 	//test with completed credentials
 	data := map[string]interface{}{
-		"email":    "mahdi@gmail.com",
-		"password": "m12345678",
-		"firstName":"mahdi",
-		"lastName":"mehrabi",
+		"email":          "mahdi@gmail.com",
+		"password":       "m12345678",
+		"repeatPassword": "m12345678",
+		"firstName":      "mahdi",
+		"lastName":       "mehrabi",
 	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
@@ -136,21 +137,21 @@ func (suite TestSuiteEnv) TestRegister() {
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
+	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 
 	//test with weak password
 	data = map[string]interface{}{
-		"email":    "mahdi@gmail.com",
-		"password": "12345678",
-		"firstName":"mahdi",
-		"lastName":"mehrabi",
+		"email":     "mahdi@gmail.com",
+		"password":  "12345678",
+		"firstName": "mahdi",
+		"lastName":  "mehrabi",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
+	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 }

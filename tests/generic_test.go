@@ -10,7 +10,7 @@ func (suite *TestSuiteEnv) TestPing() {
 	a := suite.Assert()
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/ping", nil)
+	req, _ := http.NewRequest("GET", "/api/ping", nil)
 	router.ServeHTTP(w, req)
 	a.Equal(w.Code, http.StatusOK, "Status code problem")
 	a.Contains(w.Body.String(), "pong", "Contain data problem")

@@ -45,7 +45,7 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldE
 	for k, v := range extraFieldErrors {
 		errs[k] = v
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"data": gin.H{"errors": errs}, "msg": message, "ok": false})
+	c.JSON(http.StatusUnprocessableEntity, gin.H{"data": gin.H{"errors": errs}, "msg": message, "ok": false})
 }
 
 //manual validation errors, please send errors like map[fieldName]errorMsg in second parameter
