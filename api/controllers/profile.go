@@ -79,7 +79,7 @@ func (ac ProfileController) ChangePassword(c *gin.Context) {
 	err := ac.userService.UpdatePassword(&user, encryptedPassword)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to change password", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
 		return
 	}
 
