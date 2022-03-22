@@ -7,7 +7,7 @@ CREATE TABLE "users"
 "password" VARCHAR (256) NOT NULL,
 "first_name" VARCHAR (60) NOT NULL,
 "last_name" VARCHAR (60) NOT NULL,
-"must_logout" BOOLEAN NOT NULL DEFAULT FALSE,
+"must_login" BOOLEAN NOT NULL DEFAULT FALSE,
 PRIMARY KEY ("id")
 );
 CREATE INDEX "idx_users_deleted_at" ON "users" ("deleted_at");

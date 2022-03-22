@@ -156,9 +156,9 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.RefreshToken = refreshToken
 		loginResult.User = models.UserResponse(user)
 
-		//make must_logout false
-		if err = ac.userRepository.UpdateColumn(&user, "must_logout", false); err != nil {
-			ac.logger.Zap.Error("Failed make must_logout false", err.Error())
+		//make must_login false
+		if err = ac.userRepository.UpdateColumn(&user, "must_login", false); err != nil {
+			ac.logger.Zap.Error("Failed make must_login false", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 			return
 		}
@@ -249,8 +249,8 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 
-	//if user must_logout field be true it can't refresh its token
-	if user.MustLogout {
+	//if user must_login field be true it can't refresh its token
+	if user.MustLogin {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
 		return
 	}
