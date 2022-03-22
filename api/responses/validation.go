@@ -2,7 +2,6 @@ package responses
 
 import (
 	"fmt"
-	"strings"
 )
 
 func MsgForTag(tag string, fieldName string, param string) string {
@@ -16,7 +15,6 @@ func MsgForTag(tag string, fieldName string, param string) string {
 	case "numeric":
 		return "You must use numeric value for this field"
 	case "eqfield":
-		param = strings.ToLower(param)
 		return fmt.Sprintf("Field %s must be equal to field %s", fieldName, param)
 	}
 	return "You cannot use this data for this field"
