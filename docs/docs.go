@@ -141,8 +141,22 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "fullName",
-                        "name": "fullName",
+                        "description": "repeatPassword that have at least 8 length and contain an alphabet and number ",
+                        "name": "repeatPassword",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "firstName",
+                        "name": "firstName",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "lastName",
+                        "name": "lastName",
                         "in": "query",
                         "required": true
                     }
@@ -259,6 +273,10 @@ const docTemplate = `{
         },
         "models.UserResponse": {
             "type": "object",
+            "required": [
+                "firstName",
+                "lastName"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
@@ -266,11 +284,14 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
-                "fullName": {
+                "firstName": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"

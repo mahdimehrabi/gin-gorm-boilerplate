@@ -21,12 +21,17 @@ definitions:
         type: string
       email:
         type: string
-      fullName:
+      firstName:
         type: string
       id:
         type: integer
+      lastName:
+        type: string
       updatedAt:
         type: string
+    required:
+    - firstName
+    - lastName
     type: object
   swagger.EmptyData:
     type: object
@@ -193,9 +198,20 @@ paths:
         name: password
         required: true
         type: string
-      - description: fullName
+      - description: 'repeatPassword that have at least 8 length and contain an alphabet
+          and number '
         in: query
-        name: fullName
+        name: repeatPassword
+        required: true
+        type: string
+      - description: firstName
+        in: query
+        name: firstName
+        required: true
+        type: string
+      - description: lastName
+        in: query
+        name: lastName
         required: true
         type: string
       produces:

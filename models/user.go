@@ -2,9 +2,10 @@ package models
 
 type User struct {
 	Base
-	Email    string `json:"email" binding:"required" gorm:"unique"`
-	FullName string `json:"fullName" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email     string `json:"email" binding:"required" gorm:"unique"`
+	FirstName string `json:"firstName" binding:"required"`
+	LastName  string `json:"lastName" binding:"required"`
+	Password  string `json:"password" binding:"required"`
 	// Make this field true when user change password or request for logout in other devices or ...
 	// Make sure you make this field to false on login
 	// Make sure user cannot renew access token if this field is true
@@ -20,14 +21,16 @@ func (m User) TableName() string {
 func (m User) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"email":     m.Email,
-		"full_name": m.FullName,
+		"firstName": m.FirstName,
+		"LastName":  m.LastName,
 	}
 }
 
 type UserResponse struct {
 	Base
 	Email      string `json:"email"`
-	FullName   string `json:"fullName"`
+	FirstName  string `json:"firstName" binding:"required"`
+	LastName   string `json:"lastName" binding:"required"`
 	Password   string `json:"-"`
 	MustLogout bool   `json:"-"`
 }

@@ -53,7 +53,9 @@ func NewAuthController(logger infrastructure.Logger,
 // @Produce json
 // @Param email query string true "unique email"
 // @Param password query string true "password that have at least 8 length and contain an alphabet and number "
-// @Param fullName query string true "fullName"
+// @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
+// @Param firstName query string true "firstName"
+// @Param lastName query string true "lastName"
 // @Success 200 {object} swagger.RegisterLoginResponse
 // @failure 400 {object} swagger.FailedValidationResponse
 // @Router /auth/register [post]
@@ -81,7 +83,8 @@ func (ac AuthController) Register(c *gin.Context) {
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(userData.Password)
 	user.Password = encryptedPassword
 
-	user.FullName = userData.FullName
+	user.FirstName = userData.FirstName
+	user.LastName = userData.LastName
 	user.Email = userData.Email
 	err := ac.userService.CreateUser(&user)
 	if err != nil {
@@ -159,7 +162,7 @@ func (ac AuthController) Login(c *gin.Context) {
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 			return
 		}
-		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FullName+" wellcome back")
+		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
 		return
 	} else {
 		responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "No user found with entered credentials")

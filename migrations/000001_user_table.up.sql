@@ -5,7 +5,8 @@ CREATE TABLE "users"
 "deleted_at" TIMESTAMPTZ,
 "email" VARCHAR (50) UNIQUE NOT NULL,
 "password" VARCHAR (256) NOT NULL,
-"full_name" VARCHAR (60) NOT NULL,
+"first_name" VARCHAR (60) NOT NULL,
+"last_name" VARCHAR (60) NOT NULL,
 "must_logout" BOOLEAN NOT NULL DEFAULT FALSE,
 PRIMARY KEY ("id")
 );

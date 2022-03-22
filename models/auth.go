@@ -4,7 +4,8 @@ type Register struct {
 	Password       string `json:"password" binding:"required"`
 	RepeatPassword string `json:"repeatPassword" binding:"required,eqfield=Password"`
 	Email          string `json:"email" binding:"required,uniqueDB=users&email,email"`
-	FullName       string `json:"fullName" binding:"required"`
+	FirstName      string `json:"firstName" binding:"required"`
+	LastName       string `json:"LastName" binding:"required"`
 }
 
 type LoginRequest struct {
