@@ -2,6 +2,7 @@ package tests
 
 import (
 	"boilerplate/models"
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 )
@@ -154,4 +155,20 @@ func (suite TestSuiteEnv) TestRegister() {
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
+}
+
+func (suite TestSuiteEnv) TestLogout() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+
+	w := httptest.NewRecorder()
+	data := new(bytes.Buffer)
+	req, _ := NewAuthenticatedRequest(suite.authService, user, "POST", "/api/auth/logout", data)
+
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+	suite.database.DB.Find(&user)
+	a.True(user.MustLogin, "must login problem")
 }

@@ -267,3 +267,24 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 }
+
+// @Summary logout
+// @Schemes
+// @Description jwt logout , atuhentication required
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} swagger.SuccessResponse
+// @failure 401 {object} swagger.UnauthenticatedResponse
+// @Router /auth/logout [post]
+func (ac AuthController) Logout(c *gin.Context) {
+	user := c.MustGet("user").(models.User)
+	err := ac.userRepository.UpdateColumn(&user, "must_login", true)
+	if err != nil {
+		ac.logger.Zap.Error("Failed to make mustLogin to true", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in logout")
+		return
+	}
+
+	responses.JSON(c, http.StatusOK, gin.H{}, "Your password changed successfuly , please login again !")
+}

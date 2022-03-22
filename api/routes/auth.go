@@ -2,6 +2,7 @@ package routes
 
 import (
 	"boilerplate/api/controllers"
+	"boilerplate/api/middlewares"
 	"boilerplate/infrastructure"
 )
 
@@ -10,6 +11,7 @@ type AuthRoutes struct {
 	router         infrastructure.Router
 	Logger         infrastructure.Logger
 	AuthController controllers.AuthController
+	authMiddleware middlewares.AuthMiddleware
 }
 
 //NewAuthRoute -> returns new utility route
@@ -17,18 +19,22 @@ func NewAuthRoutes(
 	logger infrastructure.Logger,
 	router infrastructure.Router,
 	AuthController controllers.AuthController,
+	authMiddleware middlewares.AuthMiddleware,
+
 ) AuthRoutes {
 	return AuthRoutes{
 		Logger:         logger,
 		router:         router,
 		AuthController: AuthController,
+		authMiddleware: authMiddleware,
 	}
 }
 
 //Setup -> sets up route for util entities
-func (gr AuthRoutes) Setup() {
-	gr.router.Gin.POST("/api/auth/register", gr.AuthController.Register)
-	gr.router.Gin.POST("/api/auth/login", gr.AuthController.Login)
-	gr.router.Gin.POST("/api/auth/access-token-verify", gr.AuthController.AccessTokenVerify)
-	gr.router.Gin.POST("/api/auth/renew-access-token", gr.AuthController.RenewToken)
+func (ar AuthRoutes) Setup() {
+	ar.router.Gin.POST("/api/auth/register", ar.AuthController.Register)
+	ar.router.Gin.POST("/api/auth/login", ar.AuthController.Login)
+	ar.router.Gin.POST("/api/auth/access-token-verify", ar.AuthController.AccessTokenVerify)
+	ar.router.Gin.POST("/api/auth/renew-access-token", ar.AuthController.RenewToken).Use()
+	ar.router.Gin.POST("/api/auth/logout", ar.authMiddleware.AuthHandle(), ar.AuthController.Logout)
 }
