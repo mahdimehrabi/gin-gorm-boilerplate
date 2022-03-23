@@ -18,7 +18,7 @@ func NewAuthService() AuthService {
 	return AuthService{}
 }
 
-func (as AuthService) CreateToken(user models.User, exp int64, secret string) (string, error) {
+func (as AuthService) CreateAccessToken(user models.User, exp int64, secret string) (string, error) {
 	var err error
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
@@ -33,16 +33,31 @@ func (as AuthService) CreateToken(user models.User, exp int64, secret string) (s
 	return token, nil
 }
 
-func (as AuthService) CreateTokens(user models.User) (string, string, error) {
+func (as AuthService) CreateRefreshToken(user models.User, exp int64, secret string, deviceToken string) (string, error) {
+	var err error
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["userId"] = user.ID
+	atClaims["password"] = user.Password
+	atClaims["exp"] = exp
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+func (as AuthService) CreateTokens(user models.User, deviceToken string) (string, string, error) {
 	var exp int64
 
 	accessSecret := "access" + os.Getenv("Secret")
 	exp = time.Now().Add(time.Hour * 2).Unix()
-	accessToken, err := as.CreateToken(user, exp, accessSecret)
+	accessToken, err := as.CreateAccessToken(user, exp, accessSecret)
 
 	refreshSecret := "refresh" + os.Getenv("Secret")
 	exp = time.Now().Add(time.Hour * 24 * 14).Unix()
-	refreshToken, err := as.CreateToken(user, exp, refreshSecret)
+	refreshToken, err := as.CreateRefreshToken(user, exp, refreshSecret, deviceToken)
 
 	return accessToken, refreshToken, err
 }

@@ -8,7 +8,10 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+	"time"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -22,12 +25,21 @@ func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encrypti
 	return user
 }
 
-func NewAuthenticatedRequest(as services.AuthService, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, error) {
+func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
 		return nil, err
 	}
-	accessToken, _, err := as.CreateTokens(user)
+	deviceToken := utils.GenerateRandomCode(20)
+	devices := make(map[string]interface{})
+	devices["deviceToken"] = deviceToken
+	devices["ip"] = "1.1.1.1"
+	devices["city"] = "Alaki"
+	devices["date"] = strconv.Itoa(int(time.Now().Unix()))
+	devices["deviceName"] = "window10-chrome"
+	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
+	db.DB.Save(&user)
+	accessToken, _, err := as.CreateTokens(user, deviceToken)
 	req.Header.Add("Authorization", "Bearer "+accessToken)
 	return req, err
 }

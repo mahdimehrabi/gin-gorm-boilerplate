@@ -93,29 +93,31 @@ func (ur UserRepository) GetAuthenticatedUser(c *gin.Context) (models.User, erro
 	return ur.FindByField("id", userId)
 }
 
-func (ur UserRepository) AddDevice(user *models.User, c *gin.Context, deviceName string) error {
+//Add device information on login and set deviceToken that used as jwt claim in refreshToken
+func (ur UserRepository) AddDevice(user *models.User, c *gin.Context, deviceName string) (string, error) {
+	deviceToken := utils.GenerateRandomCode(20)
 	devices := make(map[string]interface{})
 	if user.Devices != nil {
 		devicesBytes := []byte(user.Devices.String())
 		devices, err := utils.BytesJsonToMap(devicesBytes)
 		if err != nil {
-			return err
+			return deviceToken, err
 		}
-		devices["refreshTokenSecret"] = utils.GenerateRandomCode(20)
+		devices["deviceToken"] = deviceToken
 		devices["ip"] = c.ClientIP()
 		devices["city"] = "Alaki"
 		devices["date"] = strconv.Itoa(int(time.Now().Unix()))
 		devices["deviceName"] = deviceName
 		user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 		ur.db.DB.Save(&user)
-		return nil
+		return deviceToken, nil
 	}
-	devices["refreshTokenSecret"] = utils.GenerateRandomCode(20)
+	devices["deviceToken"] = deviceToken
 	devices["ip"] = c.ClientIP()
 	devices["city"] = "Alaki"
 	devices["date"] = strconv.Itoa(int(time.Now().Unix()))
 	devices["deviceName"] = deviceName
 	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 	ur.db.DB.Save(&user)
-	return nil
+	return deviceToken, nil
 }

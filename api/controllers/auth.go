@@ -95,18 +95,18 @@ func (ac AuthController) Register(c *gin.Context) {
 
 	// login
 	// token
-	accessToken, refreshToken, err := ac.authService.CreateTokens(user)
-	if err != nil {
-		ac.logger.Zap.Error("Failed to generate registered user token", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "your account registerd but failed to make you login")
-		return
-	}
-	var loginResult models.LoginResponse
-	loginResult.AccessToken = accessToken
-	loginResult.RefreshToken = refreshToken
-	loginResult.User = models.UserResponse(user)
+	// accessToken, refreshToken, err := ac.authService.CreateTokens(user)
+	// if err != nil {
+	// 	ac.logger.Zap.Error("Failed to generate registered user token", err.Error())
+	// 	responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "your account registerd but failed to make you login")
+	// 	return
+	// }
+	// var loginResult models.LoginResponse
+	// loginResult.AccessToken = accessToken
+	// loginResult.RefreshToken = refreshToken
+	// loginResult.User = models.UserResponse(user)
 
-	responses.JSON(c, http.StatusOK, loginResult, "Your account created successfuly!")
+	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly!")
 }
 
 // @Summary login
@@ -141,11 +141,14 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(loginRquest.Password)
 	if user.Password == encryptedPassword {
-		// login
-		// token
+		deviceToken, err := ac.userRepository.AddDevice(&user, c, "")
+		if err != nil {
+			ac.logger.Zap.Error("Failed to add device", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
+		}
 		var accessToken string
 		var refreshToken string
-		accessToken, refreshToken, err = ac.authService.CreateTokens(user)
+		accessToken, refreshToken, err = ac.authService.CreateTokens(user, deviceToken)
 		if err != nil {
 			ac.logger.Zap.Error("Failed generate jwt tokens", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
@@ -155,7 +158,6 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.AccessToken = accessToken
 		loginResult.RefreshToken = refreshToken
 		loginResult.User = models.UserResponse(user)
-		ac.userRepository.AddDevice(&user, c, "")
 
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
 		return
@@ -253,7 +255,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		var exp int64
 		accessSecret := "refresh" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
-		accessToken, _ := ac.authService.CreateToken(user, exp, accessSecret)
+		accessToken, _ := ac.authService.CreateAccessToken(user, exp, accessSecret)
 		responses.JSON(c, http.StatusOK, models.AccessTokenReqRes{AccessToken: accessToken}, "")
 		return
 	} else {
