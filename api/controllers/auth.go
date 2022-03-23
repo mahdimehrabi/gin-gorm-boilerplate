@@ -95,7 +95,7 @@ func (ac AuthController) Register(c *gin.Context) {
 
 	// login
 	// token
-	accessToken, refreshToken, err := ac.authService.CreateTokens(int(user.Base.ID))
+	accessToken, refreshToken, err := ac.authService.CreateTokens(user)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to generate registered user token", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "your account registerd but failed to make you login")
@@ -145,7 +145,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		// token
 		var accessToken string
 		var refreshToken string
-		accessToken, refreshToken, err = ac.authService.CreateTokens(int(user.Base.ID))
+		accessToken, refreshToken, err = ac.authService.CreateTokens(user)
 		if err != nil {
 			ac.logger.Zap.Error("Failed generate jwt tokens", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
@@ -259,7 +259,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		var exp int64
 		accessSecret := "refresh" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
-		accessToken, _ := ac.authService.CreateToken(int(userID), exp, accessSecret)
+		accessToken, _ := ac.authService.CreateToken(user, exp, accessSecret)
 		responses.JSON(c, http.StatusOK, models.AccessTokenReqRes{AccessToken: accessToken}, "")
 		return
 	} else {

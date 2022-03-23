@@ -1,6 +1,7 @@
 package services
 
 import (
+	"boilerplate/models"
 	"errors"
 	"os"
 	"time"
@@ -17,11 +18,12 @@ func NewAuthService() AuthService {
 	return AuthService{}
 }
 
-func (as AuthService) CreateToken(userID int, exp int64, secret string) (string, error) {
+func (as AuthService) CreateToken(user models.User, exp int64, secret string) (string, error) {
 	var err error
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
-	atClaims["userId"] = userID
+	atClaims["userId"] = user.ID
+	atClaims["password"] = user.Password
 	atClaims["exp"] = exp
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(secret))
@@ -31,16 +33,16 @@ func (as AuthService) CreateToken(userID int, exp int64, secret string) (string,
 	return token, nil
 }
 
-func (as AuthService) CreateTokens(userID int) (string, string, error) {
+func (as AuthService) CreateTokens(user models.User) (string, string, error) {
 	var exp int64
 
 	accessSecret := "access" + os.Getenv("Secret")
 	exp = time.Now().Add(time.Hour * 2).Unix()
-	accessToken, err := as.CreateToken(userID, exp, accessSecret)
+	accessToken, err := as.CreateToken(user, exp, accessSecret)
 
 	refreshSecret := "refresh" + os.Getenv("Secret")
 	exp = time.Now().Add(time.Hour * 24 * 14).Unix()
-	refreshToken, err := as.CreateToken(userID, exp, refreshSecret)
+	refreshToken, err := as.CreateToken(user, exp, refreshSecret)
 
 	return accessToken, refreshToken, err
 }

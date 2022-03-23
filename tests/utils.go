@@ -36,7 +36,7 @@ func NewAuthenticatedRequest(as services.AuthService, user models.User, method s
 	if err != nil {
 		return nil, err
 	}
-	accessToken, _, err := as.CreateTokens(int(user.ID))
+	accessToken, _, err := as.CreateTokens(user)
 	req.Header.Add("Authorization", "Bearer "+accessToken)
 	return req, err
 }
