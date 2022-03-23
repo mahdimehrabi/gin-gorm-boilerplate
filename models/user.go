@@ -1,14 +1,17 @@
 package models
 
+import "gorm.io/datatypes"
+
 type User struct {
 	Base
 	Email     string `json:"email" binding:"required" gorm:"unique"`
 	FirstName string `json:"firstName" binding:"required"`
 	LastName  string `json:"lastName" binding:"required"`
 	Password  string `json:"password" binding:"required"`
-	//change this field to a random string with length less then 50
-	// if you want to make user logout of all devices
-	RefreshTokenSecret string `json:"-"` //change this
+
+	//if you want to make user logout of specefic devices delete only specefic Device index
+	// if you want to make user logout of all devices make this column empty
+	Devices datatypes.JSON `json:"-"`
 }
 
 // TableName gives table name of model
@@ -27,9 +30,9 @@ func (m User) ToMap() map[string]interface{} {
 
 type UserResponse struct {
 	Base
-	Email              string `json:"email"`
-	FirstName          string `json:"firstName" binding:"required"`
-	LastName           string `json:"lastName" binding:"required"`
-	Password           string `json:"-"`
-	RefreshTokenSecret string `json:"-"`
+	Email     string         `json:"email"`
+	FirstName string         `json:"firstName" binding:"required"`
+	LastName  string         `json:"lastName" binding:"required"`
+	Password  string         `json:"-"`
+	Devices   datatypes.JSON `json:"-"`
 }
