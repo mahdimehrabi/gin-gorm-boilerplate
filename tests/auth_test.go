@@ -170,5 +170,4 @@ func (suite TestSuiteEnv) TestLogout() {
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 	suite.database.DB.Find(&user)
-	a.True(user.MustLogin, "must login problem")
 }

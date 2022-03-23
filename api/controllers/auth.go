@@ -156,12 +156,6 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.RefreshToken = refreshToken
 		loginResult.User = models.UserResponse(user)
 
-		//make must_login false
-		if err = ac.userRepository.UpdateColumn(&user, "must_login", false); err != nil {
-			ac.logger.Zap.Error("Failed make must_login false", err.Error())
-			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
-			return
-		}
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
 		return
 	} else {
@@ -254,12 +248,6 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 
-	//if user must_login field be true it can't refresh its token
-	if user.MustLogin {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
-		return
-	}
-
 	if valid {
 		var exp int64
 		accessSecret := "refresh" + ac.env.Secret
@@ -287,12 +275,6 @@ func (ac AuthController) Logout(c *gin.Context) {
 	if err != nil {
 		ac.logger.Zap.Error("Failed to change password", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
-		return
-	}
-	err = ac.userRepository.UpdateColumn(&user, "must_login", true)
-	if err != nil {
-		ac.logger.Zap.Error("Failed to make mustLogin to true", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in logout")
 		return
 	}
 

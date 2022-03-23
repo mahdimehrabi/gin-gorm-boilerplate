@@ -9,7 +9,6 @@ type User struct {
 	// Make this field true when user change password or request for logout in other devices or ...
 	// Make sure you make this field to false on login
 	// Make sure user cannot renew access token if this field is true
-	MustLogin bool `json:"-"`
 }
 
 // TableName gives table name of model
@@ -32,5 +31,4 @@ type UserResponse struct {
 	FirstName string `json:"firstName" binding:"required"`
 	LastName  string `json:"lastName" binding:"required"`
 	Password  string `json:"-"`
-	MustLogin bool   `json:"-"`
 }

@@ -37,7 +37,7 @@ func (us UserService) CreateUser(user *models.User) error {
 
 // CreateUser -> call to create the User
 func (us UserService) UpdatePassword(user *models.User, password string) error {
-	return us.db.DB.Model(user).UpdateColumns(models.User{Password: password, MustLogin: true}).Error
+	return us.db.DB.Model(user).UpdateColumns(models.User{Password: password}).Error
 }
 
 // GetAllUser -> call to get all the User
