@@ -6,9 +6,9 @@ type User struct {
 	FirstName string `json:"firstName" binding:"required"`
 	LastName  string `json:"lastName" binding:"required"`
 	Password  string `json:"password" binding:"required"`
-	// Make this field true when user change password or request for logout in other devices or ...
-	// Make sure you make this field to false on login
-	// Make sure user cannot renew access token if this field is true
+	//change this field to a random string with length less then 50
+	// if you want to make user logout of all devices
+	RefreshTokenSecret string `json:"-"` //change this
 }
 
 // TableName gives table name of model
@@ -27,8 +27,9 @@ func (m User) ToMap() map[string]interface{} {
 
 type UserResponse struct {
 	Base
-	Email     string `json:"email"`
-	FirstName string `json:"firstName" binding:"required"`
-	LastName  string `json:"lastName" binding:"required"`
-	Password  string `json:"-"`
+	Email              string `json:"email"`
+	FirstName          string `json:"firstName" binding:"required"`
+	LastName           string `json:"lastName" binding:"required"`
+	Password           string `json:"-"`
+	RefreshTokenSecret string `json:"-"`
 }
