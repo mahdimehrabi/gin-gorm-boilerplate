@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func BytesToJson(bytes []byte) (map[string]interface{}, error) {
+func BytesJsonToMap(bytes []byte) (map[string]interface{}, error) {
 	mp := make(map[string]interface{})
 	err := json.Unmarshal(bytes, &mp)
 	return mp, err

@@ -42,7 +42,7 @@ func NewAuthenticatedRequest(as services.AuthService, user models.User, method s
 }
 
 func ExtractResponseAsMap(w *httptest.ResponseRecorder) map[string]interface{} {
-	response, err := utils.BytesToJson(w.Body.Bytes())
+	response, err := utils.BytesJsonToMap(w.Body.Bytes())
 	if err != nil {
 		panic(err)
 	}
