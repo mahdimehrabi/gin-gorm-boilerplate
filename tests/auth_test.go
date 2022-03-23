@@ -55,6 +55,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	data = map[string]interface{}{
 		"email":    "mahdi1@gmail.com",
 		"password": "m12345678",
+		"device":   "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -65,6 +66,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	data = map[string]interface{}{
 		"email":    "mahdi1@gmail.com",
 		"password": "m123456781",
+		"device":   "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -74,6 +76,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	//test without email
 	data = map[string]interface{}{
 		"password": "m123456781",
+		"device":   "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -82,7 +85,8 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test without password
 	data = map[string]interface{}{
-		"email": "mahdi1@gmail.com",
+		"email":  "mahdi1@gmail.com",
+		"device": "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
