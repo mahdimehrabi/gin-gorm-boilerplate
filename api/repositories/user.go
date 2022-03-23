@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -82,4 +83,9 @@ func (c UserRepository) GetAllUsers(pagination utils.Pagination) ([]models.User,
 //update a single column by user model
 func (c UserRepository) UpdateColumn(user *models.User, column string, value interface{}) error {
 	return c.db.DB.Model(user).Update(column, value).Error
+}
+
+func (ur UserRepository) GetAuthenticatedUser(c *gin.Context) (models.User, error) {
+	userId := c.MustGet("userId").(string)
+	return ur.FindByField("id", userId)
 }

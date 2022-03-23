@@ -55,21 +55,8 @@ func (m AuthMiddleware) AuthHandle() gin.HandlerFunc {
 			accessToken := strs[1]
 			valid, claims, _ := services.DecodeToken(accessToken, "access"+m.env.Secret)
 			userId := strconv.Itoa(int(claims["userId"].(float64)))
-			user, err := m.userRepository.FindByField("id", userId)
-			if err != nil {
-				responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "your token dosen't start with 'Bearer '")
-				c.Abort()
-				return
-			}
-			//disable access of must login users
-			if user.MustLogin {
-				responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "you logged out or your password has changed , please login again !")
-				c.Abort()
-				return
-			}
-
 			if valid && err == nil {
-				c.Set("user", user)
+				c.Set("userId", userId)
 				c.Next()
 				return
 			}

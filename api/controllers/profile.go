@@ -53,7 +53,7 @@ func NewProfileController(logger infrastructure.Logger,
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.UnauthenticatedResponse
 // @Router /profile/change-password [post]
-func (ac ProfileController) ChangePassword(c *gin.Context) {
+func (pc ProfileController) ChangePassword(c *gin.Context) {
 
 	// Data Parse
 	var userData models.ChangePassword
@@ -74,11 +74,16 @@ func (ac ProfileController) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	user := c.MustGet("user").(models.User)
-	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(userData.Password)
-	err := ac.userService.UpdatePassword(&user, encryptedPassword)
+	encryptedPassword := pc.encryption.SaltAndSha256Encrypt(userData.Password)
+	user, err := pc.userRepository.GetAuthenticatedUser(c)
 	if err != nil {
-		ac.logger.Zap.Error("Failed to change password", err.Error())
+		pc.logger.Zap.Error("Failed to change password", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
+	}
+	err = pc.userService.UpdatePassword(&user, encryptedPassword)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to change password", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
 		return
 	}

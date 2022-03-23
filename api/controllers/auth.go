@@ -278,8 +278,13 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 // @failure 401 {object} swagger.UnauthenticatedResponse
 // @Router /auth/logout [post]
 func (ac AuthController) Logout(c *gin.Context) {
-	user := c.MustGet("user").(models.User)
-	err := ac.userRepository.UpdateColumn(&user, "must_login", true)
+	user, err := ac.userRepository.GetAuthenticatedUser(c)
+	if err != nil {
+		ac.logger.Zap.Error("Failed to change password", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
+	}
+	err = ac.userRepository.UpdateColumn(&user, "must_login", true)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to make mustLogin to true", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in logout")
