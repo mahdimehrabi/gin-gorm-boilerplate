@@ -7,8 +7,7 @@ CREATE TABLE "users"
 "password" VARCHAR (256) NOT NULL,
 "first_name" VARCHAR (60) NOT NULL,
 "last_name" VARCHAR (60) NOT NULL,
-"refresh_token_secret" VARCHAR (50) NOT NULL,
-"devices" JSON (50) NOT NULL,
+"devices" JSON ,
 PRIMARY KEY ("id")
 );
 CREATE INDEX "idx_users_deleted_at" ON "users" ("deleted_at");
