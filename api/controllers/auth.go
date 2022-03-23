@@ -235,11 +235,16 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 	}
 
 	userID := int(atClaims["userId"].(float64))
+	password := atClaims["password"].(string)
 	user, err := ac.userRepository.FindByField("id", strconv.Itoa(userID))
 
 	//don't allow deleted user renew access token
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
+		return
+	}
+	if user.Password != password {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Your password has changed !")
 		return
 	}
 
