@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"boilerplate/utils"
 	"net/http"
 	"net/http/httptest"
 )
@@ -17,7 +18,7 @@ func (suite TestSuiteEnv) TestChangePassword() {
 	}
 	w := httptest.NewRecorder()
 
-	req, _ := NewAuthenticatedRequest(suite.authService, user, "POST", "/api/profile/change-password", MapToJsonBytesBuffer(data))
+	req, _ := NewAuthenticatedRequest(suite.authService, user, "POST", "/api/profile/change-password", utils.MapToJsonBytesBuffer(data))
 
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
@@ -32,7 +33,7 @@ func (suite TestSuiteEnv) TestChangePassword() {
 		"repeatPassword": "12345678",
 	}
 	w = httptest.NewRecorder()
-	req, _ = NewAuthenticatedRequest(suite.authService, user, "POST", "/api/profile/change-password", MapToJsonBytesBuffer(data))
+	req, _ = NewAuthenticatedRequest(suite.authService, user, "POST", "/api/profile/change-password", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 }

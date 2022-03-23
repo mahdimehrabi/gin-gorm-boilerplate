@@ -155,6 +155,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.AccessToken = accessToken
 		loginResult.RefreshToken = refreshToken
 		loginResult.User = models.UserResponse(user)
+		ac.userRepository.AddDevice(&user, c, "")
 
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
 		return
@@ -271,7 +272,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 // @failure 401 {object} swagger.UnauthenticatedResponse
 // @Router /auth/logout [post]
 func (ac AuthController) Logout(c *gin.Context) {
-	user, err := ac.userRepository.GetAuthenticatedUser(c)
+	_, err := ac.userRepository.GetAuthenticatedUser(c)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to change password", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")

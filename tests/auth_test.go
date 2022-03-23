@@ -2,6 +2,7 @@ package tests
 
 import (
 	"boilerplate/models"
+	"boilerplate/utils"
 	"bytes"
 	"net/http"
 	"net/http/httptest"
@@ -17,9 +18,10 @@ func (suite TestSuiteEnv) TestLogin() {
 	data := map[string]interface{}{
 		"email":    user.Email,
 		"password": "m12345678",
+		"device":   "windows10-chrome",
 	}
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
+	req, _ := http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 	response := ExtractResponseAsMap(w)
@@ -28,13 +30,15 @@ func (suite TestSuiteEnv) TestLogin() {
 	refreshToken, _ := dt["refreshToken"].(string)
 	a.True(len(accessToken) > 7, "Access token invalid")
 	a.True(len(refreshToken) > 7, "Refresh token invalid")
+	db.Find(&user)
+	a.True(len(user.Devices.String()) > 7, "Devices not set")
 
 	//test access token
 	data = map[string]interface{}{
 		"accessToken": accessToken,
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 
@@ -43,7 +47,7 @@ func (suite TestSuiteEnv) TestLogin() {
 		"refreshToken": refreshToken,
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 
@@ -53,7 +57,7 @@ func (suite TestSuiteEnv) TestLogin() {
 		"password": "m12345678",
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnauthorized, w.Code, "Status code problem")
 
@@ -63,7 +67,7 @@ func (suite TestSuiteEnv) TestLogin() {
 		"password": "m123456781",
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnauthorized, w.Code, "Status code problem")
 
@@ -72,7 +76,7 @@ func (suite TestSuiteEnv) TestLogin() {
 		"password": "m123456781",
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 
@@ -81,7 +85,7 @@ func (suite TestSuiteEnv) TestLogin() {
 		"email": "mahdi1@gmail.com",
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/login", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 }
@@ -102,7 +106,7 @@ func (suite TestSuiteEnv) TestRegister() {
 		"lastName":       "mehrabi",
 	}
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
+	req, _ := http.NewRequest("POST", "/api/auth/register", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 	response := ExtractResponseAsMap(w)
@@ -117,7 +121,7 @@ func (suite TestSuiteEnv) TestRegister() {
 		"accessToken": accessToken,
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 
@@ -126,7 +130,7 @@ func (suite TestSuiteEnv) TestRegister() {
 		"refreshToken": refreshToken,
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 
@@ -136,7 +140,7 @@ func (suite TestSuiteEnv) TestRegister() {
 
 	//test with duplicate email
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/register", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)
@@ -150,7 +154,7 @@ func (suite TestSuiteEnv) TestRegister() {
 		"lastName":  "mehrabi",
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("POST", "/api/auth/register", MapToJsonBytesBuffer(data))
+	req, _ = http.NewRequest("POST", "/api/auth/register", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)

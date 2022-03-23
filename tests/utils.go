@@ -6,20 +6,11 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"bytes"
-	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 
 	"gorm.io/gorm"
 )
-
-func MapToJsonBytesBuffer(mp map[string]interface{}) *bytes.Buffer {
-	j, err := json.Marshal(mp)
-	if err != nil {
-		panic(err)
-	}
-	return bytes.NewBuffer(j)
-}
 
 func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encryption) models.User {
 	password = encryption.SaltAndSha256Encrypt(password)
