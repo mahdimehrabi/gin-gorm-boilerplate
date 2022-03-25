@@ -55,8 +55,10 @@ func (m AuthMiddleware) AuthHandle() gin.HandlerFunc {
 			accessToken := strs[1]
 			valid, claims, _ := services.DecodeToken(accessToken, "access"+m.env.Secret)
 			userId := strconv.Itoa(int(claims["userId"].(float64)))
+			deviceToken := claims["userId"].(string)
 			if valid && err == nil {
 				c.Set("userId", userId)
+				c.Set("deviceToken", deviceToken)
 				c.Next()
 				return
 			}
