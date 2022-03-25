@@ -7,7 +7,8 @@ env
 dependency injection
 docker compose implemention for development and production + cache
 delve debugger + source watcher for reload   
-jwt authentication + middleware
+advanced jwt authentication + middleware
+-saving device name ip and city on login
 change password route 
 password strength validation
 swagger documention generator
