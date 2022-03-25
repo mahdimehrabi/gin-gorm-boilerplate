@@ -16,7 +16,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	a := suite.Assert()
 	user := CreateUser("m12345678", db, suite.encryption)
 
-	//test correct credentials
+	//test correct credentials with first device
 	data := map[string]interface{}{
 		"email":      user.Email,
 		"password":   "m12345678",
@@ -28,29 +28,59 @@ func (suite TestSuiteEnv) TestLogin() {
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 	response := ExtractResponseAsMap(w)
 	dt, _ := response["data"].(map[string]interface{})
-	accessToken, _ := dt["accessToken"].(string)
-	refreshToken, _ := dt["refreshToken"].(string)
-	a.True(len(accessToken) > 7, "Access token invalid")
-	a.True(len(refreshToken) > 7, "Refresh token invalid")
+	accessTokenDevice1, _ := dt["accessToken"].(string)
+	refreshTokenDevice1, _ := dt["refreshToken"].(string)
+	a.True(len(accessTokenDevice1) > 7, "Access token invalid")
+	a.True(len(refreshTokenDevice1) > 7, "Refresh token invalid")
+	db.Find(&user)
+	a.True(len(user.Devices.String()) > 7, "Devices not set")
+	var atClaims jwt.MapClaims
+
+	//login with second device
+	data = map[string]interface{}{
+		"email":      user.Email,
+		"password":   "m12345678",
+		"deviceName": "android10-chrome",
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+	response = ExtractResponseAsMap(w)
+	dt, _ = response["data"].(map[string]interface{})
+	accessTokenDevice2, _ := dt["accessToken"].(string)
+	refreshTokenDevice2, _ := dt["refreshToken"].(string)
+	a.True(len(accessTokenDevice2) > 7, "Access token invalid")
+	a.True(len(refreshTokenDevice2) > 7, "Refresh token invalid")
 	db.Find(&user)
 	a.True(len(user.Devices.String()) > 7, "Devices not set")
 
-	//check device token
-	var atClaims jwt.MapClaims
+	//check device1 login data
 	refreshSecret := "refresh" + suite.env.Secret
-	_, atClaims, _ = services.DecodeToken(refreshToken, refreshSecret)
-	deviceToken := atClaims["deviceToken"].(string)
+	_, atClaims, _ = services.DecodeToken(refreshTokenDevice1, refreshSecret)
+	device1Token := atClaims["deviceToken"].(string)
 
 	devicesBytes := []byte(user.Devices.String())
 	devices, _ := utils.BytesJsonToMap(devicesBytes)
 
-	a.NotNil(devices[deviceToken], "devices not set")
-	a.Equal(devices[deviceToken].(map[string]interface{})["city"], "unknown")
-	a.Equal("windows10-chrome", devices[deviceToken].(map[string]interface{})["deviceName"])
+	a.NotNil(devices[device1Token], "devices not set")
+	a.Equal(devices[device1Token].(map[string]interface{})["city"], "unknown")
+	a.Equal("windows10-chrome", devices[device1Token].(map[string]interface{})["deviceName"])
+
+	//check device2 login data
+	_, atClaims, _ = services.DecodeToken(refreshTokenDevice2, refreshSecret)
+	device2Token := atClaims["deviceToken"].(string)
+
+	devicesBytes = []byte(user.Devices.String())
+	devices, _ = utils.BytesJsonToMap(devicesBytes)
+
+	a.NotNil(devices[device2Token], "devices not set")
+	a.Equal(devices[device2Token].(map[string]interface{})["city"], "unknown")
+	a.Equal("android10-chrome", devices[device2Token].(map[string]interface{})["deviceName"])
 
 	//test access token
 	data = map[string]interface{}{
-		"accessToken": accessToken,
+		"accessToken": accessTokenDevice1,
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/access-token-verify", utils.MapToJsonBytesBuffer(data))
@@ -59,7 +89,7 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test refresh token
 	data = map[string]interface{}{
-		"refreshToken": refreshToken,
+		"refreshToken": refreshTokenDevice1,
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/renew-access-token", utils.MapToJsonBytesBuffer(data))
