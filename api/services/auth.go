@@ -124,3 +124,22 @@ func (as AuthService) AddDevice(user *models.User, c *gin.Context, deviceName st
 	as.db.DB.Save(&user)
 	return deviceToken, nil
 }
+
+//delete specefic deviceToken so he/she will logedout with that device
+func (as AuthService) DeleteDevice(user *models.User, deviceToken string) (bool, error) {
+	if user.Devices == nil {
+		return false, errors.New("user devices is nil")
+	}
+	devicesBytes := []byte(user.Devices.String())
+	devices, err := utils.BytesJsonToMap(devicesBytes)
+	if err != nil {
+		return false, err
+	}
+	delete(devices, deviceToken)
+	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
+	err = as.db.DB.Save(&user).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
