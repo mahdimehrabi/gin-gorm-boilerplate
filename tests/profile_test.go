@@ -25,6 +25,9 @@ func (suite TestSuiteEnv) TestChangePassword() {
 	suite.database.DB.Find(&user)
 	encryptedPassword := suite.encryption.SaltAndSha256Encrypt("m987654321")
 	a.Equal(encryptedPassword, user.Password, "encrypt password problem")
+	devicesBytes := []byte(user.Devices.String())
+	devices, _ := utils.BytesJsonToMap(devicesBytes)
+	a.Equal(len(devices), 0, "devices is not empty")
 
 	//test with weak password
 	user = CreateUser("m12345678", db, suite.encryption)

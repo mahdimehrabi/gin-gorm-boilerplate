@@ -6,6 +6,7 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -35,9 +36,10 @@ func (us UserService) CreateUser(user *models.User) error {
 	return err
 }
 
-// CreateUser -> call to create the User
+// CreateUser -> call to change password (on changing password we need to logout all users so we did it )
 func (us UserService) UpdatePassword(user *models.User, password string) error {
-	return us.db.DB.Model(user).UpdateColumns(models.User{Password: password}).Error
+	devices := map[string]interface{}{}
+	return us.db.DB.Model(user).UpdateColumns(models.User{Password: password, Devices: datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())}).Error
 }
 
 // GetAllUser -> call to get all the User
