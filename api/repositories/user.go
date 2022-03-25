@@ -6,11 +6,8 @@ import (
 	"boilerplate/utils"
 	"errors"
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -91,33 +88,4 @@ func (c UserRepository) UpdateColumn(user *models.User, column string, value int
 func (ur UserRepository) GetAuthenticatedUser(c *gin.Context) (models.User, error) {
 	userId := c.MustGet("userId").(string)
 	return ur.FindByField("id", userId)
-}
-
-//Add device information on login and set deviceToken that used as jwt claim in refreshToken
-func (ur UserRepository) AddDevice(user *models.User, c *gin.Context, deviceName string) (string, error) {
-	deviceToken := utils.GenerateRandomCode(20)
-	devices := make(map[string]interface{})
-	if user.Devices != nil {
-		devicesBytes := []byte(user.Devices.String())
-		devices, err := utils.BytesJsonToMap(devicesBytes)
-		if err != nil {
-			return deviceToken, err
-		}
-		devices["deviceToken"] = deviceToken
-		devices["ip"] = c.ClientIP()
-		devices["city"] = "Alaki"
-		devices["date"] = strconv.Itoa(int(time.Now().Unix()))
-		devices["deviceName"] = deviceName
-		user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
-		ur.db.DB.Save(&user)
-		return deviceToken, nil
-	}
-	devices["deviceToken"] = deviceToken
-	devices["ip"] = c.ClientIP()
-	devices["city"] = "Alaki"
-	devices["date"] = strconv.Itoa(int(time.Now().Unix()))
-	devices["deviceName"] = deviceName
-	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
-	ur.db.DB.Save(&user)
-	return deviceToken, nil
 }

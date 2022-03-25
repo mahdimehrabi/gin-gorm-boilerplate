@@ -1,21 +1,29 @@
 package services
 
 import (
+	"boilerplate/infrastructure"
 	"boilerplate/models"
+	"boilerplate/utils"
 	"errors"
 	"os"
+	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"gorm.io/datatypes"
 )
 
 // UserService -> struct
 type AuthService struct {
+	db infrastructure.Database
 }
 
 // NewAuthService -> creates a new AuthService
-func NewAuthService() AuthService {
-	return AuthService{}
+func NewAuthService(db infrastructure.Database) AuthService {
+	return AuthService{
+		db: db,
+	}
 }
 
 func (as AuthService) CreateAccessToken(user models.User, exp int64, secret string, deviceToken string) (string, error) {
@@ -85,3 +93,36 @@ func DecodeToken(tokenString string, secret string) (bool, jwt.MapClaims, error)
 	}
 	return valid, Claims, err
 }
+
+//Add device information on login and set deviceToken that used as jwt claim in refreshToken
+func (as AuthService) AddDevice(user *models.User, c *gin.Context, deviceName string) (string, error) {
+	deviceToken := utils.GenerateRandomCode(20)
+	devices := make(map[string]interface{})
+	if user.Devices != nil {
+		devicesBytes := []byte(user.Devices.String())
+		devices, err := utils.BytesJsonToMap(devicesBytes)
+		if err != nil {
+			return deviceToken, err
+		}
+		devices["deviceToken"] = deviceToken
+		devices["ip"] = c.ClientIP()
+		devices["city"] = "Alaki"
+		devices["date"] = strconv.Itoa(int(time.Now().Unix()))
+		devices["deviceName"] = deviceName
+		user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
+		as.db.DB.Save(&user)
+		return deviceToken, nil
+	}
+	devices["deviceToken"] = deviceToken
+	devices["ip"] = c.ClientIP()
+	devices["city"] = "Alaki"
+	devices["date"] = strconv.Itoa(int(time.Now().Unix()))
+	devices["deviceName"] = deviceName
+	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
+	as.db.DB.Save(&user)
+	return deviceToken, nil
+}
+
+// func (as AuthService) DeleteToken(user *models.User, deviceToken string) {
+// 	user
+// }

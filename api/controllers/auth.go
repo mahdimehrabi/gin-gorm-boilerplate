@@ -141,7 +141,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(loginRquest.Password)
 	if user.Password == encryptedPassword {
-		deviceToken, err := ac.userRepository.AddDevice(&user, c, "")
+		deviceToken, err := ac.authService.AddDevice(&user, c, "")
 		if err != nil {
 			ac.logger.Zap.Error("Failed to add device", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
