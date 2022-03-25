@@ -14,9 +14,9 @@ type ChangePassword struct {
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Device   string `json:"device" binding:"required"`
+	Email      string `json:"email" binding:"required"`
+	Password   string `json:"password" binding:"required"`
+	DeviceName string `json:"deviceName" binding:"required"`
 }
 
 type LoginResponse struct {

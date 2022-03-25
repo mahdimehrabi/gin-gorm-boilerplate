@@ -18,9 +18,9 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test correct credentials
 	data := map[string]interface{}{
-		"email":    user.Email,
-		"password": "m12345678",
-		"device":   "windows10-chrome",
+		"email":      user.Email,
+		"password":   "m12345678",
+		"deviceName": "windows10-chrome",
 	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -46,6 +46,7 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	a.NotNil(devices[deviceToken], "devices not set")
 	a.Equal(devices[deviceToken].(map[string]interface{})["city"], "unknown")
+	a.Equal("windows10-chrome", devices[deviceToken].(map[string]interface{})["deviceName"])
 
 	//test access token
 	data = map[string]interface{}{
@@ -67,9 +68,9 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test wrong email
 	data = map[string]interface{}{
-		"email":    "mahdi1@gmail.com",
-		"password": "m12345678",
-		"device":   "windows10-chrome",
+		"email":      "mahdi1@gmail.com",
+		"password":   "m12345678",
+		"deviceName": "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -78,9 +79,9 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test wrong password
 	data = map[string]interface{}{
-		"email":    "mahdi1@gmail.com",
-		"password": "m123456781",
-		"device":   "windows10-chrome",
+		"email":      "mahdi1@gmail.com",
+		"password":   "m123456781",
+		"deviceName": "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -89,8 +90,8 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test without email
 	data = map[string]interface{}{
-		"password": "m123456781",
-		"device":   "windows10-chrome",
+		"password":   "m123456781",
+		"deviceName": "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
@@ -99,8 +100,8 @@ func (suite TestSuiteEnv) TestLogin() {
 
 	//test without password
 	data = map[string]interface{}{
-		"email":  "mahdi1@gmail.com",
-		"device": "windows10-chrome",
+		"email":      "mahdi1@gmail.com",
+		"deviceName": "windows10-chrome",
 	}
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))

@@ -116,6 +116,7 @@ func (ac AuthController) Register(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param email query string true "email"
+// @Param deviceName query string true "send user device name in this param"
 // @Param password query string true "password"
 // @Success 200 {object} swagger.RegisterLoginResponse
 // @failure 422 {object} swagger.FailedValidationResponse
@@ -141,7 +142,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(loginRquest.Password)
 	if user.Password == encryptedPassword {
-		deviceToken, err := ac.authService.AddDevice(&user, c, "")
+		deviceToken, err := ac.authService.AddDevice(&user, c, loginRquest.DeviceName)
 		if err != nil {
 			ac.logger.Zap.Error("Failed to add device", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
