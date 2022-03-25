@@ -18,13 +18,14 @@ func NewAuthService() AuthService {
 	return AuthService{}
 }
 
-func (as AuthService) CreateAccessToken(user models.User, exp int64, secret string) (string, error) {
+func (as AuthService) CreateAccessToken(user models.User, exp int64, secret string, deviceToken string) (string, error) {
 	var err error
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["userId"] = user.ID
 	atClaims["password"] = user.Password
 	atClaims["exp"] = exp
+	atClaims["deviceToken"] = deviceToken
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(secret))
 	if err != nil {
@@ -40,6 +41,7 @@ func (as AuthService) CreateRefreshToken(user models.User, exp int64, secret str
 	atClaims["userId"] = user.ID
 	atClaims["password"] = user.Password
 	atClaims["exp"] = exp
+	atClaims["deviceToken"] = deviceToken
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	token, err := at.SignedString([]byte(secret))
 	if err != nil {
@@ -53,7 +55,7 @@ func (as AuthService) CreateTokens(user models.User, deviceToken string) (string
 
 	accessSecret := "access" + os.Getenv("Secret")
 	exp = time.Now().Add(time.Hour * 2).Unix()
-	accessToken, err := as.CreateAccessToken(user, exp, accessSecret)
+	accessToken, err := as.CreateAccessToken(user, exp, accessSecret, deviceToken)
 
 	refreshSecret := "refresh" + os.Getenv("Secret")
 	exp = time.Now().Add(time.Hour * 24 * 14).Unix()
