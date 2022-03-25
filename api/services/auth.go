@@ -13,6 +13,7 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/ip2location/ip2location-go/v9"
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
 
 // UserService -> struct
@@ -34,7 +35,6 @@ func (as AuthService) CreateAccessToken(user models.User, exp int64, secret stri
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["userId"] = user.ID
-	atClaims["password"] = user.Password
 	atClaims["exp"] = exp
 	atClaims["deviceToken"] = deviceToken
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
@@ -50,7 +50,6 @@ func (as AuthService) CreateRefreshToken(user models.User, exp int64, secret str
 	atClaims := jwt.MapClaims{}
 	atClaims["authorized"] = true
 	atClaims["userId"] = user.ID
-	atClaims["password"] = user.Password
 	atClaims["exp"] = exp
 	atClaims["deviceToken"] = deviceToken
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
@@ -169,4 +168,15 @@ func (as AuthService) GetCityByIp(ip string) (string, error) {
 	}
 
 	return results.City, nil
+}
+
+//find user by id and deviceToken
+func (as AuthService) FindUserByIdDeviceToken(id string, deviceToken string) (models.User, error) {
+	var user models.User
+	err := as.db.DB.Model(&models.User{}).Where("id", id).
+		Find(&user, datatypes.JSONQuery("devices").HasKey(deviceToken)).Error
+	if user.ID == 0 {
+		return user, gorm.ErrRecordNotFound
+	}
+	return user, err
 }

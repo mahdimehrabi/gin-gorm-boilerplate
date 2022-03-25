@@ -232,3 +232,20 @@ func (suite TestSuiteEnv) TestLogout() {
 	devices, _ = utils.BytesJsonToMap(devicesBytes)
 	a.Nil(devices[deviceToken])
 }
+
+func (suite TestSuiteEnv) TestRenewAccessTokenWithUnexistDeviceToken() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+	_, refreshToken, _ := suite.authService.CreateTokens(user, "fake-device-token")
+
+	data := map[string]interface{}{
+		"refreshToken": refreshToken,
+	}
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/api/auth/renew-access-token", utils.MapToJsonBytesBuffer(data))
+
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
+}

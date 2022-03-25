@@ -232,21 +232,26 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		return
 	}
 
-	userID := int(atClaims["userId"].(float64))
-	password := atClaims["password"].(string)
-	deviceToken := atClaims["deviceToken"].(string)
-	user, err := ac.userRepository.FindByField("id", strconv.Itoa(userID))
+	uid, ok := atClaims["userId"].(float64)
+	if !ok {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
+		return
+	}
+	userID := int(uid)
+
+	deviceToken, ok := atClaims["deviceToken"].(string)
+	if !ok {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
+		return
+	}
+
+	user, err := ac.authService.FindUserByIdDeviceToken(strconv.Itoa(userID), deviceToken)
 
 	//don't allow deleted user renew access token
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
 		return
 	}
-	if user.Password != password {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Your password has changed !")
-		return
-	}
-
 	if err != nil {
 		ac.logger.Zap.Error("Error in finding user:", err)
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")
@@ -255,7 +260,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 
 	if valid {
 		var exp int64
-		accessSecret := "refresh" + ac.env.Secret
+		accessSecret := "access" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
 		accessToken, _ := ac.authService.CreateAccessToken(user, exp, accessSecret, deviceToken)
 		responses.JSON(c, http.StatusOK, models.AccessTokenReqRes{AccessToken: accessToken}, "")
