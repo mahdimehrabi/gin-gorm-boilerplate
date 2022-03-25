@@ -116,7 +116,7 @@ func (ac AuthController) Register(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param email query string true "email"
-// @Param deviceName query string true "send user device name in this param"
+// @Param deviceName query string true "send user operating system + browser name in this param"
 // @Param password query string true "password"
 // @Success 200 {object} swagger.RegisterLoginResponse
 // @failure 422 {object} swagger.FailedValidationResponse
