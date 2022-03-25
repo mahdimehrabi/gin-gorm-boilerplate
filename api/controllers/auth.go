@@ -233,6 +233,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 
 	userID := int(atClaims["userId"].(float64))
 	password := atClaims["password"].(string)
+	deviceToken := atClaims["deviceToken"].(string)
 	user, err := ac.userRepository.FindByField("id", strconv.Itoa(userID))
 
 	//don't allow deleted user renew access token
@@ -255,7 +256,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		var exp int64
 		accessSecret := "refresh" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
-		accessToken, _ := ac.authService.CreateAccessToken(user, exp, accessSecret)
+		accessToken, _ := ac.authService.CreateAccessToken(user, exp, accessSecret, deviceToken)
 		responses.JSON(c, http.StatusOK, models.AccessTokenReqRes{AccessToken: accessToken}, "")
 		return
 	} else {
@@ -274,7 +275,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 // @failure 401 {object} swagger.UnauthenticatedResponse
 // @Router /auth/logout [post]
 func (ac AuthController) Logout(c *gin.Context) {
-	_, err := ac.userRepository.GetAuthenticatedUser(c)
+	user, err := ac.userRepository.GetAuthenticatedUser(c)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to change password", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
