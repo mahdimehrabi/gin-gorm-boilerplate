@@ -25,10 +25,10 @@ func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encrypti
 	return user
 }
 
-func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, error) {
+func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, string, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	deviceToken := utils.GenerateRandomCode(20)
 	devices := make(map[string]interface{})
@@ -41,7 +41,7 @@ func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database
 	db.DB.Save(&user)
 	accessToken, _, err := as.CreateTokens(user, deviceToken)
 	req.Header.Add("Authorization", "Bearer "+accessToken)
-	return req, err
+	return req, deviceToken, err
 }
 
 func ExtractResponseAsMap(w *httptest.ResponseRecorder) map[string]interface{} {
