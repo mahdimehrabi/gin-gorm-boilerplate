@@ -45,7 +45,7 @@ func (suite TestSuiteEnv) TestLogin() {
 	devices, _ := utils.BytesJsonToMap(devicesBytes)
 
 	a.NotNil(devices[deviceToken], "devices not set")
-	a.Equal(devices[deviceToken].(map[string]interface{})["city"], "alaki")
+	a.Equal(devices[deviceToken].(map[string]interface{})["city"], "unknown")
 
 	//test access token
 	data = map[string]interface{}{

@@ -11,18 +11,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
+	"github.com/ip2location/ip2location-go/v9"
 	"gorm.io/datatypes"
 )
 
 // UserService -> struct
 type AuthService struct {
-	db infrastructure.Database
+	db  infrastructure.Database
+	env infrastructure.Env
 }
 
 // NewAuthService -> creates a new AuthService
-func NewAuthService(db infrastructure.Database) AuthService {
+func NewAuthService(db infrastructure.Database, env infrastructure.Env) AuthService {
 	return AuthService{
-		db: db,
+		db:  db,
+		env: env,
 	}
 }
 
@@ -98,6 +101,8 @@ func DecodeToken(tokenString string, secret string) (bool, jwt.MapClaims, error)
 func (as AuthService) AddDevice(user *models.User, c *gin.Context, deviceName string) (string, error) {
 	deviceToken := utils.GenerateRandomCode(20)
 	devices := make(map[string]interface{})
+	ip := c.ClientIP()
+	city, _ := as.GetCityByIp(ip)
 	if user.Devices != nil {
 		devicesBytes := []byte(user.Devices.String())
 		devices, err := utils.BytesJsonToMap(devicesBytes)
@@ -105,8 +110,8 @@ func (as AuthService) AddDevice(user *models.User, c *gin.Context, deviceName st
 			return deviceToken, err
 		}
 		devices[deviceToken] = map[string]string{
-			"ip":         c.ClientIP(),
-			"city":       "alaki",
+			"ip":         ip,
+			"city":       city,
 			"date":       strconv.Itoa(int(time.Now().Unix())),
 			"deviceName": deviceName,
 		}
@@ -115,8 +120,8 @@ func (as AuthService) AddDevice(user *models.User, c *gin.Context, deviceName st
 		return deviceToken, nil
 	}
 	devices[deviceToken] = map[string]string{
-		"ip":         c.ClientIP(),
-		"city":       "alaki",
+		"ip":         ip,
+		"city":       city,
 		"date":       strconv.Itoa(int(time.Now().Unix())),
 		"deviceName": deviceName,
 	}
@@ -142,4 +147,26 @@ func (as AuthService) DeleteDevice(user *models.User, deviceToken string) (bool,
 		return false, err
 	}
 	return true, nil
+}
+
+//get city by ip , if cant identified city it will return unknown string
+func (as AuthService) GetCityByIp(ip string) (string, error) {
+
+	filePath := as.env.BasePath + "/vendors/IP2LOCATION-LITE-DB3.BIN"
+	db, err := ip2location.OpenDB(filePath)
+
+	if err != nil {
+		return "unknown", err
+	}
+	results, err := db.Get_city(ip)
+
+	if err != nil {
+		return "unknown", err
+	}
+
+	if results.City == "Invalid IP address." || results.City == "-" {
+		return "unknown", nil
+	}
+
+	return results.City, nil
 }
