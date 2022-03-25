@@ -42,7 +42,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.SuccessVerifyAccessTokenResponse"
+                            "$ref": "#/definitions/swagger.SuccessResponse"
                         }
                     },
                     "401": {

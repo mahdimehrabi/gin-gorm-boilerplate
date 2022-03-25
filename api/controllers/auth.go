@@ -176,7 +176,7 @@ func (ac AuthController) Login(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param accessToken query string true "accessToken"
-// @Success 200 {object} swagger.SuccessVerifyAccessTokenResponse
+// @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.FailedResponse
 // @Router /auth/access-token-verify [post]

@@ -164,7 +164,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.SuccessVerifyAccessTokenResponse'
+            $ref: '#/definitions/swagger.SuccessResponse'
         "401":
           description: Unauthorized
           schema:
