@@ -83,6 +83,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "send user operating system + browser name in this param",
+                        "name": "deviceName",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "password",
                         "name": "password",
                         "in": "query",
@@ -275,7 +282,7 @@ const docTemplate = `{
         },
         "/profile/change-password": {
             "post": {
-                "description": "Change Password , Login required",
+                "description": "Change Password , authentication required",
                 "consumes": [
                     "application/json"
                 ],
@@ -333,13 +340,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.AccessTokenReqRes": {
+        "models.AccessTokenRes": {
             "type": "object",
             "required": [
-                "accessToken"
+                "accessToken",
+                "expAccessToken"
             ],
             "properties": {
                 "accessToken": {
+                    "type": "string"
+                },
+                "expAccessToken": {
                     "type": "string"
                 }
             }
@@ -348,6 +359,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "accessToken": {
+                    "type": "string"
+                },
+                "expAccessToken": {
+                    "type": "string"
+                },
+                "expRefreshToken": {
                     "type": "string"
                 },
                 "refreshToken": {
@@ -494,7 +511,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/models.AccessTokenReqRes"
+                    "$ref": "#/definitions/models.AccessTokenRes"
                 },
                 "msg": {
                     "type": "string",

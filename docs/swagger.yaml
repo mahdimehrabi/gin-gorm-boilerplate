@@ -1,14 +1,21 @@
 definitions:
-  models.AccessTokenReqRes:
+  models.AccessTokenRes:
     properties:
       accessToken:
         type: string
+      expAccessToken:
+        type: string
     required:
     - accessToken
+    - expAccessToken
     type: object
   models.LoginResponse:
     properties:
       accessToken:
+        type: string
+      expAccessToken:
+        type: string
+      expRefreshToken:
         type: string
       refreshToken:
         type: string
@@ -108,7 +115,7 @@ definitions:
   swagger.SuccessVerifyAccessTokenResponse:
     properties:
       data:
-        $ref: '#/definitions/models.AccessTokenReqRes'
+        $ref: '#/definitions/models.AccessTokenRes'
       msg:
         example: Successful message
         type: string
@@ -178,6 +185,11 @@ paths:
       - description: email
         in: query
         name: email
+        required: true
+        type: string
+      - description: send user operating system + browser name in this param
+        in: query
+        name: deviceName
         required: true
         type: string
       - description: password
@@ -317,7 +329,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Change Password , Login required
+      description: Change Password , authentication required
       parameters:
       - description: unique email
         in: query
