@@ -147,17 +147,18 @@ func (ac AuthController) Login(c *gin.Context) {
 			ac.logger.Zap.Error("Failed to add device", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 		}
-		var accessToken string
-		var refreshToken string
-		accessToken, refreshToken, err = ac.authService.CreateTokens(user, deviceToken)
+
+		tokensData, err := ac.authService.CreateTokens(user, deviceToken)
 		if err != nil {
 			ac.logger.Zap.Error("Failed generate jwt tokens", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
 			return
 		}
 		var loginResult models.LoginResponse
-		loginResult.AccessToken = accessToken
-		loginResult.RefreshToken = refreshToken
+		loginResult.AccessToken = tokensData["accessToken"]
+		loginResult.RefreshToken = tokensData["refreshToken"]
+		loginResult.ExpRefreshToken = tokensData["expRefreshToken"]
+		loginResult.ExpAccessToken = tokensData["expAccessToken"]
 		loginResult.User = models.UserResponse(user)
 
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
@@ -180,7 +181,7 @@ func (ac AuthController) Login(c *gin.Context) {
 // @failure 401 {object} swagger.FailedResponse
 // @Router /auth/access-token-verify [post]
 func (ac AuthController) AccessTokenVerify(c *gin.Context) {
-	at := models.AccessTokenReqRes{}
+	at := models.AccessTokenReq{}
 	if err := c.ShouldBindJSON(&at); err != nil {
 		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
@@ -263,7 +264,7 @@ func (ac AuthController) RenewToken(c *gin.Context) {
 		accessSecret := "access" + ac.env.Secret
 		exp = time.Now().Add(time.Hour * 2).Unix()
 		accessToken, _ := ac.authService.CreateAccessToken(user, exp, accessSecret, deviceToken)
-		responses.JSON(c, http.StatusOK, models.AccessTokenReqRes{AccessToken: accessToken}, "")
+		responses.JSON(c, http.StatusOK, models.AccessTokenRes{AccessToken: accessToken, ExpAccessToken: strconv.Itoa(int(exp))}, "")
 		return
 	} else {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "Refresh token is not valid")

@@ -238,10 +238,10 @@ func (suite TestSuiteEnv) TestRenewAccessTokenWithUnexistDeviceToken() {
 	db := suite.database.DB
 	a := suite.Assert()
 	user := CreateUser("m12345678", db, suite.encryption)
-	_, refreshToken, _ := suite.authService.CreateTokens(user, "fake-device-token")
+	tokensData, _ := suite.authService.CreateTokens(user, "fake-device-token")
 
 	data := map[string]interface{}{
-		"refreshToken": refreshToken,
+		"refreshToken": tokensData["refreshToken"],
 	}
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("POST", "/api/auth/renew-access-token", utils.MapToJsonBytesBuffer(data))

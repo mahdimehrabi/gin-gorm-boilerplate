@@ -20,13 +20,20 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AccessToken  string       `json:"accessToken"`
-	RefreshToken string       `json:"refreshToken"`
-	User         UserResponse `json:"user"`
+	AccessToken     string       `json:"accessToken"`
+	RefreshToken    string       `json:"refreshToken"`
+	ExpRefreshToken string       `json:"expRefreshToken"`
+	ExpAccessToken  string       `json:"expAccessToken"`
+	User            UserResponse `json:"user"`
 }
 
-type AccessTokenReqRes struct {
+type AccessTokenReq struct {
 	AccessToken string `json:"accessToken" binding:"required"`
+}
+
+type AccessTokenRes struct {
+	AccessToken    string `json:"accessToken" binding:"required"`
+	ExpAccessToken string `json:"expAccessToken" binding:"required"`
 }
 
 type RefreshTokenRequest struct {

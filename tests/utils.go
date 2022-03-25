@@ -40,8 +40,8 @@ func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database
 	}
 	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 	db.DB.Save(&user)
-	accessToken, _, err := as.CreateTokens(user, deviceToken)
-	req.Header.Add("Authorization", "Bearer "+accessToken)
+	tokensData, err := as.CreateTokens(user, deviceToken)
+	req.Header.Add("Authorization", "Bearer "+tokensData["accessToken"])
 	return req, deviceToken, err
 }
 

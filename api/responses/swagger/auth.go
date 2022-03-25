@@ -16,7 +16,7 @@ type FailedLoginResponse struct {
 
 type SuccessVerifyAccessTokenResponse struct {
 	SuccessResponse
-	Data models.AccessTokenReqRes `json:"data"`
+	Data models.AccessTokenRes `json:"data"`
 }
 
 type UnauthenticatedResponse struct {

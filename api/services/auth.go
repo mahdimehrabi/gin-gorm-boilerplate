@@ -60,18 +60,22 @@ func (as AuthService) CreateRefreshToken(user models.User, exp int64, secret str
 	return token, nil
 }
 
-func (as AuthService) CreateTokens(user models.User, deviceToken string) (string, string, error) {
-	var exp int64
+func (as AuthService) CreateTokens(user models.User, deviceToken string) (map[string]string, error) {
 
 	accessSecret := "access" + os.Getenv("Secret")
-	exp = time.Now().Add(time.Hour * 2).Unix()
-	accessToken, err := as.CreateAccessToken(user, exp, accessSecret, deviceToken)
+	expAccessToken := time.Now().Add(time.Minute * 15).Unix()
+	accessToken, err := as.CreateAccessToken(user, expAccessToken, accessSecret, deviceToken)
 
 	refreshSecret := "refresh" + os.Getenv("Secret")
-	exp = time.Now().Add(time.Hour * 24 * 14).Unix()
-	refreshToken, err := as.CreateRefreshToken(user, exp, refreshSecret, deviceToken)
+	expRefreshToken := time.Now().Add(time.Hour * 24 * 60).Unix()
+	refreshToken, err := as.CreateRefreshToken(user, expRefreshToken, refreshSecret, deviceToken)
 
-	return accessToken, refreshToken, err
+	return map[string]string{
+		"refreshToken":    refreshToken,
+		"accessToken":     accessToken,
+		"expRefreshToken": strconv.Itoa(int(expRefreshToken)),
+		"expAccessToken":  strconv.Itoa(int(expAccessToken)),
+	}, err
 }
 
 func DecodeToken(tokenString string, secret string) (bool, jwt.MapClaims, error) {
