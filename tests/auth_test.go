@@ -1,10 +1,13 @@
 package tests
 
 import (
+	"boilerplate/api/services"
 	"boilerplate/utils"
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/golang-jwt/jwt"
 )
 
 func (suite TestSuiteEnv) TestLogin() {
@@ -31,6 +34,18 @@ func (suite TestSuiteEnv) TestLogin() {
 	a.True(len(refreshToken) > 7, "Refresh token invalid")
 	db.Find(&user)
 	a.True(len(user.Devices.String()) > 7, "Devices not set")
+
+	//check device token
+	var atClaims jwt.MapClaims
+	refreshSecret := "refresh" + suite.env.Secret
+	_, atClaims, _ = services.DecodeToken(refreshToken, refreshSecret)
+	deviceToken := atClaims["deviceToken"].(string)
+
+	devicesBytes := []byte(user.Devices.String())
+	devices, _ := utils.BytesJsonToMap(devicesBytes)
+
+	a.NotNil(devices[deviceToken], "devices not set")
+	a.Equal(devices[deviceToken].(map[string]interface{})["city"], "alaki")
 
 	//test access token
 	data = map[string]interface{}{
@@ -172,7 +187,7 @@ func (suite TestSuiteEnv) TestLogout() {
 
 	w := httptest.NewRecorder()
 	data := new(bytes.Buffer)
-	req, _ := NewAuthenticatedRequest(suite.authService, suite.database, user, "POST", "/api/auth/logout", data)
+	req, _, _ := NewAuthenticatedRequest(suite.authService, suite.database, user, "POST", "/api/auth/logout", data)
 
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
