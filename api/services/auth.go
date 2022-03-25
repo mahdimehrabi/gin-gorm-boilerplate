@@ -104,25 +104,23 @@ func (as AuthService) AddDevice(user *models.User, c *gin.Context, deviceName st
 		if err != nil {
 			return deviceToken, err
 		}
-		devices["deviceToken"] = deviceToken
-		devices["ip"] = c.ClientIP()
-		devices["city"] = "Alaki"
-		devices["date"] = strconv.Itoa(int(time.Now().Unix()))
-		devices["deviceName"] = deviceName
+		devices[deviceToken] = map[string]string{
+			"ip":         c.ClientIP(),
+			"city":       "alaki",
+			"date":       strconv.Itoa(int(time.Now().Unix())),
+			"deviceName": deviceName,
+		}
 		user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 		as.db.DB.Save(&user)
 		return deviceToken, nil
 	}
-	devices["deviceToken"] = deviceToken
-	devices["ip"] = c.ClientIP()
-	devices["city"] = "Alaki"
-	devices["date"] = strconv.Itoa(int(time.Now().Unix()))
-	devices["deviceName"] = deviceName
+	devices[deviceToken] = map[string]string{
+		"ip":         c.ClientIP(),
+		"city":       "alaki",
+		"date":       strconv.Itoa(int(time.Now().Unix())),
+		"deviceName": deviceName,
+	}
 	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 	as.db.DB.Save(&user)
 	return deviceToken, nil
 }
-
-// func (as AuthService) DeleteToken(user *models.User, deviceToken string) {
-// 	user
-// }
