@@ -187,9 +187,17 @@ func (suite TestSuiteEnv) TestLogout() {
 
 	w := httptest.NewRecorder()
 	data := new(bytes.Buffer)
-	req, _, _ := NewAuthenticatedRequest(suite.authService, suite.database, user, "POST", "/api/auth/logout", data)
+	req, deviceToken, _ := NewAuthenticatedRequest(suite.authService, suite.database, user, "POST", "/api/auth/logout", data)
+	suite.database.DB.Find(&user)
+	devicesBytes := []byte(user.Devices.String())
+	devices, _ := utils.BytesJsonToMap(devicesBytes)
+	a.NotNil(devices[deviceToken])
 
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 	suite.database.DB.Find(&user)
+
+	devicesBytes = []byte(user.Devices.String())
+	devices, _ = utils.BytesJsonToMap(devicesBytes)
+	a.Nil(devices[deviceToken])
 }

@@ -32,11 +32,12 @@ func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database
 	}
 	deviceToken := utils.GenerateRandomCode(20)
 	devices := make(map[string]interface{})
-	devices["deviceToken"] = deviceToken
-	devices["ip"] = "1.1.1.1"
-	devices["city"] = "Alaki"
-	devices["date"] = strconv.Itoa(int(time.Now().Unix()))
-	devices["deviceName"] = "window10-chrome"
+	devices[deviceToken] = map[string]string{
+		"ip":         "1.1.1.1",
+		"city":       "alaki",
+		"date":       strconv.Itoa(int(time.Now().Unix())),
+		"deviceName": "windows10-chrome",
+	}
 	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 	db.DB.Save(&user)
 	accessToken, _, err := as.CreateTokens(user, deviceToken)
