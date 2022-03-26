@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/joho/godotenv"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/fx"
 )
@@ -99,4 +100,15 @@ func Setup(t *testing.T, tse TestSuiteEnv, lc fx.Lifecycle,
 	routes.Setup()
 	middlewares.Setup()
 	suite.Run(t, &tse)
+}
+
+type SendEmailMock struct {
+	mock.Mock
+}
+
+func (m *SendEmailMock) SendEmail(from string, to string, subject string) error {
+	var ch chan bool
+	htmlFilePath := "/file1.txt"
+	args := m.Called(ch, from, to, subject, htmlFilePath)
+	return args.Error(0)
 }
