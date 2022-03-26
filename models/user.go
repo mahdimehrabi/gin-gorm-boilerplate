@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/datatypes"
+import (
+	"time"
+
+	"gorm.io/datatypes"
+)
 
 type User struct {
 	Base
@@ -12,6 +16,10 @@ type User struct {
 	//if you want to make user logout of specefic devices delete only specefic Device index
 	// if you want to make user logout of all devices make this column empty
 	Devices datatypes.JSON `json:"-"`
+
+	VerifiedEmail bool `json:"verifiedEmail"`
+	//last time send verification email date(use this field for implement limit for user resending verify email )
+	LastVerifyEmailDate time.Time `json:"-"`
 }
 
 // TableName gives table name of model
@@ -30,9 +38,11 @@ func (m User) ToMap() map[string]interface{} {
 
 type UserResponse struct {
 	Base
-	Email     string         `json:"email"`
-	FirstName string         `json:"firstName" binding:"required"`
-	LastName  string         `json:"lastName" binding:"required"`
-	Password  string         `json:"-"`
-	Devices   datatypes.JSON `json:"-"`
+	Email               string         `json:"email"`
+	FirstName           string         `json:"firstName" binding:"required"`
+	LastName            string         `json:"lastName" binding:"required"`
+	Password            string         `json:"-"`
+	Devices             datatypes.JSON `json:"-"`
+	VerifiedEmail       bool           `json:"verifiedEmail"`
+	LastVerifyEmailDate time.Time      `json:"-"`
 }

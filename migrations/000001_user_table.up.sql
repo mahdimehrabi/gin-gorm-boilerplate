@@ -8,6 +8,8 @@ CREATE TABLE "users"
 "first_name" VARCHAR (60) NOT NULL,
 "last_name" VARCHAR (60) NOT NULL,
 "devices" JSON ,
+"verified_email" BOOLEAN NOT NULL DEFAULT FALSE ,
+"last_verify_email_date" TIMESTAMPTZ,
 PRIMARY KEY ("id")
 );
 CREATE INDEX "idx_users_deleted_at" ON "users" ("deleted_at");
