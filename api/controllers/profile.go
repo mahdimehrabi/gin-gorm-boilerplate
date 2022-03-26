@@ -38,8 +38,6 @@ func NewProfileController(logger infrastructure.Logger,
 	}
 }
 
-// @BasePath /api/auth
-
 // @Summary change-password
 // @Schemes
 // @Description Change Password , authentication required
@@ -89,4 +87,32 @@ func (pc ProfileController) ChangePassword(c *gin.Context) {
 	}
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your password changed successfuly , please login again !")
+}
+
+// @Summary devices
+// @Schemes
+// @Description return logged in devices in user's account , authentication required
+// @Tags profile
+// @Accept json
+// @Produce json
+// @Success 200 {object} swagger.SuccessResponse
+// @failure 401 {object} swagger.UnauthenticatedResponse
+// @Router /profile/change-password [post]
+func (pc ProfileController) LoggedInDevices(c *gin.Context) {
+
+	user, err := pc.userRepository.GetAuthenticatedUser(c)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to get authenticated user", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+
+	devices, err := pc.userRepository.GetLoggedInDevices(user)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to get logged in devices", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+
+	responses.JSON(c, http.StatusOK, devices, "")
 }

@@ -39,3 +39,10 @@ type AccessTokenRes struct {
 type RefreshTokenRequest struct {
 	RefreshToken string `json:"refreshToken" binding:"required"`
 }
+
+type Device struct {
+	Ip         string `json:"ip"`
+	City       string `json:"city"`
+	Date       string `json:"date"`
+	DeviceName string `json:"deviceName"`
+}

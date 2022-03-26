@@ -40,3 +40,26 @@ func (suite TestSuiteEnv) TestChangePassword() {
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 }
+
+func (suite TestSuiteEnv) TestGetLoggedInDevices() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+
+	data := map[string]interface{}{
+		"password":       "m987654321",
+		"repeatPassword": "m987654321",
+	}
+	w := httptest.NewRecorder()
+
+	req, _, _ := NewAuthenticatedRequest(suite.authService, suite.database, user, "POST", "/api/profile/devices", utils.MapToJsonBytesBuffer(data))
+
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+	suite.database.DB.Find(&user)
+
+	response := ExtractResponseAsMap(w)
+	devices, _ := response["data"].([]interface{})
+	a.Equal("alaki", devices[0].(map[string]interface{})["city"].(string))
+}

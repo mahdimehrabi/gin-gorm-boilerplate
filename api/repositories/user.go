@@ -89,3 +89,24 @@ func (ur UserRepository) GetAuthenticatedUser(c *gin.Context) (models.User, erro
 	userId := c.MustGet("userId").(string)
 	return ur.FindByField("id", userId)
 }
+
+func (ur UserRepository) GetLoggedInDevices(user models.User) ([]models.Device, error) {
+	var res []models.Device
+	devicesBytes := []byte(user.Devices.String())
+	devices, err := utils.BytesJsonToMap(devicesBytes)
+	if err != nil {
+		return res, err
+	}
+
+	for _, v := range devices {
+		dv := v.(map[string]interface{})
+		mp := models.Device{
+			Ip:         dv["ip"].(string),
+			City:       dv["city"].(string),
+			Date:       dv["date"].(string),
+			DeviceName: dv["deviceName"].(string),
+		}
+		res = append(res, mp)
+	}
+	return res, nil
+}
