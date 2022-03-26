@@ -337,6 +337,35 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/profile/devices": {
+            "post": {
+                "description": "return logged in devices in user's account , authentication required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "devices",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.DevicesResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -351,6 +380,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "expAccessToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Device": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "deviceName": {
+                    "type": "string"
+                },
+                "ip": {
                     "type": "string"
                 }
             }
@@ -399,6 +445,25 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "swagger.DevicesResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Device"
+                    }
+                },
+                "msg": {
+                    "type": "string",
+                    "example": ""
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },

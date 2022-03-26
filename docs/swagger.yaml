@@ -9,6 +9,17 @@ definitions:
     - accessToken
     - expAccessToken
     type: object
+  models.Device:
+    properties:
+      city:
+        type: string
+      date:
+        type: string
+      deviceName:
+        type: string
+      ip:
+        type: string
+    type: object
   models.LoginResponse:
     properties:
       accessToken:
@@ -39,6 +50,19 @@ definitions:
     required:
     - firstName
     - lastName
+    type: object
+  swagger.DevicesResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Device'
+        type: array
+      msg:
+        example: ""
+        type: string
+      ok:
+        example: true
+        type: boolean
     type: object
   swagger.EmptyData:
     type: object
@@ -364,6 +388,25 @@ paths:
           schema:
             $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: change-password
+      tags:
+      - profile
+  /profile/devices:
+    post:
+      consumes:
+      - application/json
+      description: return logged in devices in user's account , authentication required
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.DevicesResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+      summary: devices
       tags:
       - profile
 swagger: "2.0"
