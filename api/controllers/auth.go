@@ -24,6 +24,7 @@ type AuthController struct {
 	userService    services.UserService
 	authService    services.AuthService
 	userRepository repositories.UserRepository
+	email          infrastructure.Email
 }
 
 func NewAuthController(logger infrastructure.Logger,
@@ -32,6 +33,7 @@ func NewAuthController(logger infrastructure.Logger,
 	userService services.UserService,
 	authService services.AuthService,
 	userRepository repositories.UserRepository,
+	email infrastructure.Email,
 ) AuthController {
 	return AuthController{
 		logger:         logger,
@@ -40,6 +42,7 @@ func NewAuthController(logger infrastructure.Logger,
 		userService:    userService,
 		authService:    authService,
 		userRepository: userRepository,
+		email:          email,
 	}
 }
 
@@ -92,6 +95,8 @@ func (ac AuthController) Register(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
+	ch := make(chan bool)
+	ac.email.SendEmail(ch, "admin@gmail.com", user.Email, "sadg", "index.html")
 
 	// login
 	// token
