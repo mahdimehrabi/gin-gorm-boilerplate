@@ -146,7 +146,6 @@ func (suite TestSuiteEnv) TestRegister() {
 	a := suite.Assert()
 	var beforeUserCount int64
 	db.Model(models.User{}).Count(&beforeUserCount)
-	emailMock := new(SendEmailMock)
 
 	//test with completed credentials
 	data := map[string]interface{}{
@@ -168,7 +167,6 @@ func (suite TestSuiteEnv) TestRegister() {
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 	a.False(user.VerifiedEmail, "Email verified must be false")
 	a.False(user.LastVerifyEmailDate.IsZero(), "last verify email date must set after")
-	emailMock.AssertNumberOfCalls(suite.T(), "SendEmail", 1)
 
 	//test with duplicate email
 	w = httptest.NewRecorder()
