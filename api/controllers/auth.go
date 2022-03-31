@@ -97,21 +97,11 @@ func (ac AuthController) Register(c *gin.Context) {
 	}
 	ch := make(chan bool)
 	ac.email.SendEmail(ch, "admin@gmail.com", user.Email, "sadg", "index.html")
-
-	// login
-	// token
-	// accessToken, refreshToken, err := ac.authService.CreateTokens(user)
-	// if err != nil {
-	// 	ac.logger.Zap.Error("Failed to generate registered user token", err.Error())
-	// 	responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "your account registerd but failed to make you login")
-	// 	return
-	// }
-	// var loginResult models.LoginResponse
-	// loginResult.AccessToken = accessToken
-	// loginResult.RefreshToken = refreshToken
-	// loginResult.User = models.UserResponse(user)
-
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly!")
+	sentEmail := <-ch
+	if sentEmail {
+		ac.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now().Unix())
+	}
 }
 
 // @Summary login
