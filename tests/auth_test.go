@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -147,7 +148,7 @@ func (suite TestSuiteEnv) TestRegister() {
 	var beforeUserCount int64
 	db.Model(models.User{}).Count(&beforeUserCount)
 
-	//test with completed credentials
+	/*test with completed credentials*/
 	data := map[string]interface{}{
 		"email":          "mahdi@gmail.com",
 		"password":       "m12345678",
@@ -166,9 +167,9 @@ func (suite TestSuiteEnv) TestRegister() {
 	db.Model(models.User{}).Last(&user)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 	a.False(user.VerifiedEmail, "Email verified must be false")
-	a.False(user.LastVerifyEmailDate.IsZero(), "last verify email date must set after")
+	a.False(user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-5)*time.Minute)), "last verify email date must set after")
 
-	//test with duplicate email
+	/*test with duplicate email*/
 	w = httptest.NewRecorder()
 	req, _ = http.NewRequest("POST", "/api/auth/register", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
@@ -176,7 +177,7 @@ func (suite TestSuiteEnv) TestRegister() {
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 
-	//test with weak password
+	/*test with weak password*/
 	data = map[string]interface{}{
 		"email":     "mahdi1@gmail.com",
 		"password":  "12345678",
@@ -189,6 +190,7 @@ func (suite TestSuiteEnv) TestRegister() {
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
+	a.True(1 == 1)
 }
 
 func (suite TestSuiteEnv) TestLogout() {

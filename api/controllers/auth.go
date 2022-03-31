@@ -96,12 +96,14 @@ func (ac AuthController) Register(c *gin.Context) {
 		return
 	}
 	ch := make(chan bool)
-	ac.email.SendEmail(ch, "admin@gmail.com", user.Email, "sadg", "index.html")
+	go ac.email.SendEmail(ch, "admin@gmail.com", user.Email, "sadg", "index.html")
+	go func(ch <-chan bool) {
+		sentEmail := <-ch
+		if sentEmail {
+			ac.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now().Unix())
+		}
+	}(ch)
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly!")
-	sentEmail := <-ch
-	if sentEmail {
-		ac.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now().Unix())
-	}
 }
 
 // @Summary login
