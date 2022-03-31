@@ -95,15 +95,27 @@ func (ac AuthController) Register(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
-	ch := make(chan bool)
-	go ac.email.SendEmail(ch, "admin@gmail.com", user.Email, "sadg", "index.html")
-	go func(ch <-chan bool) {
-		sentEmail := <-ch
-		if sentEmail {
-			ac.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now().Unix())
-		}
-	}(ch)
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly!")
+
+	ac.sendRegisterationEmail(&user)
+}
+
+func (ac AuthController) sendRegisterationEmail(user *models.User) error {
+	time.Sleep(5 * time.Second)
+	ch := make(chan error)
+	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.html"
+	go ac.email.SendEmail(ch, user.Email, "sadg", htmlFile)
+	err := <-ch
+	if err != nil {
+		ac.logger.Zap.Error(err)
+		return err
+	}
+	err = ac.userRepository.UpdateColumn(user, "last_verify_email_date", time.Now())
+	if err != nil {
+		ac.logger.Zap.Error(err)
+		return err
+	}
+	return nil
 }
 
 // @Summary login

@@ -5,6 +5,7 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"bytes"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"time"
@@ -167,7 +168,9 @@ func (suite TestSuiteEnv) TestRegister() {
 	db.Model(models.User{}).Last(&user)
 	a.True(afterUserCount == beforeUserCount+1, "User count problem")
 	a.False(user.VerifiedEmail, "Email verified must be false")
-	a.False(user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-5)*time.Minute)), "last verify email date must set after")
+	a.True(user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-5)*time.Minute)), "last verify email date must set after")
+	fmt.Println("user.LastVerifyEmailDate")
+	fmt.Println(user.LastVerifyEmailDate.Year())
 
 	/*test with duplicate email*/
 	w = httptest.NewRecorder()
