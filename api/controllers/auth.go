@@ -107,7 +107,7 @@ func (ac AuthController) sendRegisterationEmail(user *models.User) error {
 
 	data := map[string]string{
 		"name": user.FirstName,
-		"link": ac.env.SiteUrl + "/email-verify?token=" + user.VerifyEmailToken,
+		"link": ac.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
 	}
 	go ac.email.SendEmail(ch, user.Email, "sadg", htmlFile, data)
 	err := <-ch
