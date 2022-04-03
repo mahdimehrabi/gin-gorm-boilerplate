@@ -21,6 +21,8 @@ type User struct {
 	//last time send verification email date(use this field for implement limit for user resending verify email )
 	LastVerifyEmailDate time.Time `json:"-"`
 	VerifyEmailToken    string    `json:"-"`
+	ForgotPasswordToken string    `json:"-"`
+	LastForgotEmailDate time.Time `json:"-"`
 }
 
 // TableName gives table name of model
@@ -47,4 +49,6 @@ type UserResponse struct {
 	VerifiedEmail       bool           `json:"verifiedEmail"`
 	LastVerifyEmailDate time.Time      `json:"-"`
 	VerifyEmailToken    string         `json:"-"`
+	ForgotPasswordToken string         `json:"-"`
+	LastForgotEmailDate time.Time      `json:"-"`
 }

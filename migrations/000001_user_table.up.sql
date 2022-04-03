@@ -11,6 +11,8 @@ CREATE TABLE "users"
 "verified_email" BOOLEAN NOT NULL DEFAULT FALSE ,
 "last_verify_email_date" TIMESTAMPTZ,
 "verify_email_token" VARCHAR (40),
+"forgot_password_token" VARCHAR (40),
+"last_forgot_email_date" TIMESTAMPTZ,
 PRIMARY KEY ("id")
 );
 CREATE INDEX "idx_users_deleted_at" ON "users" ("deleted_at");
