@@ -95,7 +95,7 @@ func (ac AuthController) Register(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
-	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly!")
+	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly, an verification link sent to your email use that to verify your account")
 
 	go ac.sendRegisterationEmail(&user)
 }
