@@ -156,6 +156,9 @@ func (ac AuthController) Login(c *gin.Context) {
 	}
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(loginRquest.Password)
 	if user.Password == encryptedPassword {
+		if !user.VerifiedEmail {
+			responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You must verify your email first")
+		}
 		deviceToken, err := ac.authService.AddDevice(&user, c, loginRquest.DeviceName)
 		if err != nil {
 			ac.logger.Zap.Error("Failed to add device", err.Error())

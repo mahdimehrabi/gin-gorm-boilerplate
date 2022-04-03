@@ -107,7 +107,6 @@ func (suite TestSuiteEnv) TestLogin() {
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnauthorized, w.Code, "Status code problem")
-
 	//test wrong password
 	data = map[string]interface{}{
 		"email":      "mahdi1@gmail.com",
@@ -138,6 +137,19 @@ func (suite TestSuiteEnv) TestLogin() {
 	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
+
+	//test not verified email account
+	suite.database.DB.Model(&user).Update("verified_email", false)
+	data = map[string]interface{}{
+		"email":      user.Email,
+		"password":   "m12345678",
+		"deviceName": "windows10-chrome",
+	}
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("POST", "/api/auth/login", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
+
 }
 
 func (suite TestSuiteEnv) TestRegister() {
@@ -237,6 +249,7 @@ func (suite TestSuiteEnv) TestVerifyEmail() {
 	db := suite.database.DB
 	a := suite.Assert()
 	user := CreateUser("m12345678", db, suite.encryption)
+	suite.database.DB.Model(&user).Update("verified_email", false)
 
 	//test with wrong token
 	w := httptest.NewRecorder()

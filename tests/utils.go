@@ -22,6 +22,7 @@ func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encrypti
 		LastName:         "mehrabi",
 		Password:         password,
 		VerifyEmailToken: utils.GenerateRandomCode(40),
+		VerifiedEmail:    true,
 	}
 	err := db.Create(&user).Error
 	if err != nil {
