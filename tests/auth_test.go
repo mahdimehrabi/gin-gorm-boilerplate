@@ -260,7 +260,9 @@ func (suite TestSuiteEnv) TestVerifyEmail() {
 
 	//test with right token
 	w = httptest.NewRecorder()
-	data = map[string]interface{}{}
+	data = map[string]interface{}{
+		"token": user.VerifyEmailToken,
+	}
 	req, _ = http.NewRequest("POST", "/api/auth/verify-email", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "status code problem")

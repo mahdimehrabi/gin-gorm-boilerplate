@@ -224,10 +224,10 @@ func (ac AuthController) AccessTokenVerify(c *gin.Context) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param refreshToken query string true "accessToken"
+// @Param refreshToken query string true "refreshToken"
 // @Success 200 {object} swagger.SuccessVerifyAccessTokenResponse
 // @failure 422 {object} swagger.FailedValidationResponse
-// @failure 401 {object} swagger.FailedResponse
+// @failure 400 {object} swagger.FailedResponse
 // @Router /auth/renew-access-token [post]
 func (ac AuthController) RenewToken(c *gin.Context) {
 	rtr := models.RefreshTokenRequest{}
@@ -306,4 +306,40 @@ func (ac AuthController) Logout(c *gin.Context) {
 	ac.authService.DeleteDevice(&user, deviceToken)
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "You logged out successfuly")
+}
+
+// @Summary verify-email
+// @Schemes
+// @Description verify-email
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param token query string true "token"
+// @Success 200 {object} swagger.SuccessResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @failure 400 {object} swagger.FailedResponse
+// @Router /auth/verify-email [post]
+func (ac AuthController) VerifyEmail(c *gin.Context) {
+	tr := models.TokenRequest{}
+	if err := c.ShouldBindJSON(&tr); err != nil {
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
+		return
+	}
+
+	user, err := ac.userRepository.FindByField("verify_email_token", tr.Token)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "No user found with your token")
+	}
+
+	if err != nil {
+		ac.logger.Zap.Error("Failed to search for verify email token", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+	}
+	err = ac.userRepository.UpdateColumn(&user, "verified_email", true)
+	if err != nil {
+		ac.logger.Zap.Error("Failed to update verified_email column", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+	}
+
+	responses.JSON(c, http.StatusOK, gin.H{}, "Your email verified successfuly you can login now")
 }
