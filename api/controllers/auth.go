@@ -102,10 +102,14 @@ func (ac AuthController) Register(c *gin.Context) {
 }
 
 func (ac AuthController) sendRegisterationEmail(user *models.User) error {
-	time.Sleep(5 * time.Second)
 	ch := make(chan error)
-	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.html"
-	go ac.email.SendEmail(ch, user.Email, "sadg", htmlFile)
+	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
+
+	data := map[string]string{
+		"name": user.FirstName,
+		"link": ac.env.SiteUrl + "/email-verify?token=" + user.VerifyEmailToken,
+	}
+	go ac.email.SendEmail(ch, user.Email, "sadg", htmlFile, data)
 	err := <-ch
 	if err != nil {
 		ac.logger.Zap.Error(err)

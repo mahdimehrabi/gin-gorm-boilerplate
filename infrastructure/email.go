@@ -1,6 +1,8 @@
 package infrastructure
 
 import (
+	"bytes"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
@@ -27,7 +29,7 @@ func NewEmail(
 
 //main method for sending email ,
 //we mocked this method in suite_test.go to make sure email sending work , feel free to use that
-func (e Email) SendEmail(ch chan error, to string, subject string, htmlFilePath string) {
+func (e Email) SendEmail(ch chan error, to string, subject string, htmlFilePath string, templateData interface{}) {
 	if e.env.Environment == "test" {
 		ch <- nil
 	}
@@ -39,11 +41,14 @@ func (e Email) SendEmail(ch chan error, to string, subject string, htmlFilePath 
 	if err != nil {
 		ch <- err
 	}
-	m.SetBody("text/html", string(htmlContent))
+	tmpl := template.New("email")
+	tmpl.Parse(string(htmlContent))
+	var processed bytes.Buffer
+	tmpl.ExecuteTemplate(&processed, "email", templateData)
+	m.SetBody("text/html", processed.String())
 
 	d := gomail.NewDialer("smtp.mailtrap.io", 2525, "a7882ca3e14ae5", "f5b7e2adaf7e50")
 
-	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
 		ch <- err
 	}
