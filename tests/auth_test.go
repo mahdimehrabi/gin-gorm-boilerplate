@@ -282,3 +282,32 @@ func (suite TestSuiteEnv) TestVerifyEmail() {
 	suite.database.DB.Find(&user)
 	a.True(user.VerifiedEmail)
 }
+
+func (suite TestSuiteEnv) TestForgotEmail() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+
+	//test with right email
+	w := httptest.NewRecorder()
+	data := map[string]interface{}{
+		"email": user.Email,
+	}
+	req, _ := http.NewRequest("POST", "/api/auth/forgot-password", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	a.True(len(user.ForgotPasswordToken) > 20)
+
+	//test with wrong email
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{
+		"email": user.Email,
+	}
+	req, _ = http.NewRequest("POST", "/api/auth/forgot-password", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	a.Nil(user.ForgotPasswordToken)
+}
