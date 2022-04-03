@@ -158,6 +158,7 @@ func (ac AuthController) Login(c *gin.Context) {
 	if user.Password == encryptedPassword {
 		if !user.VerifiedEmail {
 			responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You must verify your email first")
+			return
 		}
 		deviceToken, err := ac.authService.AddDevice(&user, c, loginRquest.DeviceName)
 		if err != nil {
