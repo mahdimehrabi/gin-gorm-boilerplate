@@ -351,3 +351,65 @@ func (ac AuthController) VerifyEmail(c *gin.Context) {
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your email verified successfuly you can login now")
 }
+
+// @Summary forgot password
+// @Schemes
+// @Description forgot password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param email query string true "unique email"
+// @Param password query string true "password that have at least 8 length and contain an alphabet and number "
+// @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
+// @Param firstName query string true "firstName"
+// @Param lastName query string true "lastName"
+// @Success 200 {object} swagger.RegisterLoginResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @Router /auth/forgot-password [post]
+func (ac AuthController) ForgotPassword(c *gin.Context) {
+
+	// Data Parse
+	var er models.EmailRequest
+	if err := c.ShouldBindJSON(&er); err != nil {
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
+		return
+	}
+
+	user, err := ac.userRepository.FindByField("email", er.Email)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		responses.JSON(c, http.StatusOK, gin.H{}, "An email contain password recovery link sent to your email")
+		return
+	}
+	if err != nil {
+		ac.logger.Zap.Error("Failed to find user by email  ", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
+		return
+	}
+	ac.userRepository.UpdateColumn(&user, "forgot_password_token", utils.GenerateRandomCode(40))
+
+	responses.JSON(c, http.StatusOK, gin.H{}, "An email contain password recovery link sent to your email")
+	go ac.sendForgotPassowrdEmail(&user)
+}
+
+func (ac AuthController) sendForgotPassowrdEmail(user *models.User) error {
+
+	ch := make(chan error)
+	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/forgot.tmpl"
+
+	data := map[string]string{
+		"name": user.FirstName,
+		"link": ac.env.SiteUrl + "/forgot-password?token=" + user.VerifyEmailToken,
+	}
+	go ac.email.SendEmail(ch, user.Email, "Recover password", htmlFile, data)
+	err := <-ch
+	if err != nil {
+		ac.logger.Zap.Error(err)
+		return err
+	}
+	err = ac.userRepository.UpdateColumn(user, "last_forgot_email_date", time.Now())
+	if err != nil {
+		ac.logger.Zap.Error(err)
+		return err
+	}
+	return nil
+}

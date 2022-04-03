@@ -44,6 +44,10 @@ type TokenRequest struct {
 	Token string `json:"token" binding:"required"`
 }
 
+type EmailRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
 type Device struct {
 	Ip         string `json:"ip"`
 	City       string `json:"city"`
