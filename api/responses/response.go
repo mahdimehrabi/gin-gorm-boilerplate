@@ -3,6 +3,7 @@ package responses
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -34,7 +35,7 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldE
 	if errors.As(err, &ve) {
 		for _, fe := range ve {
 			field := fe.Field()
-			lowerCaseField := field[0:1] + field[1:]
+			lowerCaseField := strings.ToLower(field[0:1]) + field[1:]
 			msg := MsgForTag(fe.Tag(), field, fe.Param())
 			errs[lowerCaseField] = msg
 		}
