@@ -17,7 +17,12 @@ import (
 
 func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encryption) models.User {
 	password = encryption.SaltAndSha256Encrypt(password)
-	user := models.User{Email: utils.GenerateRandomEmail(7), FirstName: "mahdi", LastName: "mehrabi", Password: password}
+	user := models.User{Email: utils.GenerateRandomEmail(7),
+		FirstName:        "mahdi",
+		LastName:         "mehrabi",
+		Password:         password,
+		VerifyEmailToken: utils.GenerateRandomCode(40),
+	}
 	err := db.Create(&user).Error
 	if err != nil {
 		panic(err)

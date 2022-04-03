@@ -231,3 +231,39 @@ func (suite TestSuiteEnv) TestRenewAccessTokenWithUnexistDeviceToken() {
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusBadRequest, w.Code, "Status code problem")
 }
+
+func (suite TestSuiteEnv) TestVerifyEmail() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+
+	//test with wrong token
+	w := httptest.NewRecorder()
+	data := map[string]interface{}{
+		"token": "wrong-token",
+	}
+	req, _ := http.NewRequest("POST", "/api/auth/verify-email", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusBadRequest, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	a.False(user.VerifiedEmail)
+
+	//test without token
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{}
+	req, _ = http.NewRequest("POST", "/api/auth/verify-email", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusUnprocessableEntity, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	a.False(user.VerifiedEmail)
+
+	//test with right token
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{}
+	req, _ = http.NewRequest("POST", "/api/auth/verify-email", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	a.True(user.VerifiedEmail)
+}
