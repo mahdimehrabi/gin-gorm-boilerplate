@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 
 	"gopkg.in/gomail.v2"
 )
@@ -46,8 +47,11 @@ func (e Email) SendEmail(ch chan error, to string, subject string, htmlFilePath 
 	var processed bytes.Buffer
 	tmpl.ExecuteTemplate(&processed, "email", templateData)
 	m.SetBody("text/html", processed.String())
-
-	d := gomail.NewDialer("smtp.mailtrap.io", 2525, "a7882ca3e14ae5", "f5b7e2adaf7e50")
+	port, err := strconv.Atoi(e.env.MailPort)
+	if err != nil {
+		ch <- err
+	}
+	d := gomail.NewDialer(e.env.MailHost, port, e.env.MailHostUser, e.env.MailHostPassword)
 
 	if err := d.DialAndSend(m); err != nil {
 		ch <- err

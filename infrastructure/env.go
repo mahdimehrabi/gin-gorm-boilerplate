@@ -20,10 +20,10 @@ type Env struct {
 
 	SiteEmail string
 
-	MailClientID     string
-	MailClientSecret string
-	MailAccesstoken  string
-	MailRefreshToken string
+	MailHostUser     string
+	MailHostPassword string
+	MailHost         string
+	MailPort         string
 
 	Secret string
 }
@@ -52,10 +52,10 @@ func (env *Env) LoadEnv() {
 
 	env.SiteEmail = os.Getenv("SiteEmail")
 
-	env.MailClientID = os.Getenv("MailClientID")
-	env.MailClientSecret = os.Getenv("MailClientSecret")
-	env.MailAccesstoken = os.Getenv("MailAccesstoken")
-	env.MailRefreshToken = os.Getenv("MailRefreshToken")
+	env.MailHostUser = os.Getenv("MailHostUser")
+	env.MailHostPassword = os.Getenv("MailHostPassword")
+	env.MailHost = os.Getenv("MailHost")
+	env.MailPort = os.Getenv("MailPort")
 
 	env.Secret = os.Getenv("Secret")
 }
