@@ -47,6 +47,8 @@ definitions:
         type: string
       updatedAt:
         type: string
+      verifiedEmail:
+        type: boolean
     required:
     - firstName
     - lastName
@@ -311,7 +313,7 @@ paths:
       - application/json
       description: jwt renew access token
       parameters:
-      - description: accessToken
+      - description: refreshToken
         in: query
         name: refreshToken
         required: true
@@ -323,8 +325,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/swagger.SuccessVerifyAccessTokenResponse'
-        "401":
-          description: Unauthorized
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/swagger.FailedResponse'
         "422":
@@ -332,6 +334,35 @@ paths:
           schema:
             $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: renew access token
+      tags:
+      - auth
+  /auth/verify-email:
+    post:
+      consumes:
+      - application/json
+      description: verify-email
+      parameters:
+      - description: token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.FailedResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: verify-email
       tags:
       - auth
   /ping:
