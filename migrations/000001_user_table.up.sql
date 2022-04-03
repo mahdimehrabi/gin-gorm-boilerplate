@@ -10,6 +10,7 @@ CREATE TABLE "users"
 "devices" JSON ,
 "verified_email" BOOLEAN NOT NULL DEFAULT FALSE ,
 "last_verify_email_date" TIMESTAMPTZ,
+"verify_email_token" VARCHAR (40),
 PRIMARY KEY ("id")
 );
 CREATE INDEX "idx_users_deleted_at" ON "users" ("deleted_at");

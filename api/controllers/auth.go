@@ -89,6 +89,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	user.FirstName = userData.FirstName
 	user.LastName = userData.LastName
 	user.Email = userData.Email
+	user.VerifyEmailToken = utils.GenerateRandomCode(40)
 	err := ac.userService.CreateUser(&user)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to create registered user ", err.Error())
