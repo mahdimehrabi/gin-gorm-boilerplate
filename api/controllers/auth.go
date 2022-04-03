@@ -164,6 +164,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		if err != nil {
 			ac.logger.Zap.Error("Failed to add device", err.Error())
 			responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "An error occured")
+			return
 		}
 
 		tokensData, err := ac.authService.CreateTokens(user, deviceToken)
@@ -333,16 +334,19 @@ func (ac AuthController) VerifyEmail(c *gin.Context) {
 	user, err := ac.userRepository.FindByField("verify_email_token", tr.Token)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "No user found with your token")
+		return
 	}
 
 	if err != nil {
 		ac.logger.Zap.Error("Failed to search for verify email token", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
 	}
 	err = ac.userRepository.UpdateColumn(&user, "verified_email", true)
 	if err != nil {
 		ac.logger.Zap.Error("Failed to update verified_email column", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
 	}
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your email verified successfuly you can login now")
