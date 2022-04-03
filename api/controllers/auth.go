@@ -97,7 +97,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	}
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly!")
 
-	ac.sendRegisterationEmail(&user)
+	go ac.sendRegisterationEmail(&user)
 }
 
 func (ac AuthController) sendRegisterationEmail(user *models.User) error {
