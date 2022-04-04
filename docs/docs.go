@@ -114,7 +114,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.RegisterLoginResponse"
+                            "$ref": "#/definitions/swagger.SuccessResponse"
                         }
                     },
                     "400": {
@@ -172,7 +172,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.RegisterLoginResponse"
+                            "$ref": "#/definitions/swagger.LoginResponse"
                         }
                     },
                     "401": {
@@ -331,7 +331,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.RegisterLoginResponse"
+                            "$ref": "#/definitions/swagger.SuccessResponse"
                         }
                     },
                     "422": {
@@ -376,6 +376,44 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/swagger.FailedResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/resend-verify-email": {
+            "post": {
+                "description": "resend-verify-email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "resend-verify-email",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "unique email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SuccessResponse"
                         }
                     },
                     "422": {
@@ -688,6 +726,22 @@ const docTemplate = `{
                 }
             }
         },
+        "swagger.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.LoginResponse"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Successful message"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "swagger.NotFoundResponse": {
             "type": "object",
             "properties": {
@@ -719,22 +773,6 @@ const docTemplate = `{
                 "msg": {
                     "type": "string",
                     "example": "pong"
-                },
-                "ok": {
-                    "type": "boolean",
-                    "example": true
-                }
-            }
-        },
-        "swagger.RegisterLoginResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/models.LoginResponse"
-                },
-                "msg": {
-                    "type": "string",
-                    "example": "Successful message"
                 },
                 "ok": {
                     "type": "boolean",

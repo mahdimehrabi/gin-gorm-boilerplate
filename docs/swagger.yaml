@@ -101,6 +101,17 @@ definitions:
         example: false
         type: boolean
     type: object
+  swagger.LoginResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.LoginResponse'
+      msg:
+        example: Successful message
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
   swagger.NotFoundResponse:
     properties:
       data:
@@ -122,17 +133,6 @@ definitions:
         type: object
       msg:
         example: pong
-        type: string
-      ok:
-        example: true
-        type: boolean
-    type: object
-  swagger.RegisterLoginResponse:
-    properties:
-      data:
-        $ref: '#/definitions/models.LoginResponse'
-      msg:
-        example: Successful message
         type: string
       ok:
         example: true
@@ -252,7 +252,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.RegisterLoginResponse'
+            $ref: '#/definitions/swagger.SuccessResponse'
         "400":
           description: Bad Request
           schema:
@@ -291,7 +291,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.RegisterLoginResponse'
+            $ref: '#/definitions/swagger.LoginResponse'
         "401":
           description: Unauthorized
           schema:
@@ -402,7 +402,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.RegisterLoginResponse'
+            $ref: '#/definitions/swagger.SuccessResponse'
         "422":
           description: Unprocessable Entity
           schema:
@@ -437,6 +437,31 @@ paths:
           schema:
             $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: renew access token
+      tags:
+      - auth
+  /auth/resend-verify-email:
+    post:
+      consumes:
+      - application/json
+      description: resend-verify-email
+      parameters:
+      - description: unique email
+        in: query
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: resend-verify-email
       tags:
       - auth
   /auth/verify-email:

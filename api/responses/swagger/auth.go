@@ -4,7 +4,7 @@ import (
 	"boilerplate/models"
 )
 
-type RegisterLoginResponse struct {
+type LoginResponse struct {
 	SuccessResponse
 	Data models.LoginResponse `json:"data"`
 }

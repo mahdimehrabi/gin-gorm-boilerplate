@@ -59,7 +59,7 @@ func NewAuthController(logger infrastructure.Logger,
 // @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
 // @Param firstName query string true "firstName"
 // @Param lastName query string true "lastName"
-// @Success 200 {object} swagger.RegisterLoginResponse
+// @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @Router /auth/register [post]
 func (ac AuthController) Register(c *gin.Context) {
@@ -110,7 +110,7 @@ func (ac AuthController) Register(c *gin.Context) {
 // @Param email query string true "email"
 // @Param deviceName query string true "send user operating system + browser name in this param"
 // @Param password query string true "password"
-// @Success 200 {object} swagger.RegisterLoginResponse
+// @Success 200 {object} swagger.LoginResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.FailedLoginResponse
 // @Router /auth/login [post]
@@ -341,7 +341,7 @@ func (ac AuthController) VerifyEmail(c *gin.Context) {
 // @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
 // @Param firstName query string true "firstName"
 // @Param lastName query string true "lastName"
-// @Success 200 {object} swagger.RegisterLoginResponse
+// @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 400 {object} swagger.FailedResponse
 // @Router /auth/forgot-password [post]
@@ -460,16 +460,16 @@ func (ac AuthController) RecoverPassword(c *gin.Context) {
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your password changed successfuly")
 }
 
-// @Summary forgot password
+// @Summary resend-verify-email
 // @Schemes
-// @Description forgot password
+// @Description resend-verify-email
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param email query string true "unique email"
-// @Success 200 {object} swagger.RegisterLoginResponse
+// @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
-// @Router /auth/forgot-password [post]
+// @Router /auth/resend-verify-email [post]
 func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 
 	// Data Parse
