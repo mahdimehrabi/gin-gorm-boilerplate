@@ -101,28 +101,6 @@ func (ac AuthController) Register(c *gin.Context) {
 	go ac.sendRegisterationEmail(&user)
 }
 
-func (ac AuthController) sendRegisterationEmail(user *models.User) error {
-	ch := make(chan error)
-	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
-
-	data := map[string]string{
-		"name": user.FirstName,
-		"link": ac.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
-	}
-	go ac.email.SendEmail(ch, user.Email, "sadg", htmlFile, data)
-	err := <-ch
-	if err != nil {
-		ac.logger.Zap.Error(err)
-		return err
-	}
-	err = ac.userRepository.UpdateColumn(user, "last_verify_email_date", time.Now())
-	if err != nil {
-		ac.logger.Zap.Error(err)
-		return err
-	}
-	return nil
-}
-
 // @Summary login
 // @Schemes
 // @Description jwt login
@@ -518,4 +496,26 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Verification email sent!")
 	go ac.sendForgotPassowrdEmail(&user)
+}
+
+func (ac AuthController) sendRegisterationEmail(user *models.User) error {
+	ch := make(chan error)
+	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
+
+	data := map[string]string{
+		"name": user.FirstName,
+		"link": ac.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
+	}
+	go ac.email.SendEmail(ch, user.Email, "Verify email", htmlFile, data)
+	err := <-ch
+	if err != nil {
+		ac.logger.Zap.Error(err)
+		return err
+	}
+	err = ac.userRepository.UpdateColumn(user, "last_verify_email_date", time.Now())
+	if err != nil {
+		ac.logger.Zap.Error(err)
+		return err
+	}
+	return nil
 }
