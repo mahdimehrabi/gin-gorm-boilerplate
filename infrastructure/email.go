@@ -33,6 +33,7 @@ func NewEmail(
 func (e Email) SendEmail(ch chan error, to string, subject string, htmlFilePath string, templateData interface{}) {
 	if e.env.Environment == "test" {
 		ch <- nil
+		return
 	}
 	m := gomail.NewMessage()
 	m.SetHeader("From", e.env.SiteEmail)
