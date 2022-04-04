@@ -301,17 +301,6 @@ func (suite TestSuiteEnv) TestForgotEmail() {
 	oldToken := user.ForgotPasswordToken
 	a.True(len(oldToken) > 20)
 
-	//test with right email but twice so we must get error wait 15 minute
-	w = httptest.NewRecorder()
-	data = map[string]interface{}{
-		"email": user.Email,
-	}
-	req, _ = http.NewRequest("POST", "/api/auth/forgot-password", utils.MapToJsonBytesBuffer(data))
-	router.ServeHTTP(w, req)
-	a.Equal(http.StatusBadRequest, w.Code, "status code problem")
-	suite.database.DB.Find(&user)
-	a.Equal(oldToken, user.ForgotPasswordToken)
-
 	//test with wrong email
 	w = httptest.NewRecorder()
 	data = map[string]interface{}{
@@ -321,5 +310,5 @@ func (suite TestSuiteEnv) TestForgotEmail() {
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "status code problem")
 	suite.database.DB.Find(&user)
-	a.Nil(user.ForgotPasswordToken)
+	a.Equal(oldToken, user.ForgotPasswordToken)
 }

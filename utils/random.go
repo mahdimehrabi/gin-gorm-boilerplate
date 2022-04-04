@@ -42,7 +42,7 @@ func GenerateRandomDigitSequence(max int) string {
 }
 
 func GenerateRandomEmail(length int) string {
-	return "mail" + GenerateRandomCode(length) + "@gmail.com"
+	return GenerateRandomCode(length) + "@gmail.com"
 }
 
 var table = [...]byte{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}

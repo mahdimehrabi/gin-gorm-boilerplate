@@ -30,7 +30,7 @@ func (suite TestSuiteEnv) TestChangePassword() {
 	a.Equal(len(devices), 0, "devices is not empty")
 
 	//test with weak password
-	user = CreateUser("m12345678", db, suite.encryption)
+	user = CreateUser("m123456789", db, suite.encryption)
 	data = map[string]interface{}{
 		"password":       "12345678",
 		"repeatPassword": "12345678",
