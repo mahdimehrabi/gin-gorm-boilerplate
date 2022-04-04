@@ -16,6 +16,8 @@ func MsgForTag(tag string, fieldName string, param string) string {
 		return "You must use numeric value for this field"
 	case "eqfield":
 		return fmt.Sprintf("Field %s must be equal to field %s", fieldName, param)
+	case "len":
+		return fmt.Sprintf("Field %s length must be equal to %s", fieldName, param)
 	}
 	return "You cannot use this data for this field"
 }

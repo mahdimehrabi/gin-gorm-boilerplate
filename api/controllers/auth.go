@@ -419,3 +419,65 @@ func (ac AuthController) sendForgotPassowrdEmail(user *models.User) error {
 	}
 	return nil
 }
+
+// @Summary change-password
+// @Schemes
+// @Description Change Password , authentication required
+// @Tags profile
+// @Accept json
+// @Produce json
+// @Param email query string true "unique email"
+// @Param password query string true "password that have at least 8 length and contain an alphabet and number "
+// @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
+// @Success 200 {object} swagger.SuccessResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @failure 401 {object} swagger.UnauthenticatedResponse
+// @Router /profile/change-password [post]
+func (ac AuthController) RecoverPassword(c *gin.Context) {
+	// Data Parse
+	var userData models.RecoverPassword
+	if err := c.ShouldBindJSON(&userData); err != nil {
+		fieldErrors := make(map[string]string, 0)
+		if !utils.IsGoodPassword(userData.Password) {
+			fieldErrors["password"] = "Password must contain at least one alphabet and one number and its length must be 8 characters or more"
+
+		}
+		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
+		return
+	}
+	if !utils.IsGoodPassword(userData.Password) {
+		fieldErrors := map[string]string{
+			"password": "Password must contain at least one alphabet and one number and its length must be 8 characters or more",
+		}
+		responses.ManualValidationErrorsJSON(c, fieldErrors, "")
+		return
+	}
+
+	user, err := ac.userRepository.FindByField("forgot_password_token", userData.Token)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		responses.JSON(c, http.StatusOK, gin.H{}, "An email contain password recovery link sent to your email")
+		return
+	}
+	if err != nil {
+		ac.logger.Zap.Error("Failed to find user by forgot password token  ", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
+		return
+	}
+	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(userData.Password)
+
+	err = ac.userService.UpdatePassword(&user, encryptedPassword)
+	if err != nil {
+		ac.logger.Zap.Error("Failed to change password", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
+	}
+
+	err = ac.userRepository.UpdateColumn(&user, "forgot_password_token", nil)
+	if err != nil {
+		ac.logger.Zap.Error("Failed to change password", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
+	}
+
+	responses.JSON(c, http.StatusOK, gin.H{}, "Your password changed successfuly")
+}

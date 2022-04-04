@@ -13,6 +13,11 @@ type ChangePassword struct {
 	RepeatPassword string `json:"repeatPassword" binding:"required,eqfield=Password"`
 }
 
+type RecoverPassword struct {
+	ChangePassword
+	Token string `json:"token" binding:"len:40,required"`
+}
+
 type LoginRequest struct {
 	Email      string `json:"email" binding:"required"`
 	Password   string `json:"password" binding:"required"`
@@ -41,7 +46,7 @@ type RefreshTokenRequest struct {
 }
 
 type TokenRequest struct {
-	Token string `json:"token" binding:"required"`
+	Token string `json:"token" binding:"len:40,required"`
 }
 
 type EmailRequest struct {
