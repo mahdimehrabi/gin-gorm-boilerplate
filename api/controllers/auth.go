@@ -512,7 +512,7 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 		return
 	}
 	if user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-15) * time.Minute)) {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for recovering password after 15 minutes of your last reqeust")
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for resending verification email after 15 minutes of your last reqeust")
 		return
 	}
 
