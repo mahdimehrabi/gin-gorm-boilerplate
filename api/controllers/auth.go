@@ -495,7 +495,7 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 	}
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Verification email sent!")
-	go ac.sendForgotPassowrdEmail(&user)
+	go ac.sendRegisterationEmail(&user)
 }
 
 func (ac AuthController) sendRegisterationEmail(user *models.User) error {
