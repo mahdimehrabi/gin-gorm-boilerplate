@@ -255,7 +255,7 @@ func (suite TestSuiteEnv) TestVerifyEmail() {
 	//test with wrong token
 	w := httptest.NewRecorder()
 	data := map[string]interface{}{
-		"token": "wrong-token",
+		"token": utils.GenerateRandomCode(40),
 	}
 	req, _ := http.NewRequest("POST", "/api/auth/verify-email", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
@@ -351,7 +351,7 @@ func (suite TestSuiteEnv) TestRecoveryPassword() {
 	a.Nil(user.ForgotPasswordToken)
 
 	//test with weak password
-	user = CreateUser("m123456789", db, suite.encryption)
+	user = CreateUser("m123456777", db, suite.encryption)
 	data = map[string]interface{}{
 		"token":          user.ForgotPasswordToken,
 		"password":       "12345678",
@@ -363,9 +363,9 @@ func (suite TestSuiteEnv) TestRecoveryPassword() {
 	a.Equal(http.StatusUnprocessableEntity, w.Code, "Status code problem")
 
 	//test with wrong token
-	user = CreateUser("m123456789", db, suite.encryption)
+	user = CreateUser("m123456765", db, suite.encryption)
 	data = map[string]interface{}{
-		"token":          "wrong token",
+		"token":          utils.GenerateRandomCode(40),
 		"password":       "m987654321",
 		"repeatPassword": "m987654321",
 	}
