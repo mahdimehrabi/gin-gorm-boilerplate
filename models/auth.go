@@ -15,7 +15,7 @@ type ChangePassword struct {
 
 type RecoverPassword struct {
 	ChangePassword
-	Token string `json:"token" binding:"len:40,required"`
+	Token string `json:"token" binding:"len=40,required"`
 }
 
 type LoginRequest struct {
@@ -46,7 +46,7 @@ type RefreshTokenRequest struct {
 }
 
 type TokenRequest struct {
-	Token string `json:"token" binding:"len:40,required"`
+	Token string `json:"token" binding:"len=40,required"`
 }
 
 type EmailRequest struct {
