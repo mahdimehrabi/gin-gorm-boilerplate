@@ -18,11 +18,13 @@
         {
             "name": "test",
             "type": "go",
-            "request": "attach",
+            "request": "launch",
             "mode": "remote",
-            "remotePath": "${workspaceFolder}",
+            "remotePath": "/clean_web",
             "port": 4000,
-            "host": "127.0.0.1"
+            "program": "${workspaceRoot}",
+            "host": "127.0.0.1",
+            "showLog": true
         }
     ]
 }
