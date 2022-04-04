@@ -375,3 +375,43 @@ func (suite TestSuiteEnv) TestRecoveryPassword() {
 	a.Equal(http.StatusNotFound, w.Code, "Status code problem")
 
 }
+
+func (suite TestSuiteEnv) TestResendEmail() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+	suite.database.DB.Model(&user).Update("verified_email", false)
+
+	//test with right email
+	w := httptest.NewRecorder()
+	data := map[string]interface{}{
+		"email": user.Email,
+	}
+	req, _ := http.NewRequest("POST", "/api/auth/resend-verify-email", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	token := user.VerifyEmailToken
+	a.True(len(token) > 20)
+
+	//test with wrong email
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{
+		"email": "masfasf@gmail.com",
+	}
+	req, _ = http.NewRequest("POST", "/api/auth/resend-verify-email", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "status code problem")
+
+	//test with right email but twice in row
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{
+		"email": user.Email,
+	}
+	suite.database.DB.Model(&user).UpdateColumn("last_verify_email_date", time.Now())
+	req, _ = http.NewRequest("POST", "/api/auth/resend-verify-email", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusBadRequest, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+}
