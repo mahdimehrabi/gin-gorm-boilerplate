@@ -48,6 +48,78 @@
                 }
             }
         },
+        "/auth/forgot-password": {
+            "post": {
+                "description": "forgot password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "forgot password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "unique email",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "password that have at least 8 length and contain an alphabet and number ",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repeatPassword that have at least 8 length and contain an alphabet and number ",
+                        "name": "repeatPassword",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "firstName",
+                        "name": "firstName",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "lastName",
+                        "name": "lastName",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.RegisterLoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "jwt login",
@@ -130,6 +202,64 @@
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/recover-password": {
+            "post": {
+                "description": "Let user change it password with forgot token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "recover-password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "password that have at least 8 length and contain an alphabet and number ",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repeatPassword that have at least 8 length and contain an alphabet and number ",
+                        "name": "repeatPassword",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SuccessResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
                         }
                     }
                 }
@@ -326,13 +456,6 @@
                 ],
                 "summary": "change-password",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "unique email",
-                        "name": "email",
-                        "in": "query",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "password that have at least 8 length and contain an alphabet and number ",
@@ -546,6 +669,22 @@
                 "msg": {
                     "type": "string",
                     "example": "Please review your entered data"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "swagger.NotFoundResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/swagger.EmptyData"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "404 not found!"
                 },
                 "ok": {
                     "type": "boolean",

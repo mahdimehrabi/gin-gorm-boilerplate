@@ -44,7 +44,6 @@ func NewProfileController(logger infrastructure.Logger,
 // @Tags profile
 // @Accept json
 // @Produce json
-// @Param email query string true "unique email"
 // @Param password query string true "password that have at least 8 length and contain an alphabet and number "
 // @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
 // @Success 200 {object} swagger.SuccessResponse

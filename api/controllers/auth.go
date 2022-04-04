@@ -420,19 +420,19 @@ func (ac AuthController) sendForgotPassowrdEmail(user *models.User) error {
 	return nil
 }
 
-// @Summary change-password
+// @Summary recover-password
 // @Schemes
-// @Description Change Password , authentication required
-// @Tags profile
+// @Description Let user change it password with forgot token
+// @Tags auth
 // @Accept json
 // @Produce json
-// @Param email query string true "unique email"
+// @Param token query string true "token"
 // @Param password query string true "password that have at least 8 length and contain an alphabet and number "
 // @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
 // @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
-// @failure 401 {object} swagger.UnauthenticatedResponse
-// @Router /profile/change-password [post]
+// @failure 404 {object} swagger.NotFoundResponse
+// @Router /auth/recover-password [post]
 func (ac AuthController) RecoverPassword(c *gin.Context) {
 	// Data Parse
 	var userData models.RecoverPassword

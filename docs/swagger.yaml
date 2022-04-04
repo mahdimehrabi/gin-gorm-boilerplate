@@ -101,6 +101,17 @@ definitions:
         example: false
         type: boolean
     type: object
+  swagger.NotFoundResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.EmptyData'
+      msg:
+        example: 404 not found!
+        type: string
+      ok:
+        example: false
+        type: boolean
+    type: object
   swagger.PingResponse:
     properties:
       data:
@@ -202,6 +213,57 @@ paths:
       summary: access token verify
       tags:
       - auth
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: forgot password
+      parameters:
+      - description: unique email
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: 'password that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: 'repeatPassword that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: repeatPassword
+        required: true
+        type: string
+      - description: firstName
+        in: query
+        name: firstName
+        required: true
+        type: string
+      - description: lastName
+        in: query
+        name: lastName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.RegisterLoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/swagger.FailedResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: forgot password
+      tags:
+      - auth
   /auth/login:
     post:
       consumes:
@@ -258,6 +320,47 @@ paths:
           schema:
             $ref: '#/definitions/swagger.UnauthenticatedResponse'
       summary: logout
+      tags:
+      - auth
+  /auth/recover-password:
+    post:
+      consumes:
+      - application/json
+      description: Let user change it password with forgot token
+      parameters:
+      - description: token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: 'password that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: 'repeatPassword that have at least 8 length and contain an alphabet
+          and number '
+        in: query
+        name: repeatPassword
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.NotFoundResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: recover-password
       tags:
       - auth
   /auth/register:
@@ -386,11 +489,6 @@ paths:
       - application/json
       description: Change Password , authentication required
       parameters:
-      - description: unique email
-        in: query
-        name: email
-        required: true
-        type: string
       - description: 'password that have at least 8 length and contain an alphabet
           and number '
         in: query

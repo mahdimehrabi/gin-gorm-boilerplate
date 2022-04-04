@@ -17,6 +17,13 @@ type FailedResponse struct {
 	Data EmptyData `json:"data"`
 }
 
+//for override
+type NotFoundResponse struct {
+	Msg  string    `json:"msg" example:"404 not found!"`
+	Ok   bool      `json:"ok" example:"false"`
+	Data EmptyData `json:"data"`
+}
+
 type validationErrors struct {
 	Errors map[string]string `json:"errors" example:"field1:This field is required,field2:This field must be numeric"`
 }
