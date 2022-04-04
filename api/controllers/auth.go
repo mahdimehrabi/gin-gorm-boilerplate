@@ -481,3 +481,41 @@ func (ac AuthController) RecoverPassword(c *gin.Context) {
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your password changed successfuly")
 }
+
+// @Summary forgot password
+// @Schemes
+// @Description forgot password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param email query string true "unique email"
+// @Success 200 {object} swagger.RegisterLoginResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @Router /auth/forgot-password [post]
+func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
+
+	// Data Parse
+	var er models.EmailRequest
+	if err := c.ShouldBindJSON(&er); err != nil {
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
+		return
+	}
+
+	user, err := ac.userRepository.FindByField("email", er.Email)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		responses.JSON(c, http.StatusOK, gin.H{}, "Verification email sent!")
+		return
+	}
+	if err != nil {
+		ac.logger.Zap.Error("Failed to find user by email  ", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
+		return
+	}
+	if user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-15) * time.Minute)) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for recovering password after 15 minutes of your last reqeust")
+		return
+	}
+
+	responses.JSON(c, http.StatusOK, gin.H{}, "Verification email sent!")
+	go ac.sendForgotPassowrdEmail(&user)
+}
