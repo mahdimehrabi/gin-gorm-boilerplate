@@ -348,7 +348,7 @@ func (suite TestSuiteEnv) TestRecoveryPassword() {
 	suite.database.DB.Find(&user)
 	encryptedPassword := suite.encryption.SaltAndSha256Encrypt("m987654321")
 	a.Equal(encryptedPassword, user.Password, "encrypt password problem")
-	a.Nil(user.ForgotPasswordToken)
+	a.Empty(user.ForgotPasswordToken)
 
 	//test with weak password
 	user = CreateUser("m123456777", db, suite.encryption)
@@ -372,6 +372,6 @@ func (suite TestSuiteEnv) TestRecoveryPassword() {
 	w = httptest.NewRecorder()
 	req, _, _ = NewAuthenticatedRequest(suite.authService, suite.database, user, "POST", "/api/auth/recover-password", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
-	a.Equal(http.StatusForbidden, w.Code, "Status code problem")
+	a.Equal(http.StatusNotFound, w.Code, "Status code problem")
 
 }

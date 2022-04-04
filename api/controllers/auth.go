@@ -455,7 +455,7 @@ func (ac AuthController) RecoverPassword(c *gin.Context) {
 
 	user, err := ac.userRepository.FindByField("forgot_password_token", userData.Token)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		responses.JSON(c, http.StatusOK, gin.H{}, "An email contain password recovery link sent to your email")
+		responses.JSON(c, http.StatusNotFound, gin.H{}, "404 not found!")
 		return
 	}
 	if err != nil {
@@ -472,7 +472,7 @@ func (ac AuthController) RecoverPassword(c *gin.Context) {
 		return
 	}
 
-	err = ac.userRepository.UpdateColumn(&user, "forgot_password_token", nil)
+	err = ac.userRepository.UpdateColumn(&user, "forgot_password_token", "")
 	if err != nil {
 		ac.logger.Zap.Error("Failed to change password", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
