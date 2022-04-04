@@ -13,7 +13,7 @@ var digitsAndNumbers = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 // GenerateRandomCode generate random string
 func GenerateRandomCode(codeLength int) string {
 	code := make([]rune, codeLength)
-	r := mr.NewSource(time.Now().Unix())
+	r := mr.NewSource(time.Now().UnixMicro())
 	rand := mr.New(r)
 
 	for i := range code {
