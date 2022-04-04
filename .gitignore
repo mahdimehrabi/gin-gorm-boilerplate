@@ -15,7 +15,9 @@ debug.test
 
 #editor based
 .idea
-.vscode
+.vscode/*
+!.vscode/
+!.vscode/launch.json
 .DS_Store
 */.DS_Store
 *.swp
