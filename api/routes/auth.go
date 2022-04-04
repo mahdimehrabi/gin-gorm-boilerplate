@@ -38,4 +38,5 @@ func (ar AuthRoutes) Setup() {
 	ar.router.Gin.POST("/api/auth/renew-access-token", ar.AuthController.RenewToken)
 	ar.router.Gin.POST("/api/auth/logout", ar.authMiddleware.AuthHandle(), ar.AuthController.Logout)
 	ar.router.Gin.POST("/api/auth/verify-email", ar.AuthController.VerifyEmail)
+	ar.router.Gin.POST("/api/auth/forgot-password", ar.AuthController.ForgotPassword)
 }

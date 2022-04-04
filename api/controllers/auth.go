@@ -365,6 +365,7 @@ func (ac AuthController) VerifyEmail(c *gin.Context) {
 // @Param lastName query string true "lastName"
 // @Success 200 {object} swagger.RegisterLoginResponse
 // @failure 422 {object} swagger.FailedValidationResponse
+// @failure 400 {object} swagger.FailedResponse
 // @Router /auth/forgot-password [post]
 func (ac AuthController) ForgotPassword(c *gin.Context) {
 
@@ -385,6 +386,11 @@ func (ac AuthController) ForgotPassword(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
+	if user.LastForgotEmailDate.After(time.Now().Add(time.Duration(-15) * time.Minute)) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for recovering password after 15 minutes of your last reqeust")
+		return
+	}
+
 	ac.userRepository.UpdateColumn(&user, "forgot_password_token", utils.GenerateRandomCode(40))
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "An email contain password recovery link sent to your email")

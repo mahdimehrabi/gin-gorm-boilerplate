@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"net/http"
 	"net/http/httptest"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -304,11 +305,23 @@ func (suite TestSuiteEnv) TestForgotEmail() {
 	//test with wrong email
 	w = httptest.NewRecorder()
 	data = map[string]interface{}{
-		"email": user.Email,
+		"email": "masfasf@gmail.com",
 	}
 	req, _ = http.NewRequest("POST", "/api/auth/forgot-password", utils.MapToJsonBytesBuffer(data))
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "status code problem")
+	suite.database.DB.Find(&user)
+	a.Equal(oldToken, user.ForgotPasswordToken)
+
+	//test with right email but twice in row
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{
+		"email": user.Email,
+	}
+	suite.database.DB.Model(&user).UpdateColumn("last_forgot_email_date", time.Now())
+	req, _ = http.NewRequest("POST", "/api/auth/forgot-password", utils.MapToJsonBytesBuffer(data))
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusBadRequest, w.Code, "status code problem")
 	suite.database.DB.Find(&user)
 	a.Equal(oldToken, user.ForgotPasswordToken)
 }
