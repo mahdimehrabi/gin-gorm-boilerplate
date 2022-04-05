@@ -9,6 +9,7 @@ docker compose implemention for development and production + cache
 delve debugger + source watcher for reload   
 advanced jwt authentication + middleware
 -saving device name ip and city on login
+-devices
 registeration by verifying email
 forgot password
 change password route 
