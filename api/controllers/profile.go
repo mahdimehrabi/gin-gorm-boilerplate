@@ -125,7 +125,8 @@ func (pc ProfileController) LoggedInDevices(c *gin.Context) {
 // @Tags profile
 // @Accept json
 // @Produce json
-// @Success 200 {object} swagger.SuccessResponse
+// @Param token query string true "token of the device that we want to remove"
+// @Success 200 {object} swagger.DevicesResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 404 {object} swagger.NotFoundResponse
 // @failure 401 {object} swagger.UnauthenticatedResponse
@@ -158,5 +159,14 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 
 	pc.authService.DeleteDevice(&user, tr.Token)
 
-	responses.JSON(c, http.StatusOK, gin.H{}, "Selected device logged out succesfuly!")
+	resDevices, err := pc.userRepository.GetLoggedInDevices(user)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to get logged in devices", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+	responses.JSON(c, http.StatusOK, models.DeviceListResponse{
+		Current: c.MustGet("deviceToken").(string),
+		Devices: resDevices,
+	}, "Selected device logged out succesfuly!")
 }

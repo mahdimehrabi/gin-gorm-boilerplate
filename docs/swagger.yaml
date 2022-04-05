@@ -25,7 +25,7 @@ definitions:
   models.DeviceListResponse:
     properties:
       current:
-        example: current token
+        example: current device token
         type: string
       devices:
         items:
@@ -578,13 +578,19 @@ paths:
       consumes:
       - application/json
       description: jwt terminate-device , atuhentication required
+      parameters:
+      - description: token of the device that we want to remove
+        in: query
+        name: token
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/swagger.SuccessResponse'
+            $ref: '#/definitions/swagger.DevicesResponse'
         "401":
           description: Unauthorized
           schema:

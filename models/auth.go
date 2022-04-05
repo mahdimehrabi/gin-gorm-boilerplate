@@ -66,6 +66,6 @@ type Device struct {
 }
 
 type DeviceListResponse struct {
-	Current string   `json:"current" example:"current token"`
+	Current string   `json:"current" example:"current device token"`
 	Devices []Device `json:"devices"`
 }

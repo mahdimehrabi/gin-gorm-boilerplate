@@ -585,11 +585,20 @@ const docTemplate = `{
                     "profile"
                 ],
                 "summary": "terminate-device",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "token of the device that we want to remove",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/swagger.SuccessResponse"
+                            "$ref": "#/definitions/swagger.DevicesResponse"
                         }
                     },
                     "401": {
@@ -655,7 +664,7 @@ const docTemplate = `{
             "properties": {
                 "current": {
                     "type": "string",
-                    "example": "current token"
+                    "example": "current device token"
                 },
                 "devices": {
                     "type": "array",
