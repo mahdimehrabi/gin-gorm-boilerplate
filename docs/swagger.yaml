@@ -19,6 +19,17 @@ definitions:
         type: string
       ip:
         type: string
+      token:
+        type: string
+    type: object
+  models.DeviceListResponse:
+    properties:
+      current:
+        type: string
+      devices:
+        items:
+          $ref: '#/definitions/models.Device'
+        type: array
     type: object
   models.LoginResponse:
     properties:
@@ -56,9 +67,7 @@ definitions:
   swagger.DevicesResponse:
     properties:
       data:
-        items:
-          $ref: '#/definitions/models.Device'
-        type: array
+        $ref: '#/definitions/models.DeviceListResponse'
       msg:
         example: ""
         type: string
@@ -561,6 +570,33 @@ paths:
           schema:
             $ref: '#/definitions/swagger.UnauthenticatedResponse'
       summary: devices
+      tags:
+      - profile
+  /profile/terminate-device:
+    post:
+      consumes:
+      - application/json
+      description: jwt terminate-device , atuhentication required
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.NotFoundResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: terminate-device
       tags:
       - profile
 swagger: "2.0"

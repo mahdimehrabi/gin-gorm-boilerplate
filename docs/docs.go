@@ -571,6 +571,47 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/profile/terminate-device": {
+            "post": {
+                "description": "jwt terminate-device , atuhentication required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "terminate-device",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -603,6 +644,23 @@ const docTemplate = `{
                 },
                 "ip": {
                     "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.DeviceListResponse": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "string"
+                },
+                "devices": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Device"
+                    }
                 }
             }
         },
@@ -660,10 +718,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Device"
-                    }
+                    "$ref": "#/definitions/models.DeviceListResponse"
                 },
                 "msg": {
                     "type": "string",

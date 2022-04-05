@@ -113,19 +113,23 @@ func (pc ProfileController) LoggedInDevices(c *gin.Context) {
 		return
 	}
 
-	responses.JSON(c, http.StatusOK, devices, "")
+	responses.JSON(c, http.StatusOK, models.DeviceListResponse{
+		Current: c.MustGet("deviceToken").(string),
+		Devices: devices,
+	}, "")
 }
 
 // @Summary terminate-device
 // @Schemes
 // @Description jwt terminate-device , atuhentication required
-// @Tags auth
+// @Tags profile
 // @Accept json
 // @Produce json
 // @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
+// @failure 404 {object} swagger.NotFoundResponse
 // @failure 401 {object} swagger.UnauthenticatedResponse
-// @Router /auth/terminate-device [post]
+// @Router /profile/terminate-device [post]
 func (pc ProfileController) TerminateDevice(c *gin.Context) {
 	tr := models.TokenRequestNoLimit{}
 	if err := c.ShouldBindJSON(&tr); err != nil {
