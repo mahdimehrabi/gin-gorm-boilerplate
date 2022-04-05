@@ -98,13 +98,14 @@ func (ur UserRepository) GetLoggedInDevices(user models.User) ([]models.Device, 
 		return res, err
 	}
 
-	for _, v := range devices {
+	for token, v := range devices {
 		dv := v.(map[string]interface{})
 		mp := models.Device{
 			Ip:         dv["ip"].(string),
 			City:       dv["city"].(string),
 			Date:       dv["date"].(string),
 			DeviceName: dv["deviceName"].(string),
+			Token:      token,
 		}
 		res = append(res, mp)
 	}

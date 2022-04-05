@@ -127,7 +127,7 @@ func (pc ProfileController) LoggedInDevices(c *gin.Context) {
 // @failure 401 {object} swagger.UnauthenticatedResponse
 // @Router /auth/terminate-device [post]
 func (pc ProfileController) TerminateDevice(c *gin.Context) {
-	tr := models.TokenRequest{}
+	tr := models.TokenRequestNoLimit{}
 	if err := c.ShouldBindJSON(&tr); err != nil {
 		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
@@ -139,6 +139,19 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
 		return
 	}
+
+	devicesBytes := []byte(user.Devices.String())
+	devices, err := utils.BytesJsonToMap(devicesBytes)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to get logged in devices", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+	if devices[tr.Token] == nil {
+		responses.ErrorJSON(c, http.StatusNotFound, gin.H{}, "This device already logged out or not exist at all")
+		return
+	}
+
 	pc.authService.DeleteDevice(&user, tr.Token)
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "Selected device logged out succesfuly!")

@@ -49,6 +49,10 @@ type TokenRequest struct {
 	Token string `json:"token" binding:"len=40,required"`
 }
 
+type TokenRequestNoLimit struct {
+	Token string `json:"token" binding:"required"`
+}
+
 type EmailRequest struct {
 	Email string `json:"email" binding:"required,email"`
 }
@@ -58,4 +62,5 @@ type Device struct {
 	City       string `json:"city"`
 	Date       string `json:"date"`
 	DeviceName string `json:"deviceName"`
+	Token      string `json:"token"`
 }

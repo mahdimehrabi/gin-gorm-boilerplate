@@ -71,7 +71,7 @@ func (suite TestSuiteEnv) TestTerminateDevice() {
 	user := CreateUser("m12345678", db, suite.encryption)
 
 	w := httptest.NewRecorder()
-	deviceToken := utils.GenerateRandomCode(40)
+	deviceToken := utils.GenerateRandomCode(18)
 	data := map[string]interface{}{
 		"token": deviceToken,
 	}
@@ -96,4 +96,21 @@ func (suite TestSuiteEnv) TestTerminateDevice() {
 	devicesBytes = []byte(user.Devices.String())
 	devices, _ = utils.BytesJsonToMap(devicesBytes)
 	a.Nil(devices[deviceToken])
+
+	//test wrong token
+	w = httptest.NewRecorder()
+	data = map[string]interface{}{
+		"token": "wrong-device-token",
+	}
+	req, deviceToken, _ = NewAuthenticatedRequest(
+		suite.authService,
+		suite.database,
+		user,
+		"POST",
+		"/api/profile/terminate-device",
+		utils.MapToJsonBytesBuffer(data),
+	)
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusNotFound, w.Code, "Status code problem")
+
 }
