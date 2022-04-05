@@ -63,3 +63,37 @@ func (suite TestSuiteEnv) TestGetLoggedInDevices() {
 	devices, _ := response["data"].([]interface{})
 	a.Equal("alaki", devices[0].(map[string]interface{})["city"].(string))
 }
+
+func (suite TestSuiteEnv) TestTerminateDevice() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+
+	w := httptest.NewRecorder()
+	deviceToken := utils.GenerateRandomCode(40)
+	data := map[string]interface{}{
+		"token": deviceToken,
+	}
+	req, _, _ := NewAuthenticatedRequestCustomDeviceToken(
+		suite.authService,
+		suite.database,
+		user,
+		"POST",
+		"/api/profile/terminate-device",
+		utils.MapToJsonBytesBuffer(data),
+		deviceToken,
+	)
+	suite.database.DB.Find(&user)
+	devicesBytes := []byte(user.Devices.String())
+	devices, _ := utils.BytesJsonToMap(devicesBytes)
+	a.NotNil(devices[deviceToken])
+
+	router.ServeHTTP(w, req)
+	a.Equal(http.StatusOK, w.Code, "Status code problem")
+	suite.database.DB.Find(&user)
+
+	devicesBytes = []byte(user.Devices.String())
+	devices, _ = utils.BytesJsonToMap(devicesBytes)
+	a.Nil(devices[deviceToken])
+}

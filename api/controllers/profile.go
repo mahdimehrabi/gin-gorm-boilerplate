@@ -115,3 +115,31 @@ func (pc ProfileController) LoggedInDevices(c *gin.Context) {
 
 	responses.JSON(c, http.StatusOK, devices, "")
 }
+
+// @Summary terminate-device
+// @Schemes
+// @Description jwt terminate-device , atuhentication required
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Success 200 {object} swagger.SuccessResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @failure 401 {object} swagger.UnauthenticatedResponse
+// @Router /auth/terminate-device [post]
+func (pc ProfileController) TerminateDevice(c *gin.Context) {
+	tr := models.TokenRequest{}
+	if err := c.ShouldBindJSON(&tr); err != nil {
+		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
+		return
+	}
+
+	user, err := pc.userRepository.GetAuthenticatedUser(c)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to change password", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
+	}
+	pc.authService.DeleteDevice(&user, tr.Token)
+
+	responses.JSON(c, http.StatusOK, gin.H{}, "Selected device logged out succesfuly!")
+}

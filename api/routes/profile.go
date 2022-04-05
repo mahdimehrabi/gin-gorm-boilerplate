@@ -35,5 +35,6 @@ func (pr ProfileRoutes) Setup() {
 	{
 		g.POST("/change-password", pr.ProfileController.ChangePassword)
 		g.POST("/devices", pr.ProfileController.LoggedInDevices)
+		g.POST("/terminate-device", pr.ProfileController.TerminateDevice)
 	}
 }
