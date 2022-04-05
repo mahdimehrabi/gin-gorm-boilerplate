@@ -544,7 +544,7 @@ const docTemplate = `{
             }
         },
         "/profile/devices": {
-            "post": {
+            "get": {
                 "description": "return logged in devices in user's account , authentication required",
                 "consumes": [
                     "application/json"
@@ -654,7 +654,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "current": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "current token"
                 },
                 "devices": {
                     "type": "array",

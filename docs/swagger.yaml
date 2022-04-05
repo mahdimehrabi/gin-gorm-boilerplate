@@ -25,6 +25,7 @@ definitions:
   models.DeviceListResponse:
     properties:
       current:
+        example: current token
         type: string
       devices:
         items:
@@ -554,7 +555,7 @@ paths:
       tags:
       - profile
   /profile/devices:
-    post:
+    get:
       consumes:
       - application/json
       description: return logged in devices in user's account , authentication required

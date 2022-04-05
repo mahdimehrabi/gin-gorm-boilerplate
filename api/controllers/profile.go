@@ -96,7 +96,7 @@ func (pc ProfileController) ChangePassword(c *gin.Context) {
 // @Produce json
 // @Success 200 {object} swagger.DevicesResponse
 // @failure 401 {object} swagger.UnauthenticatedResponse
-// @Router /profile/devices [post]
+// @Router /profile/devices [get]
 func (pc ProfileController) LoggedInDevices(c *gin.Context) {
 
 	user, err := pc.userRepository.GetAuthenticatedUser(c)

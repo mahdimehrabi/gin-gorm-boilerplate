@@ -34,7 +34,7 @@ func (pr ProfileRoutes) Setup() {
 	g := pr.router.Gin.Group("/api/profile").Use(pr.authMiddleware.AuthHandle())
 	{
 		g.POST("/change-password", pr.ProfileController.ChangePassword)
-		g.POST("/devices", pr.ProfileController.LoggedInDevices)
+		g.GET("/devices", pr.ProfileController.LoggedInDevices)
 		g.POST("/terminate-device", pr.ProfileController.TerminateDevice)
 	}
 }
