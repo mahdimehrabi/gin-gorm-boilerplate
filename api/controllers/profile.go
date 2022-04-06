@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/datatypes"
 )
 
 type ProfileController struct {
@@ -19,6 +20,7 @@ type ProfileController struct {
 	userService    services.UserService
 	authService    services.AuthService
 	userRepository repositories.UserRepository
+	db             infrastructure.Database
 }
 
 func NewProfileController(logger infrastructure.Logger,
@@ -27,6 +29,7 @@ func NewProfileController(logger infrastructure.Logger,
 	userService services.UserService,
 	authService services.AuthService,
 	userRepository repositories.UserRepository,
+	db infrastructure.Database,
 ) ProfileController {
 	return ProfileController{
 		logger:         logger,
@@ -35,6 +38,7 @@ func NewProfileController(logger infrastructure.Logger,
 		userService:    userService,
 		authService:    authService,
 		userRepository: userRepository,
+		db:             db,
 	}
 }
 
@@ -148,7 +152,7 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 	devicesBytes := []byte(user.Devices.String())
 	devices, err := utils.BytesJsonToMap(devicesBytes)
 	if err != nil {
-		pc.logger.Zap.Error("Failed to get logged in devices", err.Error())
+		pc.logger.Zap.Error("Failed to terminate device", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
 		return
 	}
@@ -161,7 +165,7 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 
 	resDevices, err := pc.userRepository.GetLoggedInDevices(user)
 	if err != nil {
-		pc.logger.Zap.Error("Failed to get logged in devices", err.Error())
+		pc.logger.Zap.Error("Failed to terminate device", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
 		return
 	}
@@ -169,4 +173,55 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 		Current: c.MustGet("deviceToken").(string),
 		Devices: resDevices,
 	}, "Selected device logged out succesfuly!")
+}
+
+// @Summary terminate-device
+// @Schemes
+// @Description terminate all devices execpt current device , atuhentication required
+// @Tags profile
+// @Accept json
+// @Produce json
+// @Success 200 {object} swagger.DevicesResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @failure 404 {object} swagger.NotFoundResponse
+// @failure 401 {object} swagger.UnauthenticatedResponse
+// @Router /profile/terminate-devices-except-me [post]
+func (pc ProfileController) TerminateDevicesExceptMe(c *gin.Context) {
+	user, err := pc.userRepository.GetAuthenticatedUser(c)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to change password", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		return
+	}
+	token := c.MustGet("deviceToken").(string)
+
+	devicesBytes := []byte(user.Devices.String())
+	devices, err := utils.BytesJsonToMap(devicesBytes)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to terminate all devices except me", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+	currentDevice := devices[token]
+	devices = map[string]interface{}{
+		"token": currentDevice,
+	}
+	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
+	err = pc.db.DB.Save(&user).Error
+	if err != nil {
+		pc.logger.Zap.Error("Failed to terminate all devices except me", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+
+	resDevices, err := pc.userRepository.GetLoggedInDevices(user)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to terminate all devices except me", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured 😢")
+		return
+	}
+	responses.JSON(c, http.StatusOK, models.DeviceListResponse{
+		Current: c.MustGet("deviceToken").(string),
+		Devices: resDevices,
+	}, "All devices except current device logged out successfuly")
 }

@@ -4,6 +4,10 @@ import (
 	"boilerplate/utils"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+	"time"
+
+	"gorm.io/datatypes"
 )
 
 func (suite TestSuiteEnv) TestChangePassword() {
@@ -113,4 +117,49 @@ func (suite TestSuiteEnv) TestTerminateDevice() {
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusNotFound, w.Code, "Status code problem")
 
+}
+
+func (suite TestSuiteEnv) TerminateDevicesExceptMe() {
+	router := suite.router.Gin
+	db := suite.database.DB
+	a := suite.Assert()
+	user := CreateUser("m12345678", db, suite.encryption)
+
+	devices := make(map[string]interface{})
+	device1Token := utils.GenerateRandomCode(17) + "1"
+	device2Token := utils.GenerateRandomCode(17) + "2"
+	devices[device1Token] = map[string]string{
+		"ip":         "1.1.1.1",
+		"city":       "alaki",
+		"date":       strconv.Itoa(int(time.Now().Unix())),
+		"deviceName": "windows10-chrome",
+	}
+	devices[device2Token] = map[string]string{
+		"ip":         "1.1.1.1",
+		"city":       "alaki",
+		"date":       strconv.Itoa(int(time.Now().Unix())),
+		"deviceName": "android-chrome",
+	}
+	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
+	suite.database.DB.Save(&user)
+
+	data := map[string]interface{}{}
+
+	req, _, _ := NewAuthenticatedRequest(
+		suite.authService,
+		suite.database,
+		user,
+		"POST",
+		"/api/profile/terminate-devices-except-me",
+		utils.MapToJsonBytesBuffer(data),
+	)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	a.Equal(http.StatusOK, w.Code)
+
+	devicesBytes := []byte(user.Devices.String())
+	devices, _ = utils.BytesJsonToMap(devicesBytes)
+	a.NotNil(devices[device1Token])
+	a.Nil(devices[device1Token])
 }
