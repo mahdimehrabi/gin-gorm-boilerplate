@@ -204,7 +204,7 @@ func (pc ProfileController) TerminateDevicesExceptMe(c *gin.Context) {
 	}
 	currentDevice := devices[token]
 	devices = map[string]interface{}{
-		"token": currentDevice,
+		token: currentDevice,
 	}
 	user.Devices = datatypes.JSON(utils.MapToJsonBytesBuffer(devices).String())
 	err = pc.db.DB.Save(&user).Error
