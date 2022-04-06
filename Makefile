@@ -1,5 +1,10 @@
 include .env
-MIGRATE=docker-compose exec web migrate -path=migrations -database "postgres://${DBUsername}:${DBPassword}@${DBHost}:${DBPort}/${DBName}?sslmode=disable" -verbose
+ifeq ($(Environment),development)
+DOCKER_COMMAND=docker-compose
+else 
+DOCKER_COMMAND=docker-compose -f docker-compose.prod.yml
+endif
+MIGRATE=${DOCKER_COMMAND} exec web migrate -path=migrations -database "postgres://${DBUsername}:${DBPassword}@${DBHost}:${DBPort}/${DBName}?sslmode=disable" -verbose
 
 migrate-up:
 		$(MIGRATE) up
@@ -24,13 +29,13 @@ crud:
 	bash automate/scripts/crud.sh
 
 test-all:
-	docker-compose exec web go test ./tests/...
+	${DOCKER_COMMAND} exec web go test ./tests/...
 
 test-all-debugger:
-	docker-compose exec web dlv test ./tests --headless --listen=:4000 --api-version=2 --accept-multiclient 
+	${DOCKER_COMMAND} exec web dlv test ./tests --headless --listen=:4000 --api-version=2 --accept-multiclient 
 
 kill-test-debugger:
-	docker-compose exec web pkill -f "dlv test"
+	${DOCKER_COMMAND} exec web pkill -f "dlv test"
 
 .PHONY: migrate-up migrate-down force goto drop create
 
