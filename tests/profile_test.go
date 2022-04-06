@@ -60,7 +60,7 @@ func (suite TestSuiteEnv) TestGetLoggedInDevices() {
 	suite.database.DB.Find(&user)
 
 	response := ExtractResponseAsMap(w)
-	devices, _ := response["data"].([]interface{})
+	devices, _ := response["data"].(map[string]interface{})["devices"].([]interface{})
 	a.Equal("alaki", devices[0].(map[string]interface{})["city"].(string))
 }
 

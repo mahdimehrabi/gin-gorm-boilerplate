@@ -350,6 +350,10 @@ func (suite TestSuiteEnv) TestRecoveryPassword() {
 	a.Equal(encryptedPassword, user.Password, "encrypt password problem")
 	a.Empty(user.ForgotPasswordToken)
 
+	devicesBytes := []byte(user.Devices.String())
+	devices, _ := utils.BytesJsonToMap(devicesBytes)
+	a.Equal(len(devices), 0, "devices is not empty")
+
 	//test with weak password
 	user = CreateUser("m123456777", db, suite.encryption)
 	data = map[string]interface{}{
