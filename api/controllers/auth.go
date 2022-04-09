@@ -360,8 +360,8 @@ func (ac AuthController) ForgotPassword(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
-	if user.LastForgotEmailDate.After(time.Now().Add(time.Duration(-15) * time.Minute)) {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for recovering password after 15 minutes of your last reqeust")
+	if user.LastForgotEmailDate.After(time.Now().Add(time.Duration(-1) * time.Minute)) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for recovering password after 1 minutes of your last reqeust")
 		return
 	}
 
@@ -485,8 +485,8 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
 		return
 	}
-	if user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-15) * time.Minute)) {
-		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for resending verification email after 15 minutes of your last reqeust")
+	if user.LastVerifyEmailDate.After(time.Now().Add(time.Duration(-1) * time.Minute)) {
+		responses.ErrorJSON(c, http.StatusBadRequest, gin.H{}, "You can request for resending verification email after 1 minutes of your last reqeust")
 		return
 	}
 
