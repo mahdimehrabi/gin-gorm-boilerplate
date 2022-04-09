@@ -175,7 +175,7 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 	}, "Selected device logged out succesfuly!")
 }
 
-// @Summary terminate-device
+// @Summary terminate-devices-except-me
 // @Schemes
 // @Description terminate all devices execpt current device , atuhentication required
 // @Tags profile

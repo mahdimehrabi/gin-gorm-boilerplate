@@ -234,28 +234,6 @@ paths:
         name: email
         required: true
         type: string
-      - description: 'password that have at least 8 length and contain an alphabet
-          and number '
-        in: query
-        name: password
-        required: true
-        type: string
-      - description: 'repeatPassword that have at least 8 length and contain an alphabet
-          and number '
-        in: query
-        name: repeatPassword
-        required: true
-        type: string
-      - description: firstName
-        in: query
-        name: firstName
-        required: true
-        type: string
-      - description: lastName
-        in: query
-        name: lastName
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -604,6 +582,33 @@ paths:
           schema:
             $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: terminate-device
+      tags:
+      - profile
+  /profile/terminate-devices-except-me:
+    post:
+      consumes:
+      - application/json
+      description: terminate all devices execpt current device , atuhentication required
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.DevicesResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.NotFoundResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: terminate-devices-except-me
       tags:
       - profile
 swagger: "2.0"

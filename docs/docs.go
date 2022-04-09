@@ -80,34 +80,6 @@ const docTemplate = `{
                         "name": "email",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "password that have at least 8 length and contain an alphabet and number ",
-                        "name": "password",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repeatPassword that have at least 8 length and contain an alphabet and number ",
-                        "name": "repeatPassword",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "firstName",
-                        "name": "firstName",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "lastName",
-                        "name": "lastName",
-                        "in": "query",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -594,6 +566,47 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.DevicesResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/profile/terminate-devices-except-me": {
+            "post": {
+                "description": "terminate all devices execpt current device , atuhentication required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "terminate-devices-except-me",
                 "responses": {
                     "200": {
                         "description": "OK",

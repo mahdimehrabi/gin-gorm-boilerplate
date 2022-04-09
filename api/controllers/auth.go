@@ -337,10 +337,6 @@ func (ac AuthController) VerifyEmail(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param email query string true "unique email"
-// @Param password query string true "password that have at least 8 length and contain an alphabet and number "
-// @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
-// @Param firstName query string true "firstName"
-// @Param lastName query string true "lastName"
 // @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 400 {object} swagger.FailedResponse
