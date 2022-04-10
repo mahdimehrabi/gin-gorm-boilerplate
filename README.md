@@ -24,3 +24,5 @@ database transaction middleware
 pagination
 image resizer 
 advanced rest api responses
+cmd
+image resizer 
