@@ -13,6 +13,12 @@ type ChangePassword struct {
 	RepeatPassword string `json:"repeatPassword" binding:"required,eqfield=Password"`
 }
 
+type ChangeCurrentPassword struct {
+	Password        string `json:"password" binding:"required"`
+	RepeatPassword  string `json:"repeatPassword" binding:"required,eqfield=Password"`
+	CurrentPassword string `json:"currentPassword" binding:"required"`
+}
+
 type RecoverPassword struct {
 	ChangePassword
 	Token string `json:"token" binding:"len=40,required"`
