@@ -23,6 +23,9 @@ type User struct {
 	VerifyEmailToken    string    `json:"-"`
 	ForgotPasswordToken string    `json:"-"`
 	LastForgotEmailDate time.Time `json:"-"`
+
+	//resized profile picture store in this as json
+	Picture string `json:"picture"`
 }
 
 // TableName gives table name of model
@@ -51,4 +54,5 @@ type UserResponse struct {
 	VerifyEmailToken    string         `json:"-"`
 	ForgotPasswordToken string         `json:"-"`
 	LastForgotEmailDate time.Time      `json:"-"`
+	Picture             string         `json:"picture"`
 }
