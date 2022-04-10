@@ -185,7 +185,7 @@ func (suite TestSuiteEnv) TestProfilePicture() {
 	a := suite.Assert()
 	user := CreateUser("m12345678", db, suite.encryption)
 
-	f, _ := os.Open("./media/duck.png")
+	f, _ := os.Open("./media/image.jpg")
 	defer f.Close()
 
 	data, writer, _ := CreateFileRequestBody("picture", f)

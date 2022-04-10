@@ -260,14 +260,22 @@ func (pc ProfileController) UploadProfilePicture(c *gin.Context) {
 
 	directoryPath := pc.env.BasePath + "/media/users/" + strconv.Itoa(int(user.ID))
 	os.MkdirAll(directoryPath, os.ModePerm)
-	uploadPath := directoryPath + "/orginal_picture"
-	res, filePath, err := UploadFile(uploadPath, c, "picture", []string{"jpg", "png", "jpeg"})
+	uploadPath := directoryPath + "/picture"
+	res, filePath, err := UploadFile(uploadPath, c, "picture", []string{"jpg", "jpeg"})
 	if err != nil {
 		pc.logger.Zap.Error("Failed to save uploaded picture profile ", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
 		return
 	}
 	if !res {
+		return
+	}
+	err = utils.ResizeImage(filePath, filePath, 200, 200)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to resize user image", err.Error())
+		fieldErrors := make(map[string]string, 0)
+		fieldErrors["picture"] = "It seems that your image file is not standard please use another image"
+		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
 		return
 	}
 
