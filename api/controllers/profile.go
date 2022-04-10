@@ -8,6 +8,9 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"net/http"
+	"os"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/datatypes"
@@ -48,6 +51,7 @@ func NewProfileController(logger infrastructure.Logger,
 // @Tags profile
 // @Accept json
 // @Produce json
+// @Param currentPassword query string true "Current user password"
 // @Param password query string true "password that have at least 8 length and contain an alphabet and number "
 // @Param repeatPassword query string true "repeatPassword that have at least 8 length and contain an alphabet and number "
 // @Success 200 {object} swagger.SuccessResponse
@@ -88,13 +92,13 @@ func (pc ProfileController) ChangePassword(c *gin.Context) {
 	}
 	if err != nil {
 		pc.logger.Zap.Error("Failed to change password", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
 		return
 	}
 	err = pc.userService.UpdatePassword(&user, encryptedPassword)
 	if err != nil {
 		pc.logger.Zap.Error("Failed to change password", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
 		return
 	}
 
@@ -154,7 +158,7 @@ func (pc ProfileController) TerminateDevice(c *gin.Context) {
 	user, err := pc.userRepository.GetAuthenticatedUser(c)
 	if err != nil {
 		pc.logger.Zap.Error("Failed to change password", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
 		return
 	}
 
@@ -199,7 +203,7 @@ func (pc ProfileController) TerminateDevicesExceptMe(c *gin.Context) {
 	user, err := pc.userRepository.GetAuthenticatedUser(c)
 	if err != nil {
 		pc.logger.Zap.Error("Failed to change password", err.Error())
-		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in changing password!")
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
 		return
 	}
 	token := c.MustGet("deviceToken").(string)
@@ -233,4 +237,48 @@ func (pc ProfileController) TerminateDevicesExceptMe(c *gin.Context) {
 		Current: c.MustGet("deviceToken").(string),
 		Devices: resDevices,
 	}, "All devices except current device logged out successfuly")
+}
+
+// @Summary upload-profile-picture
+// @Schemes
+// @Description Upload profile picture , authentication required
+// @Tags profile
+// @Accept json
+// @Produce json
+// @Param profile query file true "file of image"
+// @Success 200 {object} swagger.SuccessResponse
+// @failure 422 {object} swagger.FailedValidationResponse
+// @failure 401 {object} swagger.UnauthenticatedResponse
+// @Router /profile/upload-profile-picture [post]
+func (pc ProfileController) UploadProfilePicture(c *gin.Context) {
+	user, err := GetUser(*c, pc.userRepository)
+	if err != nil {
+		pc.logger.Zap.Error("Failed to get user ", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
+		return
+	}
+
+	directoryPath := pc.env.BasePath + "/media/users/" + strconv.Itoa(int(user.ID))
+	os.MkdirAll(directoryPath, os.ModePerm)
+	uploadPath := directoryPath + "/orginal_picture"
+	res, filePath, err := UploadFile(uploadPath, c, "picture", []string{"jpg", "png", "jpeg"})
+	if err != nil {
+		pc.logger.Zap.Error("Failed to save uploaded picture profile ", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
+		return
+	}
+	if !res {
+		return
+	}
+
+	path := filePath[strings.Index(filePath, "/media"):]
+	user.Picture = path
+	err = pc.db.DB.Save(&user).Error
+	if err != nil {
+		pc.logger.Zap.Error("Failed to save user picture path in db ", err.Error())
+		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
+		return
+	}
+
+	responses.JSON(c, http.StatusOK, models.UserResponse(user), "Your password changed successfuly , please login again !")
 }

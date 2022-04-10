@@ -37,5 +37,6 @@ func (pr ProfileRoutes) Setup() {
 		g.GET("/devices", pr.ProfileController.LoggedInDevices)
 		g.POST("/terminate-device", pr.ProfileController.TerminateDevice)
 		g.POST("/terminate-devices-except-me", pr.ProfileController.TerminateDevicesExceptMe)
+		g.POST("/upload-profile-picture", pr.ProfileController.UploadProfilePicture)
 	}
 }
