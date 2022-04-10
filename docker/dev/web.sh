@@ -4,7 +4,7 @@ while true; do
 
     PID=$!
 
-    inotifywait -e modify -e move -e create -e delete -e attrib --exclude '(__debug_bin|\.git)' -r .
+    inotifywait -e modify -e move -e create -e delete -e attrib --exclude '(__debug_bin|\.git|media)' -r .
 
     echo "[run.sh] Stopping process id: $PID"
     
