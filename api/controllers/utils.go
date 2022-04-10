@@ -19,10 +19,10 @@ func GetUser(c gin.Context, ur repositories.UserRepository) (models.User, error)
 //validate and upload file
 //uploadPath => path of file without extension like /media/mahdi/image
 func UploadFile(uploadPath string, c *gin.Context, key string, types []string) (bool, string, error) {
-	file, err := c.FormFile("picture")
+	file, err := c.FormFile(key)
 	if err != nil {
 		fieldErrors := make(map[string]string, 0)
-		fieldErrors["picture"] = "You must upload a image with type of jpeg or png"
+		fieldErrors[key] = "You must upload a image with type of jpeg or png"
 		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
 		return false, "", nil
 	}
@@ -30,7 +30,7 @@ func UploadFile(uploadPath string, c *gin.Context, key string, types []string) (
 	extension := fileSlice[len(fileSlice)-1]
 	if !utils.StringInSlice(extension, types) {
 		fieldErrors := make(map[string]string, 0)
-		fieldErrors["picture"] = "You must upload a image with type of jpeg or png"
+		fieldErrors[key] = "You must upload a image with type of jpeg or png"
 		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
 		return false, "", nil
 	}

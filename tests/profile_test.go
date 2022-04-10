@@ -188,9 +188,7 @@ func (suite TestSuiteEnv) TestProfilePicture() {
 	f, _ := os.Open("./media/duck.png")
 	defer f.Close()
 
-	data := map[string]interface{}{
-		"picture": f,
-	}
+	data, writer, _ := CreateFileRequestBody("picture", f)
 	w := httptest.NewRecorder()
 
 	req, _, _ := NewAuthenticatedRequest(
@@ -199,9 +197,10 @@ func (suite TestSuiteEnv) TestProfilePicture() {
 		user,
 		"POST",
 		"/api/profile/upload-profile-picture",
-		utils.MapToJsonBytesBuffer(data))
+		data)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
 	suite.database.DB.Find(&user)
-	a.Equal(user.Picture, "/media/duck.png")
+	a.Regexp("/media/users/"+strconv.Itoa(int(user.ID))+"*", user.Picture)
 }

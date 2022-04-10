@@ -6,8 +6,12 @@ import (
 	"boilerplate/models"
 	"boilerplate/utils"
 	"bytes"
+	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -76,4 +80,19 @@ func ExtractResponseAsMap(w *httptest.ResponseRecorder) map[string]interface{} {
 		panic(err)
 	}
 	return response
+}
+
+func CreateFileRequestBody(key string, file *os.File) (*bytes.Buffer, *multipart.Writer, error) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile(key, filepath.Base(file.Name()))
+
+	if err != nil {
+		return body, writer, err
+	}
+
+	io.Copy(part, file)
+	writer.Close()
+
+	return body, writer, nil
 }
