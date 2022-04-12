@@ -3,7 +3,7 @@ package controllers
 import (
 	"boilerplate/api/responses"
 	_ "boilerplate/api/responses/swagger"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

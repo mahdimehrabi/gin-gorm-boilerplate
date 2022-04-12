@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
 	"errors"

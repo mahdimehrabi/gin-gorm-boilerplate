@@ -3,7 +3,7 @@ package routes
 import (
 	"boilerplate/api/controllers"
 	"boilerplate/api/middlewares"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 )
 
 // ProfileRoutes -> utility routes struct

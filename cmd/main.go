@@ -1,7 +1,7 @@
 package main
 
 import (
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"boilerplate/models"
 	"bufio"
 	"fmt"

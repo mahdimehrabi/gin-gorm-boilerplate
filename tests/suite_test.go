@@ -7,7 +7,7 @@ import (
 	"boilerplate/api/routes"
 	"boilerplate/api/services"
 	"boilerplate/api/validators"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"testing"
 
 	"github.com/joho/godotenv"

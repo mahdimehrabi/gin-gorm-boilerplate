@@ -4,7 +4,7 @@ import (
 	"boilerplate/api/repositories"
 	"boilerplate/api/responses"
 	"boilerplate/api/services"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
 	"net/http"

@@ -1,7 +1,7 @@
 package validators
 
 import (
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"strings"
 
 	"github.com/go-playground/validator/v10"

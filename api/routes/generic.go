@@ -2,7 +2,7 @@ package routes
 
 import (
 	"boilerplate/api/controllers"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 )
 
 // GenericRoutes -> utility routes struct

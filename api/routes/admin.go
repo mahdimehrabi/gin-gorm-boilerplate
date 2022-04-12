@@ -3,7 +3,7 @@ package routes
 import (
 	"boilerplate/api/controllers/dashboard/admin"
 	"boilerplate/api/middlewares"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 )
 
 // AdminRoutes -> utility routes struct

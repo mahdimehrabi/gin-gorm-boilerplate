@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"boilerplate/utils"
 	"net/http"
 

@@ -2,7 +2,7 @@ package services
 
 import (
 	"boilerplate/api/repositories"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
 

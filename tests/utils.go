@@ -2,7 +2,7 @@ package tests
 
 import (
 	"boilerplate/api/services"
-	"boilerplate/infrastructure"
+	"boilerplate/core/infrastructure"
 	"boilerplate/models"
 	"boilerplate/utils"
 	"bytes"

@@ -7,8 +7,8 @@ import (
 	"boilerplate/api/routes"
 	"boilerplate/api/services"
 	"boilerplate/api/validators"
+	"boilerplate/core/infrastructure"
 	"boilerplate/docs"
-	"boilerplate/infrastructure"
 	"context"
 	"fmt"
 
