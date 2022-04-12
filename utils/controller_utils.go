@@ -1,20 +1,11 @@
-package controllers
+package utils
 
 import (
-	"boilerplate/api/repositories"
 	"boilerplate/api/responses"
-	"boilerplate/models"
-	"boilerplate/utils"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
-
-//get authenticated user
-func GetUser(c gin.Context, ur repositories.UserRepository) (models.User, error) {
-	userId := c.MustGet("userId")
-	return ur.FindByField("id", userId.(string))
-}
 
 //validate and upload file
 //uploadPath => path of file without extension like /media/mahdi/image
@@ -28,7 +19,7 @@ func UploadFile(uploadPath string, c *gin.Context, key string, types []string) (
 	}
 	fileSlice := strings.Split(file.Filename, ".")
 	extension := fileSlice[len(fileSlice)-1]
-	if !utils.StringInSlice(extension, types) {
+	if !StringInSlice(extension, types) {
 		fieldErrors := make(map[string]string, 0)
 		fieldErrors[key] = "You must upload a image with type of jpeg or png"
 		responses.ValidationErrorsJSON(c, err, "", fieldErrors)

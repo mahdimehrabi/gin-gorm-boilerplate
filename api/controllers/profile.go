@@ -251,7 +251,7 @@ func (pc ProfileController) TerminateDevicesExceptMe(c *gin.Context) {
 // @failure 401 {object} swagger.UnauthenticatedResponse
 // @Router /profile/upload-profile-picture [post]
 func (pc ProfileController) UploadProfilePicture(c *gin.Context) {
-	user, err := GetUser(*c, pc.userRepository)
+	user, err := pc.userRepository.GetAuthenticatedUser(c)
 	if err != nil {
 		pc.logger.Zap.Error("Failed to get user ", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
@@ -261,7 +261,7 @@ func (pc ProfileController) UploadProfilePicture(c *gin.Context) {
 	directoryPath := pc.env.BasePath + "/media/users/" + strconv.Itoa(int(user.ID))
 	os.MkdirAll(directoryPath, os.ModePerm)
 	uploadPath := directoryPath + "/picture"
-	res, filePath, err := UploadFile(uploadPath, c, "picture", []string{"jpg", "jpeg"})
+	res, filePath, err := utils.UploadFile(uploadPath, c, "picture", []string{"jpg", "jpeg"})
 	if err != nil {
 		pc.logger.Zap.Error("Failed to save uploaded picture profile ", err.Error())
 		responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured")
