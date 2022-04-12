@@ -48,22 +48,37 @@ definitions:
   models.UserResponse:
     properties:
       createdAt:
-        type: string
+        type: integer
       email:
         type: string
       firstName:
         type: string
       id:
         type: integer
+      isAdmin:
+        type: boolean
       lastName:
         type: string
-      updatedAt:
+      picture:
         type: string
+      updatedAt:
+        type: integer
       verifiedEmail:
         type: boolean
     required:
     - firstName
     - lastName
+    type: object
+  swagger.AccessForbiddenResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.EmptyData'
+      msg:
+        example: Sorry you don't have access to visit this page!
+        type: string
+      ok:
+        example: false
+        type: boolean
     type: object
   swagger.DevicesResponse:
     properties:
@@ -133,6 +148,16 @@ definitions:
         example: false
         type: boolean
     type: object
+  swagger.PaginateUsersData:
+    properties:
+      count:
+        example: 10
+        type: integer
+      list:
+        items:
+          $ref: '#/definitions/models.UserResponse'
+        type: array
+    type: object
   swagger.PingResponse:
     properties:
       data:
@@ -143,6 +168,17 @@ definitions:
         type: object
       msg:
         example: pong
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
+  swagger.SingleUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.UserResponse'
+      msg:
+        example: Successful message
         type: string
       ok:
         example: true
@@ -181,6 +217,17 @@ definitions:
         example: false
         type: boolean
     type: object
+  swagger.UsersListResponse:
+    properties:
+      data:
+        $ref: '#/definitions/swagger.PaginateUsersData'
+      msg:
+        example: Successful message
+        type: string
+      ok:
+        example: true
+        type: boolean
+    type: object
   swagger.validationErrors:
     properties:
       errors:
@@ -194,6 +241,169 @@ definitions:
 info:
   contact: {}
 paths:
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      description: list of paginated response , authentication required
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.UsersListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/swagger.AccessForbiddenResponse'
+      summary: get users list
+      tags:
+      - admin
+    post:
+      consumes:
+      - application/json
+      description: create user and admin , admin only
+      parameters:
+      - description: unique email
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: 'password that have at least 8 length and contain an alphabet
+          and number '
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: 'repeatPassword that have at least 8 length and contain an alphabet
+          and number '
+        in: formData
+        name: repeatPassword
+        required: true
+        type: string
+      - description: firstName
+        in: formData
+        name: firstName
+        required: true
+        type: string
+      - description: lastName
+        in: formData
+        name: lastName
+        required: true
+        type: string
+      - description: isAdmin
+        in: formData
+        name: isAdmin
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.UsersListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/swagger.AccessForbiddenResponse'
+      summary: create users
+      tags:
+      - admin
+  /admin/users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete user or admin , admin only
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.UsersListResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/swagger.AccessForbiddenResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.NotFoundResponse'
+      summary: delete user
+      tags:
+      - admin
+    put:
+      consumes:
+      - application/json
+      description: update user and admin , admin only
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: unique email
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: firstName
+        in: formData
+        name: firstName
+        required: true
+        type: string
+      - description: lastName
+        in: formData
+        name: lastName
+        required: true
+        type: string
+      - description: isAdmin
+        in: formData
+        name: isAdmin
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SingleUserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/swagger.AccessForbiddenResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/swagger.NotFoundResponse'
+      summary: update user
+      tags:
+      - admin
   /auth/access-token-verify:
     post:
       consumes:
@@ -502,6 +712,11 @@ paths:
       - application/json
       description: Change Password , authentication required
       parameters:
+      - description: Current user password
+        in: query
+        name: currentPassword
+        required: true
+        type: string
       - description: 'password that have at least 8 length and contain an alphabet
           and number '
         in: query
@@ -609,6 +824,35 @@ paths:
           schema:
             $ref: '#/definitions/swagger.FailedValidationResponse'
       summary: terminate-devices-except-me
+      tags:
+      - profile
+  /profile/upload-profile-picture:
+    post:
+      consumes:
+      - application/json
+      description: Upload profile picture , authentication required
+      parameters:
+      - description: file of image
+        in: formData
+        name: picture
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/swagger.SuccessResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/swagger.UnauthenticatedResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/swagger.FailedValidationResponse'
+      summary: upload-profile-picture
       tags:
       - profile
 swagger: "2.0"

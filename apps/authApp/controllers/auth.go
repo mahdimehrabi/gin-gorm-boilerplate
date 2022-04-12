@@ -8,6 +8,7 @@ import (
 	"boilerplate/apps/userApp/services"
 	"boilerplate/core/infrastructure"
 	"boilerplate/core/responses"
+	_ "boilerplate/core/swagger"
 	"boilerplate/utils"
 	"errors"
 	"net/http"

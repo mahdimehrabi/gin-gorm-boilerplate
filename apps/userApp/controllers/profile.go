@@ -7,6 +7,7 @@ import (
 	"boilerplate/apps/userApp/services"
 	"boilerplate/core/infrastructure"
 	"boilerplate/core/responses"
+	_ "boilerplate/core/swagger"
 	"boilerplate/utils"
 	"net/http"
 	"os"
@@ -246,7 +247,7 @@ func (pc ProfileController) TerminateDevicesExceptMe(c *gin.Context) {
 // @Tags profile
 // @Accept json
 // @Produce json
-// @Param profile query file true "file of image"
+// @Param picture formData string true "file of image"
 // @Success 200 {object} swagger.SuccessResponse
 // @failure 422 {object} swagger.FailedValidationResponse
 // @failure 401 {object} swagger.UnauthenticatedResponse

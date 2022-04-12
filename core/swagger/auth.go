@@ -1,26 +1,23 @@
 package swagger
 
-import (
-	"boilerplate/apps/auth"
-	"boilerplate/apps/generic"
-)
+import "boilerplate/apps/authApp/models"
 
-type SuccessLoginResponse struct {
-	generic.SuccessResponse
-	Data auth.LoginResponse `json:"data"`
+type LoginResponse struct {
+	SuccessResponse
+	Data models.LoginResponse `json:"data"`
 }
 
 type FailedLoginResponse struct {
-	generic.FailedResponse
+	FailedResponse
 	Msg string `json:"msg" example:"No user found with entered credentials"`
 }
 
 type SuccessVerifyAccessTokenResponse struct {
-	generic.SuccessResponse
-	Data auth.AccessTokenRes `json:"data"`
+	SuccessResponse
+	Data models.AccessTokenRes `json:"data"`
 }
 
 type UnauthenticatedResponse struct {
-	generic.FailedResponse
+	FailedResponse
 	Msg string `json:"msg" example:"You must login first!"`
 }

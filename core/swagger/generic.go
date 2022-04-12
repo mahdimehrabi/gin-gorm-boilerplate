@@ -24,6 +24,12 @@ type NotFoundResponse struct {
 	Data EmptyData `json:"data"`
 }
 
+type AccessForbiddenResponse struct {
+	Msg  string    `json:"msg" example:"Sorry you don't have access to visit this page!"`
+	Ok   bool      `json:"ok" example:"false"`
+	Data EmptyData `json:"data"`
+}
+
 type validationErrors struct {
 	Errors map[string]string `json:"errors" example:"field1:This field is required,field2:This field must be numeric"`
 }

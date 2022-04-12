@@ -16,6 +16,244 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/users": {
+            "get": {
+                "description": "list of paginated response , authentication required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "get users list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UsersListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.AccessForbiddenResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create user and admin , admin only",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "create users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "unique email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "password that have at least 8 length and contain an alphabet and number ",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repeatPassword that have at least 8 length and contain an alphabet and number ",
+                        "name": "repeatPassword",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "firstName",
+                        "name": "firstName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "lastName",
+                        "name": "lastName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "isAdmin",
+                        "name": "isAdmin",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UsersListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.AccessForbiddenResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/users/{id}": {
+            "put": {
+                "description": "update user and admin , admin only",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "update user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "unique email",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "firstName",
+                        "name": "firstName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "lastName",
+                        "name": "lastName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "isAdmin",
+                        "name": "isAdmin",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SingleUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.AccessForbiddenResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete user or admin , admin only",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "delete user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UsersListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.AccessForbiddenResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.NotFoundResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/access-token-verify": {
             "post": {
                 "description": "jwt access token verify",
@@ -480,6 +718,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "Current user password",
+                        "name": "currentPassword",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "password that have at least 8 length and contain an alphabet and number ",
                         "name": "password",
                         "in": "query",
@@ -634,6 +879,50 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/profile/upload-profile-picture": {
+            "post": {
+                "description": "Upload profile picture , authentication required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profile"
+                ],
+                "summary": "upload-profile-picture",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "file of image",
+                        "name": "picture",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SuccessResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.UnauthenticatedResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.FailedValidationResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -715,7 +1004,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "email": {
                     "type": "string"
@@ -726,14 +1015,36 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "isAdmin": {
+                    "type": "boolean"
+                },
                 "lastName": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "picture": {
                     "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
                 },
                 "verifiedEmail": {
                     "type": "boolean"
+                }
+            }
+        },
+        "swagger.AccessForbiddenResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/swagger.EmptyData"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Sorry you don't have access to visit this page!"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },
@@ -836,6 +1147,21 @@ const docTemplate = `{
                 }
             }
         },
+        "swagger.PaginateUsersData": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserResponse"
+                    }
+                }
+            }
+        },
         "swagger.PingResponse": {
             "type": "object",
             "properties": {
@@ -851,6 +1177,22 @@ const docTemplate = `{
                 "msg": {
                     "type": "string",
                     "example": "pong"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "swagger.SingleUserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.UserResponse"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Successful message"
                 },
                 "ok": {
                     "type": "boolean",
@@ -903,6 +1245,22 @@ const docTemplate = `{
                 "ok": {
                     "type": "boolean",
                     "example": false
+                }
+            }
+        },
+        "swagger.UsersListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/swagger.PaginateUsersData"
+                },
+                "msg": {
+                    "type": "string",
+                    "example": "Successful message"
+                },
+                "ok": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },
