@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"boilerplate/constants"
 	"boilerplate/infrastructure"
 	"boilerplate/utils"
 	"net/http"
@@ -43,7 +42,7 @@ func (m DBTransactionMiddleware) DBTransactionHandle() gin.HandlerFunc {
 			}
 		}()
 
-		c.Set(constants.DBTransaction, txHandle)
+		c.Set("boilerplate_trx", txHandle)
 		c.Next()
 
 		if utils.StatusInList(c.Writer.Status(), []int{http.StatusOK, http.StatusCreated}) {
