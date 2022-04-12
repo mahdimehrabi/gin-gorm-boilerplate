@@ -1,8 +1,8 @@
 package tests
 
 import (
-	"boilerplate/api/services"
-	"boilerplate/models"
+	"boilerplate/apps/authApp/services"
+	"boilerplate/apps/userApp/models"
 	"boilerplate/utils"
 	"bytes"
 	"net/http"

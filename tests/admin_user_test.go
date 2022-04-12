@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"boilerplate/models"
+	"boilerplate/apps/userApp/models"
 	"boilerplate/utils"
 	"fmt"
 	"net/http"

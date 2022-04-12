@@ -2,7 +2,6 @@ package main
 
 import (
 	"boilerplate/core/infrastructure"
-	"boilerplate/models"
 	"bufio"
 	"fmt"
 	"log"
@@ -66,7 +65,7 @@ func CreateAdmin(env infrastructure.Env) {
 
 	db := GetDB(env)
 	var count int64
-	err := db.Model(&models.User{}).Where("email = ?", email).Count(&count).Error
+	err := db.Model(&userApp.User{}).Where("email = ?", email).Count(&count).Error
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,7 +78,7 @@ func CreateAdmin(env infrastructure.Env) {
 	password = strings.Replace(password, "\n", "", -1)
 	encryption := infrastructure.NewEncryption(infrastructure.Logger{}, env)
 	password = encryption.SaltAndSha256Encrypt(password)
-	user := models.User{
+	user := userApp.User{
 		FirstName:     firstName,
 		LastName:      lastName,
 		Email:         email,

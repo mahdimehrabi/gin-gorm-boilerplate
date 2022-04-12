@@ -1,9 +1,9 @@
 package tests
 
 import (
-	"boilerplate/api/services"
+	authServices "boilerplate/apps/authApp/services"
+	"boilerplate/apps/userApp/models"
 	"boilerplate/core/infrastructure"
-	"boilerplate/models"
 	"boilerplate/utils"
 	"bytes"
 	"io"
@@ -52,7 +52,7 @@ func CreateAdmin(password string, db *gorm.DB, encryption infrastructure.Encrypt
 	return user
 }
 
-func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, string, error) {
+func NewAuthenticatedRequest(as authServices.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, string, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
 		return nil, "", err
@@ -72,7 +72,7 @@ func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database
 	return req, deviceToken, err
 }
 
-func NewAuthenticatedRequestCustomDeviceToken(as services.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer, deviceToken string) (*http.Request, string, error) {
+func NewAuthenticatedRequestCustomDeviceToken(as authServices.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer, deviceToken string) (*http.Request, string, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
 		return nil, "", err

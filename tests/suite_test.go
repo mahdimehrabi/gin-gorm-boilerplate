@@ -1,13 +1,10 @@
 package tests
 
 import (
-	"boilerplate/api/controllers"
-	"boilerplate/api/middlewares"
-	"boilerplate/api/repositories"
-	"boilerplate/api/routes"
-	"boilerplate/api/services"
-	"boilerplate/api/validators"
+	"boilerplate/apps/authApp/services"
+	"boilerplate/core"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/validators"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -80,11 +77,11 @@ func TestSuite(t *testing.T) {
 	fx.New(
 		fx.Options(
 			infrastructure.Module,
-			routes.Module,
-			controllers.Module,
-			services.Module,
-			repositories.Module,
-			middlewares.Module,
+			core.RoutesModule,
+			core.ControllerModule,
+			core.SeviceModule,
+			core.RepositoryModule,
+			core.MiddlewaresModule,
 			validators.Module,
 			fx.Provide(NewTestSuiteEnv),
 			fx.Supply(t),
@@ -94,7 +91,7 @@ func TestSuite(t *testing.T) {
 }
 
 func Setup(t *testing.T, tse TestSuiteEnv, lc fx.Lifecycle,
-	routes routes.Routes, middlewares middlewares.Middlewares, validators validators.Validators) {
+	routes core.Routes, middlewares core.Middlewares, validators validators.Validators) {
 	validators.Setup()
 	routes.Setup()
 	middlewares.Setup()

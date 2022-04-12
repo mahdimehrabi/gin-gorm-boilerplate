@@ -1,13 +1,8 @@
 package core
 
 import (
-	"boilerplate/api/controllers"
-	"boilerplate/api/middlewares"
-	"boilerplate/api/repositories"
-	"boilerplate/api/routes"
-	"boilerplate/api/services"
-	"boilerplate/api/validators"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/validators"
 	"boilerplate/docs"
 	"context"
 	"fmt"
@@ -18,20 +13,20 @@ import (
 	"go.uber.org/fx"
 )
 
-var Module = fx.Options(
+var BootstrapModule = fx.Options(
 	infrastructure.Module,
-	routes.Module,
-	controllers.Module,
-	services.Module,
-	repositories.Module,
-	middlewares.Module,
+	RoutesModule,
+	ControllerModule,
+	SeviceModule,
+	RepositoryModule,
+	MiddlewaresModule,
 	validators.Module,
 	fx.Invoke(bootstrap),
 )
 
 func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
-	middlewares middlewares.Middlewares, router infrastructure.Router,
-	routes routes.Routes, env infrastructure.Env, logger infrastructure.Logger,
+	middlewares Middlewares, router infrastructure.Router,
+	routes Routes, env infrastructure.Env, logger infrastructure.Logger,
 	validators validators.Validators) {
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application 📛")

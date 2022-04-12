@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"boilerplate/api/responses"
+	"boilerplate/core/responses"
 	"strings"
 
 	"github.com/gin-gonic/gin"
