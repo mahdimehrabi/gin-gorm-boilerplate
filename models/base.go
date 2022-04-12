@@ -13,3 +13,10 @@ type Base struct {
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"` //add soft delete in gorm
 }
+
+type BaseResponse struct {
+	ID        uint64         `json:"id"`
+	CreatedAt int64          `json:"createdAt"`
+	UpdatedAt int64          `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `json:"-"`
+}

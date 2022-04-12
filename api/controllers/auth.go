@@ -156,7 +156,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.RefreshToken = tokensData["refreshToken"]
 		loginResult.ExpRefreshToken = tokensData["expRefreshToken"]
 		loginResult.ExpAccessToken = tokensData["expAccessToken"]
-		loginResult.User = models.UserResponse(user)
+		loginResult.User = user.ToResponse()
 
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
 		return

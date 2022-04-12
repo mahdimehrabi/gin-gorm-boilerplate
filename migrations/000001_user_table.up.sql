@@ -4,6 +4,7 @@ CREATE TABLE "users"
 "updated_at" TIMESTAMPTZ,
 "deleted_at" TIMESTAMPTZ,
 "email" VARCHAR (50) UNIQUE NOT NULL,
+"is_admin" BOOLEAN  NOT NULL DEFAULT FALSE,
 "password" VARCHAR (256) NOT NULL,
 "first_name" VARCHAR (60) NOT NULL,
 "last_name" VARCHAR (60) NOT NULL,

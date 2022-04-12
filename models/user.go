@@ -8,6 +8,7 @@ import (
 
 type User struct {
 	Base
+	IsAdmin   bool   `json:"-"`
 	Email     string `json:"email" binding:"required" gorm:"unique"`
 	FirstName string `json:"firstName" binding:"required"`
 	LastName  string `json:"lastName" binding:"required"`
@@ -36,14 +37,46 @@ func (m User) TableName() string {
 // ToMap convert User to map
 func (m User) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"email":     m.Email,
-		"firstName": m.FirstName,
+		"Email":     m.Email,
+		"FirstName": m.FirstName,
 		"LastName":  m.LastName,
+		"IsAdmin":   m.IsAdmin,
 	}
 }
 
+func (u User) ToResponse() UserResponse {
+	return UserResponse{
+		BaseResponse: BaseResponse{
+			CreatedAt: u.CreatedAt.Unix(),
+			UpdatedAt: u.UpdatedAt.Unix(),
+			ID:        u.ID,
+		},
+		IsAdmin:             u.IsAdmin,
+		Email:               u.Email,
+		FirstName:           u.FirstName,
+		LastName:            u.LastName,
+		Password:            u.Password,
+		Devices:             u.Devices,
+		VerifiedEmail:       u.VerifiedEmail,
+		LastVerifyEmailDate: u.LastVerifyEmailDate,
+		VerifyEmailToken:    u.VerifyEmailToken,
+		ForgotPasswordToken: u.ForgotPasswordToken,
+		LastForgotEmailDate: u.LastForgotEmailDate,
+		Picture:             u.Picture,
+	}
+}
+
+func UsersToResponses(users []User) []UserResponse {
+	userResponses := make([]UserResponse, len(users))
+	for i, v := range users {
+		userResponses[i] = v.ToResponse()
+	}
+	return userResponses
+}
+
 type UserResponse struct {
-	Base
+	BaseResponse
+	IsAdmin             bool           `json:"isAdmin"`
 	Email               string         `json:"email"`
 	FirstName           string         `json:"firstName" binding:"required"`
 	LastName            string         `json:"lastName" binding:"required"`
@@ -55,4 +88,21 @@ type UserResponse struct {
 	ForgotPasswordToken string         `json:"-"`
 	LastForgotEmailDate time.Time      `json:"-"`
 	Picture             string         `json:"picture"`
+}
+
+type CreateUserRequestAdmin struct {
+	IsAdmin        bool   `json:"isAdmin"`
+	Email          string `json:"email" binding:"required,uniqueDB=users&email,email"`
+	FirstName      string `json:"firstName" binding:"required"`
+	LastName       string `json:"lastName" binding:"required"`
+	Password       string `json:"password" binding:"required"`
+	RepeatPassword string `json:"repeatPassword" binding:"required,eqfield=Password"`
+}
+
+type UpdateUserRequestAdmin struct {
+	ID        uint   `json:"-"` //this is required for unique validation in update
+	IsAdmin   bool   `json:"isAdmin"`
+	Email     string `json:"email" binding:"required,uniqueDB=users&email,email"`
+	FirstName string `json:"firstName" binding:"required"`
+	LastName  string `json:"lastName" binding:"required"`
 }
