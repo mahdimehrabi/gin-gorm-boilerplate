@@ -1,7 +1,7 @@
 package main
 
 import (
-	"boilerplate/bootstrap"
+	bootstrap "boilerplate/core"
 
 	"github.com/joho/godotenv"
 	"go.uber.org/fx"
