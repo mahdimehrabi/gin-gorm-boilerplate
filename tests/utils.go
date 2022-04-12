@@ -35,6 +35,23 @@ func CreateUser(password string, db *gorm.DB, encryption infrastructure.Encrypti
 	return user
 }
 
+func CreateAdmin(password string, db *gorm.DB, encryption infrastructure.Encryption) models.User {
+	password = encryption.SaltAndSha256Encrypt(password)
+	user := models.User{Email: password[len(password)-3:] + utils.GenerateRandomEmail(4),
+		FirstName:        "mahdi",
+		LastName:         "mehrabi",
+		Password:         password,
+		VerifyEmailToken: utils.GenerateRandomCode(40),
+		VerifiedEmail:    true,
+		IsAdmin:          true,
+	}
+	err := db.Create(&user).Error
+	if err != nil {
+		panic(err)
+	}
+	return user
+}
+
 func NewAuthenticatedRequest(as services.AuthService, db infrastructure.Database, user models.User, method string, url string, data *bytes.Buffer) (*http.Request, string, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
