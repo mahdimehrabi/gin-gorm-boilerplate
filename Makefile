@@ -37,6 +37,9 @@ test-all-debugger:
 kill-test-debugger:
 	${DOCKER_COMMAND} exec web pkill -f "dlv test"
 
+create-admin:
+	${DOCKER_COMMAND} exec web go run ./cmd/main.go create_admin
+
 .PHONY: migrate-up migrate-down force goto drop create
 
 .PHONY: migrate-up migrate-down force goto drop create auto-create
