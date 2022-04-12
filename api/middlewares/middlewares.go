@@ -7,6 +7,7 @@ var Module = fx.Options(
 	fx.Provide(NewMiddlewares),
 	fx.Provide(NewDBTransactionMiddleware),
 	fx.Provide(NewAuthMiddleware),
+	fx.Provide(NewAdminMiddleware),
 )
 
 // IMiddleware middleware interface
