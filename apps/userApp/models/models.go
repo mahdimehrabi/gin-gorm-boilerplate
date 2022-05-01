@@ -2,9 +2,11 @@ package models
 
 import (
 	"boilerplate/apps/genericApp/models"
+	"os"
 	"time"
 
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -33,6 +35,12 @@ type User struct {
 // TableName gives table name of model
 func (m User) TableName() string {
 	return "users"
+}
+
+func (u *User) BeforeDelete(tx *gorm.DB) (err error) {
+	path := os.Getenv("BasePath") + u.Picture
+	os.Remove(path)
+	return nil
 }
 
 // ToMap convert User to map

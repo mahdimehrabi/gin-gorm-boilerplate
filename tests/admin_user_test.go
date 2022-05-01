@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strconv"
 )
 
@@ -183,6 +184,9 @@ func (suite TestSuiteEnv) TestAdminDeleteUser() {
 	a := suite.Assert()
 	admin := CreateAdmin("m1234567", db, suite.encryption)
 	user := CreateAdmin("m1234567", db, suite.encryption)
+	user.Picture = "/media/picture.jpg"
+	db.Save(&user)
+	os.Create(suite.env.BasePath + user.Picture)
 	CreateAdmin("m1234567", db, suite.encryption)
 	CreateAdmin("m1234567", db, suite.encryption)
 	var beforeUserCount int64
@@ -201,11 +205,12 @@ func (suite TestSuiteEnv) TestAdminDeleteUser() {
 
 	router.ServeHTTP(w, req)
 	a.Equal(http.StatusOK, w.Code, "Status code problem")
-	res := w.Body.String()
-	fmt.Println(res)
 	var afterUserCount int64
 	db.Model(models.User{}).Count(&afterUserCount)
 	a.True(afterUserCount == beforeUserCount-1, "User count problem")
+	//check profile picture deleted
+	_, err := os.Stat(suite.env.BasePath + user.Picture)
+	a.True(os.IsNotExist(err))
 
 	/*test with wrong id */
 	db.Model(models.User{}).Count(&beforeUserCount)

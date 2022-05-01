@@ -47,7 +47,9 @@ func (c UserRepository) FindByField(field string, value string) (user userModels
 }
 
 func (c UserRepository) DeleteByID(id uint) error {
-	return c.db.DB.Where("id=?", id).Delete(&userModels.User{}).Error
+	user := userModels.User{}
+	c.db.DB.Where("id=?", id).First(&user)
+	return c.db.DB.Delete(&user).Error
 }
 
 func (c UserRepository) IsExist(field string, value string) (bool, error) {
