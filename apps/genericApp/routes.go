@@ -7,8 +7,9 @@ import (
 
 // GenericRoutes -> utility routes struct
 type GenericRoutes struct {
-	router            infrastructure.Router
+	Router            infrastructure.Router
 	Logger            infrastructure.Logger
+	Env               infrastructure.Env
 	GenericController controllers.GenericController
 }
 
@@ -16,16 +17,19 @@ type GenericRoutes struct {
 func NewGenericRoutes(
 	logger infrastructure.Logger,
 	router infrastructure.Router,
-	GenericController controllers.GenericController,
+	env infrastructure.Env,
+	genericController controllers.GenericController,
 ) GenericRoutes {
 	return GenericRoutes{
 		Logger:            logger,
-		router:            router,
-		GenericController: GenericController,
+		Router:            router,
+		GenericController: genericController,
+		Env:               env,
 	}
 }
 
 //Setup -> sets up route for util entities
 func (gr GenericRoutes) Setup() {
-	gr.router.Gin.GET("/api/ping", gr.GenericController.Ping)
+	gr.Router.Gin.GET("/api/ping", gr.GenericController.Ping)
+	gr.Router.Gin.Static("/media", gr.Env.BasePath+"/media")
 }
