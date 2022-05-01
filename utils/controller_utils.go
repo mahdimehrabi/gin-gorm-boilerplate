@@ -13,7 +13,7 @@ func UploadFile(uploadPath string, c *gin.Context, key string, types []string) (
 	file, err := c.FormFile(key)
 	if err != nil {
 		fieldErrors := make(map[string]string, 0)
-		fieldErrors[key] = "You must upload a image with type of jpeg or png"
+		fieldErrors[key] = "You must upload a image with one of this types: " + strings.Join(types, ",")
 		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
 		return false, "", nil
 	}
@@ -21,7 +21,7 @@ func UploadFile(uploadPath string, c *gin.Context, key string, types []string) (
 	extension := fileSlice[len(fileSlice)-1]
 	if !StringInSlice(extension, types) {
 		fieldErrors := make(map[string]string, 0)
-		fieldErrors[key] = "You must upload a image with type of jpeg or png"
+		fieldErrors[key] = "You must upload a image with one of this types: " + strings.Join(types, ",")
 		responses.ValidationErrorsJSON(c, err, "", fieldErrors)
 		return false, "", nil
 	}
