@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"boilerplate/core/infrastructure"
+	_ "boilerplate/core/models"
 	"boilerplate/core/responses"
-	_ "boilerplate/core/swagger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

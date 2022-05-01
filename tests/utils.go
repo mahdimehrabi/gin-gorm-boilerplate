@@ -2,8 +2,8 @@ package tests
 
 import (
 	authServices "boilerplate/apps/authApp/services"
-	"boilerplate/apps/userApp/models"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"boilerplate/utils"
 	"bytes"
 	"io"

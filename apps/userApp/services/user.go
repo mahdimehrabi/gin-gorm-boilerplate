@@ -1,9 +1,9 @@
 package services
 
 import (
-	"boilerplate/apps/userApp/models"
 	"boilerplate/apps/userApp/repositories"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"boilerplate/utils"
 
 	"gorm.io/datatypes"

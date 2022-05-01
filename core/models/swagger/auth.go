@@ -1,6 +1,6 @@
 package swagger
 
-import "boilerplate/apps/authApp/models"
+import "boilerplate/core/models"
 
 type LoginResponse struct {
 	SuccessResponse

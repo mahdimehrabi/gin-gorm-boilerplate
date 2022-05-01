@@ -1,8 +1,8 @@
 package main
 
 import (
-	"boilerplate/apps/userApp/models"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"bufio"
 	"fmt"
 	"log"

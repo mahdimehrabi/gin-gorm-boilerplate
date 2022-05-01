@@ -1,13 +1,12 @@
 package controllers
 
 import (
-	"boilerplate/apps/authApp/models"
 	authServices "boilerplate/apps/authApp/services"
 	"boilerplate/apps/userApp/repositories"
 	"boilerplate/apps/userApp/services"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"boilerplate/core/responses"
-	_ "boilerplate/core/swagger"
 	"boilerplate/utils"
 	"net/http"
 	"os"

@@ -1,8 +1,6 @@
 package swagger
 
-import (
-	"boilerplate/apps/userApp/models"
-)
+import "boilerplate/core/models"
 
 type PaginateUsersData struct {
 	Count int                   `json:"count" example:"10"`

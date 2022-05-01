@@ -1,7 +1,5 @@
 package models
 
-import "boilerplate/apps/userApp/models"
-
 type Register struct {
 	Password       string `json:"password" binding:"required"`
 	RepeatPassword string `json:"repeatPassword" binding:"required,eqfield=Password"`
@@ -33,11 +31,11 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AccessToken     string              `json:"accessToken"`
-	RefreshToken    string              `json:"refreshToken"`
-	ExpRefreshToken string              `json:"expRefreshToken"`
-	ExpAccessToken  string              `json:"expAccessToken"`
-	User            models.UserResponse `json:"user"`
+	AccessToken     string       `json:"accessToken"`
+	RefreshToken    string       `json:"refreshToken"`
+	ExpRefreshToken string       `json:"expRefreshToken"`
+	ExpAccessToken  string       `json:"expAccessToken"`
+	User            UserResponse `json:"user"`
 }
 
 type AccessTokenReq struct {

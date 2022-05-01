@@ -1,9 +1,8 @@
 package repositories
 
 import (
-	"boilerplate/apps/authApp/models"
-	userModels "boilerplate/apps/userApp/models"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"boilerplate/utils"
 	"errors"
 	"fmt"
@@ -37,17 +36,17 @@ func (c UserRepository) WithTrx(trxHandle *gorm.DB) UserRepository {
 }
 
 // Save -> User
-func (c UserRepository) Create(User *userModels.User) error {
+func (c UserRepository) Create(User *models.User) error {
 	return c.db.DB.Create(User).Error
 }
 
-func (c UserRepository) FindByField(field string, value string) (user userModels.User, err error) {
+func (c UserRepository) FindByField(field string, value string) (user models.User, err error) {
 	err = c.db.DB.Where(fmt.Sprintf("%s= ?", field), value).First(&user).Error
 	return
 }
 
 func (c UserRepository) DeleteByID(id uint) error {
-	user := userModels.User{}
+	user := models.User{}
 	c.db.DB.Where("id=?", id).First(&user)
 	return c.db.DB.Delete(&user).Error
 }
@@ -64,11 +63,11 @@ func (c UserRepository) IsExist(field string, value string) (bool, error) {
 }
 
 // GetAllUser -> Get All users
-func (c UserRepository) GetAllUsers(pagination utils.Pagination) ([]userModels.User, int64, error) {
-	var users []userModels.User
+func (c UserRepository) GetAllUsers(pagination utils.Pagination) ([]models.User, int64, error) {
+	var users []models.User
 	var totalRows int64 = 0
 	queryBuilder := c.db.DB.Limit(pagination.PageSize).Offset(pagination.Offset).Order("created_at desc")
-	queryBuilder = queryBuilder.Model(&userModels.User{})
+	queryBuilder = queryBuilder.Model(&models.User{})
 
 	if pagination.Keyword != "" {
 		searchQuery := "%" + pagination.Keyword + "%"
@@ -84,16 +83,16 @@ func (c UserRepository) GetAllUsers(pagination utils.Pagination) ([]userModels.U
 }
 
 //update a single column by user model
-func (c UserRepository) UpdateColumn(user *userModels.User, column string, value interface{}) error {
+func (c UserRepository) UpdateColumn(user *models.User, column string, value interface{}) error {
 	return c.db.DB.Model(user).Update(column, value).Error
 }
 
-func (ur UserRepository) GetAuthenticatedUser(c *gin.Context) (userModels.User, error) {
+func (ur UserRepository) GetAuthenticatedUser(c *gin.Context) (models.User, error) {
 	userId := c.MustGet("userId").(string)
 	return ur.FindByField("id", userId)
 }
 
-func (ur UserRepository) GetLoggedInDevices(user userModels.User) ([]models.Device, error) {
+func (ur UserRepository) GetLoggedInDevices(user models.User) ([]models.Device, error) {
 	var res []models.Device
 	devicesBytes := []byte(user.Devices.String())
 	devices, err := utils.BytesJsonToMap(devicesBytes)

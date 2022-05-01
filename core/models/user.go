@@ -1,7 +1,6 @@
 package models
 
 import (
-	"boilerplate/apps/genericApp/models"
 	"os"
 	"time"
 
@@ -10,7 +9,7 @@ import (
 )
 
 type User struct {
-	models.Base
+	Base
 	IsAdmin   bool   `json:"-"`
 	Email     string `json:"email" binding:"required" gorm:"unique"`
 	FirstName string `json:"firstName" binding:"required"`
@@ -55,7 +54,7 @@ func (m User) ToMap() map[string]interface{} {
 
 func (u User) ToResponse() UserResponse {
 	return UserResponse{
-		BaseResponse: models.BaseResponse{
+		BaseResponse: BaseResponse{
 			CreatedAt: u.CreatedAt.Unix(),
 			UpdatedAt: u.UpdatedAt.Unix(),
 			ID:        u.ID,
@@ -84,7 +83,7 @@ func UsersToResponses(users []User) []UserResponse {
 }
 
 type UserResponse struct {
-	models.BaseResponse
+	BaseResponse
 	IsAdmin             bool           `json:"isAdmin"`
 	Email               string         `json:"email"`
 	FirstName           string         `json:"firstName" binding:"required"`

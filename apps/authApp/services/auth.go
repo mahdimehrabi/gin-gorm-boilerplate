@@ -1,8 +1,8 @@
 package services
 
 import (
-	"boilerplate/apps/userApp/models"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"boilerplate/utils"
 	"errors"
 	"os"

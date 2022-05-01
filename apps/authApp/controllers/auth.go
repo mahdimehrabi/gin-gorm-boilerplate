@@ -1,14 +1,12 @@
 package controllers
 
 import (
-	"boilerplate/apps/authApp/models"
 	authServices "boilerplate/apps/authApp/services"
-	userModels "boilerplate/apps/userApp/models"
 	"boilerplate/apps/userApp/repositories"
 	"boilerplate/apps/userApp/services"
 	"boilerplate/core/infrastructure"
+	"boilerplate/core/models"
 	"boilerplate/core/responses"
-	_ "boilerplate/core/swagger"
 	"boilerplate/utils"
 	"errors"
 	"net/http"
@@ -85,7 +83,7 @@ func (ac AuthController) Register(c *gin.Context) {
 		responses.ManualValidationErrorsJSON(c, fieldErrors, "")
 		return
 	}
-	var user userModels.User
+	var user models.User
 	encryptedPassword := ac.encryption.SaltAndSha256Encrypt(userData.Password)
 	user.Password = encryptedPassword
 
@@ -124,7 +122,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		responses.ValidationErrorsJSON(c, err, "", map[string]string{})
 		return
 	}
-	var user userModels.User
+	var user models.User
 	user, err := ac.userRepository.FindByField("Email", loginRquest.Email)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		responses.ErrorJSON(c, http.StatusUnauthorized, gin.H{}, "No user found with entered credentials")
@@ -374,7 +372,7 @@ func (ac AuthController) ForgotPassword(c *gin.Context) {
 	go ac.sendForgotPassowrdEmail(&user)
 }
 
-func (ac AuthController) sendForgotPassowrdEmail(user *userModels.User) error {
+func (ac AuthController) sendForgotPassowrdEmail(user *models.User) error {
 
 	ch := make(chan error)
 	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/forgot.tmpl"
@@ -497,7 +495,7 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 	go ac.sendRegisterationEmail(&user)
 }
 
-func (ac AuthController) sendRegisterationEmail(user *userModels.User) error {
+func (ac AuthController) sendRegisterationEmail(user *models.User) error {
 	ch := make(chan error)
 	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
 
