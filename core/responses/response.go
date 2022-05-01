@@ -1,7 +1,9 @@
 package responses
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -32,6 +34,7 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldE
 	//auto generate errors from validation erros
 	var ve validator.ValidationErrors
 	errs := make(map[string]string)
+	typeErr := new(json.UnmarshalTypeError)
 	if errors.As(err, &ve) {
 		for _, fe := range ve {
 			field := fe.Field()
@@ -39,6 +42,8 @@ func ValidationErrorsJSON(c *gin.Context, err error, message string, extraFieldE
 			msg := MsgForTag(fe.Tag(), field, fe.Param())
 			errs[lowerCaseField] = msg
 		}
+	} else if errors.As(err, &typeErr) {
+		errs[typeErr.Field] = fmt.Sprintf("Incorrect type %s for field %s", typeErr.Value, typeErr.Field)
 	}
 
 	//merge errors with extraFieldErrors

@@ -9,16 +9,19 @@ import (
 // Module Middleware exported
 var Module = fx.Options(
 	fx.Provide(NewUniqueValidator),
+	fx.Provide(NewFkValidator),
 	fx.Provide(NewValidators),
 )
 
 type Validators struct {
-	uv UniqueValidator
+	uv  UniqueValidator
+	fkv FkValidator
 }
 
-func NewValidators(uv UniqueValidator) Validators {
+func NewValidators(uv UniqueValidator, fkv FkValidator) Validators {
 	return Validators{
-		uv: uv,
+		uv:  uv,
+		fkv: fkv,
 	}
 }
 
@@ -26,5 +29,6 @@ func NewValidators(uv UniqueValidator) Validators {
 func (val Validators) Setup() {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("uniqueDB", val.uv.Handler())
+		v.RegisterValidation("fkDB", val.fkv.Handler())
 	}
 }
