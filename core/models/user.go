@@ -74,7 +74,7 @@ func (u User) ToResponse() UserResponse {
 		VerifyEmailToken:    u.VerifyEmailToken,
 		ForgotPasswordToken: u.ForgotPasswordToken,
 		LastForgotEmailDate: u.LastForgotEmailDate,
-		Picture:             picture,
+		Picture:             env.SiteUrl + picture,
 	}
 }
 
