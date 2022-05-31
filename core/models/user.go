@@ -53,6 +53,10 @@ func (m User) ToMap() map[string]interface{} {
 }
 
 func (u User) ToResponse() UserResponse {
+	picture := "/default.png"
+	if u.Picture != "" {
+		picture = u.Picture
+	}
 	return UserResponse{
 		BaseResponse: BaseResponse{
 			CreatedAt: u.CreatedAt.Unix(),
@@ -70,7 +74,7 @@ func (u User) ToResponse() UserResponse {
 		VerifyEmailToken:    u.VerifyEmailToken,
 		ForgotPasswordToken: u.ForgotPasswordToken,
 		LastForgotEmailDate: u.LastForgotEmailDate,
-		Picture:             u.Picture,
+		Picture:             picture,
 	}
 }
 
