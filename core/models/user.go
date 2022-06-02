@@ -1,6 +1,7 @@
 package models
 
 import (
+	"boilerplate/core/infrastructure"
 	"os"
 	"time"
 
@@ -52,7 +53,7 @@ func (m User) ToMap() map[string]interface{} {
 	}
 }
 
-func (u User) ToResponse() UserResponse {
+func (u User) ToResponse(env infrastructure.Env) UserResponse {
 	picture := "/default.png"
 	if u.Picture != "" {
 		picture = u.Picture
@@ -78,10 +79,10 @@ func (u User) ToResponse() UserResponse {
 	}
 }
 
-func UsersToResponses(users []User) []UserResponse {
+func UsersToResponses(users []User, env infrastructure.Env) []UserResponse {
 	userResponses := make([]UserResponse, len(users))
 	for i, v := range users {
-		userResponses[i] = v.ToResponse()
+		userResponses[i] = v.ToResponse(env)
 	}
 	return userResponses
 }

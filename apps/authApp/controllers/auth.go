@@ -157,7 +157,7 @@ func (ac AuthController) Login(c *gin.Context) {
 		loginResult.RefreshToken = tokensData["refreshToken"]
 		loginResult.ExpRefreshToken = tokensData["expRefreshToken"]
 		loginResult.ExpAccessToken = tokensData["expAccessToken"]
-		loginResult.User = user.ToResponse()
+		loginResult.User = user.ToResponse(ac.env)
 
 		responses.JSON(c, http.StatusOK, loginResult, "Hello "+user.FirstName+" wellcome back")
 		return

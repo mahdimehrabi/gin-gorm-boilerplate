@@ -289,5 +289,5 @@ func (pc ProfileController) UploadProfilePicture(c *gin.Context) {
 		return
 	}
 
-	responses.JSON(c, http.StatusOK, user.ToResponse(), "Your password changed successfuly , please login again !")
+	responses.JSON(c, http.StatusOK, user.ToResponse(pc.env), "Your password changed successfuly , please login again !")
 }

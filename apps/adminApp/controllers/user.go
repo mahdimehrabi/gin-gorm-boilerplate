@@ -172,7 +172,7 @@ func (uc UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	responses.JSON(c, http.StatusOK, user.ToResponse(), "User updated successfuly")
+	responses.JSON(c, http.StatusOK, user.ToResponse(uc.env), "User updated successfuly")
 }
 
 // @Summary delete user
