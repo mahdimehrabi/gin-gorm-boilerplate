@@ -23,6 +23,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/derekparker/trie v0.0.0-20200317170641-1fdf38b7b0e9 // indirect
+	github.com/getsentry/sentry-go v0.13.0 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-delve/delve v1.8.3-0.20220315213312-a19931c9d3a2 // indirect
@@ -59,7 +60,7 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.2 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/mattn/go-colorable v0.1.6 // indirect
+	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

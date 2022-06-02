@@ -1,6 +1,10 @@
 package infrastructure
 
 import (
+	"fmt"
+	"time"
+
+	"github.com/getsentry/sentry-go"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -20,7 +24,10 @@ func NewLogger(env Env) Logger {
 	}
 
 	logger, _ := config.Build(zap.Hooks(func(entry zapcore.Entry) error {
-		/*add sentry or another error tracking service here */
+		if entry.Level == zapcore.ErrorLevel {
+			defer sentry.Flush(2 * time.Second)
+			sentry.CaptureMessage(fmt.Sprintf("%s, Line No: %d :: %s", entry.Caller.File, entry.Caller.Line, entry.Message, entry.Stack))
+		}
 		return nil
 	}))
 

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type GenericController struct {
@@ -33,5 +34,6 @@ func NewGenericController(logger infrastructure.Logger,
 // @Success 200 {object} swagger.PingResponse
 // @Router /ping [get]
 func (uc GenericController) Ping(ctx *gin.Context) {
+	uc.logger.Zap.Error(gorm.ErrInvalidDB)
 	responses.JSON(ctx, http.StatusOK, gin.H{"pingpong": "🏓🏓🏓🏓🏓🏓"}, "pong")
 }
