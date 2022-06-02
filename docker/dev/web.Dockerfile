@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine
+FROM golang:1.18-alpine
 
 # Required because go requires gcc to build
 RUN apk add build-base
