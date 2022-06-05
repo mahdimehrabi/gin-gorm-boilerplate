@@ -1,7 +1,37 @@
-## Gin Gorm PostgreSQL boilerplate with clean architecture 
-A boilerplate for gin + gorm + postgres + docker 
+# Gin Gorm Boilerplate with clean architecture
 
-### Features
+## Introduction
+A clean archtiecture and well documented gin boilerplate with lot of good features
+ready for you to use and improve your speed of development 
+
+## requirements
+make sure you installed [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
+
+## Installation 
+clone repository in your system
+```git clone https://github.com/mahdimehrabi/gin-gorm-boilerplate.git```
+
+create env files base on example 
+```
+cp env.example .env
+cp env.test.example .env.test
+```
+if you want to run on localhost set `Environment=development` and if you want to run in production model set `Environment=production` in .env file
+
+build and run docker-compose  
+development: `docker-compose up -d`
+production: `docker-compose -f docker-compose.prod.yml up -d` 
+
+run migrations 
+```
+make migrate-up
+```
+
+see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to localhost:port/api/ping (default port is 8000)
+
+
+
+## Features
 clean architecture
 env
 dependency injection
