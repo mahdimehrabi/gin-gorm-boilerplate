@@ -25,9 +25,6 @@ create-migration:
 		@read -p  "What is the name of migration?" NAME; \
 		${MIGRATE} create -ext sql -seq -dir migration  $$NAME
 
-crud:
-	bash automate/scripts/crud.sh
-
 test-all:
 	${DOCKER_COMMAND} exec web go test ./tests/...
 
