@@ -29,7 +29,7 @@ run migrations
 make migrate-up
 ```
 
-see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to localhost:port/api/ping (default port is 8000)
+see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to `localhost:port/api/ping`(default port is 8000)
 
 
 
