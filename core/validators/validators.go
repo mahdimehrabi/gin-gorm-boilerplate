@@ -10,18 +10,21 @@ import (
 var Module = fx.Options(
 	fx.Provide(NewUniqueValidator),
 	fx.Provide(NewFkValidator),
+	fx.Provide(NewTimestampValidator),
 	fx.Provide(NewValidators),
 )
 
 type Validators struct {
 	uv  UniqueValidator
 	fkv FkValidator
+	ts  TimestampValidator
 }
 
-func NewValidators(uv UniqueValidator, fkv FkValidator) Validators {
+func NewValidators(uv UniqueValidator, fkv FkValidator, ts TimestampValidator) Validators {
 	return Validators{
 		uv:  uv,
 		fkv: fkv,
+		ts:  ts,
 	}
 }
 
@@ -30,5 +33,6 @@ func (val Validators) Setup() {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("uniqueDB", val.uv.Handler())
 		v.RegisterValidation("fkDB", val.fkv.Handler())
+		v.RegisterValidation("timestamp", val.ts.Handler())
 	}
 }
