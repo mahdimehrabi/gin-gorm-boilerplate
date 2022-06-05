@@ -29,17 +29,31 @@ run migrations
 make migrate-up
 ```
 
-see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to `localhost:port/api/ping`(default port is 8000)
+### swagger
+see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to `localhost:port/api/ping` (default port is 8000)<br />
 
-
+install [gin swagger](https://github.com/swaggo/gin-swagger) 
+generate swagger docs `swag init`
+see swagger documention for already implemented rest api services
+`localhost:port/swagger/index.html`
 
 ## Features
-#### clean architecture
 #### env
+we have two env file for this application
+`.env`=> for production and development environment 
+`.env.test`=>for test 
+don't change `Envrionment` key of .env.test it must be `test`
+and we have an infrastracture for env in `core/infrastracture/env.go` that is responsible for load environment variable in to struct for more clean and easier access around application 
 #### dependency injection
-#### docker compose implemention for development and production + cache
+we used [uber fx](https://github.com/uber-go/fx) for dependency injection to have more clean application I sugget you read whole documention of fx package
+#### docker compose implemention for development and production 
+for production use set `Environment=production` and use `docker-compose -f docker-compose.prod.yml up -d ` to run app
+for development set `Environment=development` and use `docker-compose up -d ` to run app
 #### delve debugger + source watcher for reload   
+we have a powerful source watcher for reload server and delve debuger configuration <br />
+`docker/dev/web.sh` handle watching and running delve server you can use configuration in `.vscode` directory for configure your vscode to connect to debugger for debugging in normal and  even debugging your tests
 #### advanced jwt authentication + middleware
+we have an called authApp that is responsible for jwt authentication you can see its rest api services in [swagger]{#place-1}
 #### -saving device name ip and city on login
 #### -devices
 #### registeration by verifying email
