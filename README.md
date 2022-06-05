@@ -53,7 +53,7 @@ for development set `Environment=development` and use `docker-compose up -d ` to
 we have a powerful source watcher for reload server and delve debuger configuration <br />
 `docker/dev/web.sh` handle watching and running delve server you can use configuration in `.vscode` directory for configure your vscode to connect to debugger for debugging in normal and  even debugging your tests
 #### advanced jwt authentication + middleware
-we have an app called authApp that is responsible for jwt authentication and related stuff like sending forgot password email, change password,password strength checker and etc. you can see its rest api services in 
+we have an app called authApp that is responsible for jwt authentication and related stuff like sending forgot password email, change password,password strength checker and etc. you can see its rest api services in [swagger](#swagger)
 #### saving device name ip and city on login
 on users login ,client(frontend) must send login device name and we store that + user IP on login 
 and this app have some routes to let user see and manage his logged in devices + information (like IP,country,city) and remove them one by one or all of them (like social media apps)
