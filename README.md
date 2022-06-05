@@ -40,8 +40,8 @@ see swagger documention for get information about already implemented rest api s
 ## Features
 #### env
 we have two env file for this application. </br>
-`.env`=> for production and development environment  </br>
-`.env.test`=>for test </br>
+`.env`: for production and development environment  </br>
+`.env.test`: for test </br>
 don't change `Envrionment` key of .env.test it must be `test` </br>
 we have an infrastracture for env in `core/infrastracture/env.go` that is responsible for load environment variable in to struct for more clean and easier access around application .
 #### dependency injection
