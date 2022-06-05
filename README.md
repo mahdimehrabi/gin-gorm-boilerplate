@@ -61,7 +61,7 @@ and this app have some routes to let user see and manage his logged in devices +
 we have complete registeration service for sending email , resending email , verify token and ... that implemented in authentication app
 #### swagger documention generator
 swagger documention of apps are stored in `core/models/swagger` you can edit them or add new one . 
-I suggest you read [swagger gin documention]{https://github.com/swaggo/gin-swagger} for more information.
+I suggest you read https://github.com/swaggo/gin-swagger for more information.
 #### easy custom validator implemention
 we have advanced validation system that integerated with gin and [go-playground validation]{https://github.com/go-playground/validator},
 for example we have a custom validator that is responsible for checking the of a field is unique in database table, you can use it in your request model like below:
@@ -71,19 +71,19 @@ type CreateUserRequestAdmin struct {
 	Email          string `json:"email" binding:"required,uniqueDB=users&email"` //users=>table name , email => column name
 }
 ``` 
-you can implement your custom validator by creating your validator in `core/validators/` and introduing them in depndency injection by adding them to `core/validators/validators.go` file in you can understand how to create them by reading the example validators that are exist in validators directory and for more information you can read [gin]{https://github.com/gin-gonic/gin} and [go-playground validation]{https://github.com/go-playground/validator} documents.
+you can implement your custom validator by creating your validator in `core/validators/` and introduing them in depndency injection by adding them to `core/validators/validators.go` file , you can understand how to create them by reading the example validators that are exist in validators directory and for more information you can read [gin]{https://github.com/gin-gonic/gin} and [go-playground validation]{https://github.com/go-playground/validator} documents.
 #### logger + sentry 
-we have logger infrastructre that is responsible for storing logs in sentry I will encourage you to create a [sentry]{https://sentry.io/} account and create a project and add your dsn to .env file `SentryDSN=yourDsn` 
+we have logger infrastructre that is responsible for storing logs in sentry I will encourage you to create a [sentry]{https://sentry.io/} account and create a project and add your dsn to .env file `SentryDSN=yourDsn` <br />
 logger is only responsible to capure 500 errors that handled by you in controllers, we configured sentry to capture unwanted panics in `core/bootstrap.go` file.
 #### migration versioning 
 migrations are store in `core/migrations` and we use this [package]{https://github.com/golang-migrate/migrate} for our migration and we have some commands to generate and run them in Makefile 
 #### easy response 
 look at `core/response/responses.go` file you can use these functions to have a clean responses for success and error rest response
 ### middlewares 
-you can create your middleware in app in apps directory but if you think the middleware you want to develop is a generic middleware I suggest you put your middleware in generic app <br />
+you can create your middleware in any app you want in apps directory but if you think the middleware you want to develop is a generic middleware I suggest you put your middleware in generic app. <br />
 after creating your middleware don't forget to add it do dependency injection , you can add it by editing `core/middlewares` file.
 #### database transaction middleware
-this middleware is responsible for database transaction you add it to your route and if the resonse of the route is not successful it roolback the transaction.
+this middleware is responsible for database transaction you use it on your route and if the resonse of the route is not successful it roolback the transaction.
 #### pagination
 check out `apps/userApp/repositories/user.go` and `getAllUsers` method
 #### cmd
