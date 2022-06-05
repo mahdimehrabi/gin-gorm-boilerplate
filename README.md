@@ -55,13 +55,13 @@ we have a powerful source watcher for reload server and delve debuger configurat
 #### advanced jwt authentication + middleware
 we have an app called authApp that is responsible for jwt authentication and related stuff like sending forgot password email, change password,password strength checker and etc. you can see its rest api services in [swagger](#swagger)
 #### saving device name ip and city on login
-on users login client must send login device name 
+on users login ,client(frontend) must send login device name and we store that + user IP on login 
 and this app have some routes to let user see and manage his logged in devices + information (like IP,country,city) and remove them one by one or all of them (like social media apps)
 #### registeration by verifying email
 we have complete registeration service for sending email , resending email , verify token and ... that implemented in authentication app
 #### swagger documention generator
-swagger documention of apps are stored in `core/models/swagger` you can edit them or add new one
-[swagger gin documention]{https://github.com/swaggo/gin-swagger}
+swagger documention of apps are stored in `core/models/swagger` you can edit them or add new one . 
+I suggest you read [swagger gin documention]{https://github.com/swaggo/gin-swagger} for more information.
 #### easy custom validator implemention
 we have advanced validation system that integerated with gin and [go-playground validation]{https://github.com/go-playground/validator},
 for example we have a custom validator that is responsible for checking the of a field is unique in database table, you can use it in your request model like below:
