@@ -29,9 +29,9 @@ run migrations
 make migrate-up
 ```
 
-### swagger
 see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to `localhost:port/api/ping` (default port is 8000)<br />
 
+### swagger
 install [gin swagger](https://github.com/swaggo/gin-swagger) 
 generate swagger docs `swag init`
 see swagger documention for already implemented rest api services
