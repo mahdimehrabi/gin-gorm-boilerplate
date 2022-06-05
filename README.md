@@ -1,6 +1,5 @@
 # Gin Gorm Boilerplate with clean architecture
 
-## Introduction
 A clean archtiecture and well documented gin boilerplate with lot of good features
 ready for you to use and improve your speed of development 
 
