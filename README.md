@@ -32,18 +32,18 @@ make migrate-up
 see docker logs `docker-compose logs -f` and wait for your application to be ready and check your application work by sending get request to `localhost:port/api/ping` (default port is 8000)<br />
 
 ### swagger
-install [gin swagger](https://github.com/swaggo/gin-swagger) 
-generate swagger docs `swag init`
-see swagger documention for already implemented rest api services
-`localhost:port/swagger/index.html`
+install [gin swagger](https://github.com/swaggo/gin-swagger) .<br/>
+generate swagger docs `swag init` . <br/>
+see swagger documention for get information about already implemented rest api services
+`localhost:port/swagger/index.html` .
 
 ## Features
 #### env
-we have two env file for this application
-`.env`=> for production and development environment 
-`.env.test`=>for test 
-don't change `Envrionment` key of .env.test it must be `test`
-and we have an infrastracture for env in `core/infrastracture/env.go` that is responsible for load environment variable in to struct for more clean and easier access around application 
+we have two env file for this application. </br>
+`.env`=> for production and development environment  </br>
+`.env.test`=>for test </br>
+don't change `Envrionment` key of .env.test it must be `test` </br>
+we have an infrastracture for env in `core/infrastracture/env.go` that is responsible for load environment variable in to struct for more clean and easier access around application .
 #### dependency injection
 we used [uber fx](https://github.com/uber-go/fx) for dependency injection to have more clean application I sugget you read whole documention of fx package
 #### docker compose implemention for development and production 
@@ -54,7 +54,7 @@ we have a powerful source watcher for reload server and delve debuger configurat
 `docker/dev/web.sh` handle watching and running delve server you can use configuration in `.vscode` directory for configure your vscode to connect to debugger for debugging in normal and  even debugging your tests
 #### advanced jwt authentication + middleware
 we have an app called authApp that is responsible for jwt authentication and related stuff like sending forgot password email, change password,password strength checker and etc. you can see its rest api services in [swagger](#swagger)
-#### -saving device name ip and city on login
+#### saving device name ip and city on login
 on users login client must send login device name 
 and this app have some routes to let user see and manage his logged in devices + information (like IP,country,city) and remove them one by one or all of them (like social media apps)
 #### registeration by verifying email
