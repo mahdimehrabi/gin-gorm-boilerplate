@@ -12,6 +12,7 @@ clone repository in your system
 
 create env files base on example 
 ```
+cd gin-gorm-boilerplate
 cp env.example .env
 cp env.test.example .env.test
 ```
