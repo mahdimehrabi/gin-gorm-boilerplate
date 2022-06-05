@@ -17,6 +17,8 @@ cp env.test.example .env.test
 ```
 if you want to run on localhost set `Environment=development` and if you want to run in production model set `Environment=production` in .env file
 
+create docker volume for database data `docker volume create psql_data`
+
 build and run docker-compose  
 development: `docker-compose up -d`
 production: `docker-compose -f docker-compose.prod.yml up -d` 
