@@ -25,7 +25,8 @@ type Env struct {
 	MailHost         string
 	MailPort         string
 
-	Secret string
+	Secret    string
+	RedisAddr string
 }
 
 // NewEnv creates a new environment
@@ -58,4 +59,5 @@ func (env *Env) LoadEnv() {
 	env.MailPort = os.Getenv("MailPort")
 
 	env.Secret = os.Getenv("Secret")
+	env.RedisAddr = os.Getenv("RedisAddr")
 }
