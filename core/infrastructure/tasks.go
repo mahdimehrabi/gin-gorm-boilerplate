@@ -14,7 +14,6 @@ var TasksModules = fx.Options(
 type Tasks struct {
 	Logger Logger
 	Env    Env
-	Client *asynq.Client
 	Server *asynq.Server
 }
 
@@ -26,7 +25,6 @@ func NewTasks(
 	return Tasks{
 		Logger: logger,
 		Env:    env,
-		Client: asynq.NewClient(asynq.RedisClientOpt{Addr: env.RedisAddr}),
 		Server: asynq.NewServer(asynq.RedisClientOpt{Addr: env.RedisAddr},
 			asynq.Config{
 				Concurrency: 10,
@@ -38,4 +36,9 @@ func NewTasks(
 			},
 		),
 	}
+}
+
+//GetClient -> return asynq client don't forget to close it
+func (t *Tasks) GetClient() *asynq.Client {
+	return asynq.NewClient(asynq.RedisClientOpt{Addr: t.Env.RedisAddr})
 }
