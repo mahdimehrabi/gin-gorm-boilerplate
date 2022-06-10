@@ -10,6 +10,10 @@ var TasksModules = fx.Options(
 	fx.Provide(NewEmail),
 )
 
+type Task interface {
+	handle() error
+}
+
 //Tasks -> Tasks Struct
 type Tasks struct {
 	Logger Logger
