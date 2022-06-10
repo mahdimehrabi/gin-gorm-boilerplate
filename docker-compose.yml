@@ -29,6 +29,8 @@ services:
       - ${AdminerPort}:8080
     depends_on:
       - database
+  redis:
+    image: "redis:alpine"
 
 
 volumes:
