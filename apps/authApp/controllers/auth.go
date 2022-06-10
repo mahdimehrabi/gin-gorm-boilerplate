@@ -2,6 +2,7 @@ package controllers
 
 import (
 	authServices "boilerplate/apps/authApp/services"
+	"boilerplate/apps/authApp/tasks"
 	"boilerplate/apps/userApp/repositories"
 	"boilerplate/apps/userApp/services"
 	"boilerplate/core/infrastructure"
@@ -25,7 +26,8 @@ type AuthController struct {
 	userService    services.UserService
 	authService    authServices.AuthService
 	userRepository repositories.UserRepository
-	email          infrastructure.Email
+	emailTask      tasks.EmailTask
+	tasks          infrastructure.Tasks
 }
 
 func NewAuthController(logger infrastructure.Logger,
@@ -34,7 +36,8 @@ func NewAuthController(logger infrastructure.Logger,
 	userService services.UserService,
 	authService authServices.AuthService,
 	userRepository repositories.UserRepository,
-	email infrastructure.Email,
+	emailTask tasks.EmailTask,
+	tasks infrastructure.Tasks,
 ) AuthController {
 	return AuthController{
 		logger:         logger,
@@ -43,7 +46,8 @@ func NewAuthController(logger infrastructure.Logger,
 		userService:    userService,
 		authService:    authService,
 		userRepository: userRepository,
-		email:          email,
+		emailTask:      emailTask,
+		tasks:          tasks,
 	}
 }
 
@@ -99,7 +103,13 @@ func (ac AuthController) Register(c *gin.Context) {
 	}
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly, an verification link sent to your email use that to verify your account")
 
-	go ac.sendRegisterationEmail(&user)
+	task, err := ac.emailTask.NewVerifyEmailTask(uint(user.ID))
+	if err != nil {
+		ac.logger.Zap.Error("Failed to start task for sending registration email", err.Error())
+	}
+	client := ac.tasks.GetClient()
+	defer client.Close()
+	client.Enqueue(task)
 }
 
 // @Summary login
@@ -375,13 +385,13 @@ func (ac AuthController) ForgotPassword(c *gin.Context) {
 func (ac AuthController) sendForgotPassowrdEmail(user *models.User) error {
 
 	ch := make(chan error)
-	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/forgot.tmpl"
-
-	data := map[string]string{
-		"name": user.FirstName,
-		"link": ac.env.SiteUrl + "/forgot-password?token=" + user.VerifyEmailToken,
-	}
-	go ac.email.SendEmail(ch, user.Email, "Recover password", htmlFile, data)
+	//htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/forgot.tmpl"
+	//
+	//data := map[string]string{
+	//	"name": user.FirstName,
+	//	"link": ac.env.SiteUrl + "/forgot-password?token=" + user.VerifyEmailToken,
+	//}
+	//go ac.email.SendEmail(ch, user.Email, "Recover password", htmlFile, data)
 	err := <-ch
 	if err != nil {
 		ac.logger.Zap.Error(err)
@@ -491,28 +501,11 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 		return
 	}
 
+	//err = ac.emailTask.NewVerifyEmailTask(user.ID)
+	//if err != nil {
+	//	ac.logger.Zap.Error("Failed to find user by email  ", err.Error())
+	//	responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
+	//	return
+	//}
 	responses.JSON(c, http.StatusOK, gin.H{}, "Verification email sent!")
-	go ac.sendRegisterationEmail(&user)
-}
-
-func (ac AuthController) sendRegisterationEmail(user *models.User) error {
-	ch := make(chan error)
-	htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
-
-	data := map[string]string{
-		"name": user.FirstName,
-		"link": ac.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
-	}
-	go ac.email.SendEmail(ch, user.Email, "Verify email", htmlFile, data)
-	err := <-ch
-	if err != nil {
-		ac.logger.Zap.Error(err)
-		return err
-	}
-	err = ac.userRepository.UpdateColumn(user, "last_verify_email_date", time.Now())
-	if err != nil {
-		ac.logger.Zap.Error(err)
-		return err
-	}
-	return nil
 }

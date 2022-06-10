@@ -1,6 +1,7 @@
 package services
 
 import (
+	"boilerplate/apps/userApp/repositories"
 	"boilerplate/core/infrastructure"
 	"boilerplate/core/models"
 	"boilerplate/utils"
@@ -18,15 +19,26 @@ import (
 
 // UserService -> struct
 type AuthService struct {
-	db  infrastructure.Database
-	env infrastructure.Env
+	db             infrastructure.Database
+	env            infrastructure.Env
+	email          infrastructure.Email
+	logger         infrastructure.Logger
+	userRepository repositories.UserRepository
 }
 
 // NewAuthService -> creates a new AuthService
-func NewAuthService(db infrastructure.Database, env infrastructure.Env) AuthService {
+func NewAuthService(
+	db infrastructure.Database,
+	env infrastructure.Env,
+	email infrastructure.Email,
+	logger infrastructure.Logger,
+	userRepository repositories.UserRepository) AuthService {
 	return AuthService{
-		db:  db,
-		env: env,
+		db:             db,
+		env:            env,
+		email:          email,
+		logger:         logger,
+		userRepository: userRepository,
 	}
 }
 
@@ -183,4 +195,26 @@ func (as AuthService) FindUserByIdDeviceToken(id string, deviceToken string) (mo
 		return user, gorm.ErrRecordNotFound
 	}
 	return user, err
+}
+
+func (as AuthService) SendRegisterationEmail(user *models.User) error {
+	ch := make(chan error)
+	htmlFile := as.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
+
+	data := map[string]string{
+		"name": user.FirstName,
+		"link": as.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
+	}
+	go as.email.SendEmail(ch, user.Email, "Verify email", htmlFile, data)
+	err := <-ch
+	if err != nil {
+		as.logger.Zap.Error(err)
+		return err
+	}
+	err = as.userRepository.UpdateColumn(user, "last_verify_email_date", time.Now())
+	if err != nil {
+		as.logger.Zap.Error(err)
+		return err
+	}
+	return nil
 }
