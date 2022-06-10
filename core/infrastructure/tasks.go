@@ -1,6 +1,14 @@
 package infrastructure
 
-import "github.com/hibiken/asynq"
+import (
+	"github.com/hibiken/asynq"
+	"go.uber.org/fx"
+)
+
+var TasksModules = fx.Options(
+	fx.Provide(NewTasks),
+	fx.Provide(NewEmail),
+)
 
 //Tasks -> Tasks Struct
 type Tasks struct {

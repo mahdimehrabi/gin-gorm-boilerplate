@@ -10,4 +10,5 @@ var Module = fx.Options(
 	fx.Provide(NewMigrations),
 	fx.Provide(NewEncryption),
 	fx.Provide(NewEmail),
+	fx.Provide(NewTasks),
 )
