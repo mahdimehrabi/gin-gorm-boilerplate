@@ -11,14 +11,15 @@ var TasksModules = fx.Options(
 )
 
 type Task interface {
-	handle() error
+	HandlesToMux() error
 }
 
 //Tasks -> Tasks Struct
 type Tasks struct {
-	Logger Logger
-	Env    Env
-	Server *asynq.Server
+	Logger    Logger
+	Env       Env
+	Server    *asynq.Server
+	ServerMux *asynq.ServeMux
 }
 
 //NewTasks -> return new Tasks struct
@@ -39,6 +40,7 @@ func NewTasks(
 				},
 			},
 		),
+		ServerMux: asynq.NewServeMux(),
 	}
 }
 
