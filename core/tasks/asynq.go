@@ -5,20 +5,20 @@ import (
 	"github.com/hibiken/asynq"
 )
 
-//Tasks -> Tasks Struct
-type Tasks struct {
+//TaskAsynq -> TaskAsynq Struct
+type TaskAsynq struct {
 	Logger    infrastructure.Logger
 	Env       infrastructure.Env
 	Server    *asynq.Server
 	ServerMux *asynq.ServeMux
 }
 
-//NewTasks -> return new Tasks struct,
-func NewTasks(
+//NewTaskAsynq -> return new TaskAsynq struct,
+func NewTaskAsynq(
 	logger infrastructure.Logger,
 	env infrastructure.Env,
-) Tasks {
-	return Tasks{
+) TaskAsynq {
+	return TaskAsynq{
 		Logger: logger,
 		Env:    env,
 		Server: asynq.NewServer(asynq.RedisClientOpt{Addr: env.RedisAddr},
@@ -36,6 +36,6 @@ func NewTasks(
 }
 
 //GetClient -> return asynq client don't forget to close it
-func (t *Tasks) GetClient() *asynq.Client {
+func (t *TaskAsynq) GetClient() *asynq.Client {
 	return asynq.NewClient(asynq.RedisClientOpt{Addr: t.Env.RedisAddr})
 }

@@ -27,7 +27,7 @@ type AuthController struct {
 	authService    authServices.AuthService
 	userRepository repositories.UserRepository
 	emailTask      tasks2.EmailTask
-	tasks          tasks2.Tasks
+	tasks          tasks2.TaskAsynq
 }
 
 func NewAuthController(logger infrastructure.Logger,
@@ -37,7 +37,7 @@ func NewAuthController(logger infrastructure.Logger,
 	authService authServices.AuthService,
 	userRepository repositories.UserRepository,
 	emailTask tasks2.EmailTask,
-	tasks tasks2.Tasks,
+	tasks tasks2.TaskAsynq,
 ) AuthController {
 	return AuthController{
 		logger:         logger,
