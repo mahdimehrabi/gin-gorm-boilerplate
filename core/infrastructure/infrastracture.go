@@ -1,6 +1,8 @@
 package infrastructure
 
-import "go.uber.org/fx"
+import (
+	"go.uber.org/fx"
+)
 
 var Module = fx.Options(
 	fx.Provide(NewLogger),
@@ -10,5 +12,4 @@ var Module = fx.Options(
 	fx.Provide(NewMigrations),
 	fx.Provide(NewEncryption),
 	fx.Provide(NewEmail),
-	fx.Provide(NewTasks),
 )

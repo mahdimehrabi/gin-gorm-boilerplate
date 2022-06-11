@@ -1,31 +1,22 @@
-package infrastructure
+package tasks
 
 import (
+	"boilerplate/core/infrastructure"
 	"github.com/hibiken/asynq"
-	"go.uber.org/fx"
 )
-
-var TasksModules = fx.Options(
-	fx.Provide(NewTasks),
-	fx.Provide(NewEmail),
-)
-
-type Task interface {
-	HandlesToMux() error
-}
 
 //Tasks -> Tasks Struct
 type Tasks struct {
-	Logger    Logger
-	Env       Env
+	Logger    infrastructure.Logger
+	Env       infrastructure.Env
 	Server    *asynq.Server
 	ServerMux *asynq.ServeMux
 }
 
-//NewTasks -> return new Tasks struct
+//NewTasks -> return new Tasks struct,
 func NewTasks(
-	logger Logger,
-	env Env,
+	logger infrastructure.Logger,
+	env infrastructure.Env,
 ) Tasks {
 	return Tasks{
 		Logger: logger,
@@ -47,4 +38,12 @@ func NewTasks(
 //GetClient -> return asynq client don't forget to close it
 func (t *Tasks) GetClient() *asynq.Client {
 	return asynq.NewClient(asynq.RedisClientOpt{Addr: t.Env.RedisAddr})
+}
+
+//Add your tasks to this method return
+func (t *Tasks) GetTasks() []Task {
+	return []Task{}
+}
+
+func (t *Tasks) HandleTasks() {
 }

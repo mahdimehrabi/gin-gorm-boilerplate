@@ -8,6 +8,7 @@ import (
 	"boilerplate/core/infrastructure"
 	"boilerplate/core/models"
 	"boilerplate/core/responses"
+	tasks2 "boilerplate/core/tasks"
 	"boilerplate/utils"
 	"errors"
 	"net/http"
@@ -27,7 +28,7 @@ type AuthController struct {
 	authService    authServices.AuthService
 	userRepository repositories.UserRepository
 	emailTask      tasks.EmailTask
-	tasks          infrastructure.Tasks
+	tasks          tasks2.Tasks
 }
 
 func NewAuthController(logger infrastructure.Logger,
@@ -37,7 +38,7 @@ func NewAuthController(logger infrastructure.Logger,
 	authService authServices.AuthService,
 	userRepository repositories.UserRepository,
 	emailTask tasks.EmailTask,
-	tasks infrastructure.Tasks,
+	tasks tasks2.Tasks,
 ) AuthController {
 	return AuthController{
 		logger:         logger,
