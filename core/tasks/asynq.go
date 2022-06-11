@@ -7,10 +7,9 @@ import (
 
 //TaskAsynq -> TaskAsynq Struct
 type TaskAsynq struct {
-	Logger    infrastructure.Logger
-	Env       infrastructure.Env
-	Server    *asynq.Server
-	ServerMux *asynq.ServeMux
+	Logger infrastructure.Logger
+	Env    infrastructure.Env
+	Server *asynq.Server
 }
 
 //NewTaskAsynq -> return new TaskAsynq struct,
@@ -31,11 +30,10 @@ func NewTaskAsynq(
 				},
 			},
 		),
-		ServerMux: asynq.NewServeMux(),
 	}
 }
 
-//GetClient -> return asynq client don't forget to close it
-func (t *TaskAsynq) GetClient() *asynq.Client {
+//NewClient -> return asynq client don't forget to close it
+func (t *TaskAsynq) NewClient() *asynq.Client {
 	return asynq.NewClient(asynq.RedisClientOpt{Addr: t.Env.RedisAddr})
 }

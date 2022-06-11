@@ -107,7 +107,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	if err != nil {
 		ac.logger.Zap.Error("Failed to start task for sending registration email", err.Error())
 	}
-	client := ac.tasks.GetClient()
+	client := ac.tasks.NewClient()
 	defer client.Close()
 	client.Enqueue(task)
 }
