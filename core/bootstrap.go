@@ -3,6 +3,7 @@ package core
 import (
 	"boilerplate/core/infrastructure"
 	"boilerplate/core/responses"
+	"boilerplate/core/tasks"
 	"boilerplate/core/validators"
 	"boilerplate/docs"
 	"context"
@@ -26,13 +27,16 @@ var BootstrapModule = fx.Options(
 	RepositoryModule,
 	MiddlewaresModule,
 	validators.Module,
+	tasks.Modules,
 	fx.Invoke(bootstrap),
 )
 
 func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 	middlewares Middlewares, router infrastructure.Router,
-	routes Routes, env infrastructure.Env, logger infrastructure.Logger,
-	validators validators.Validators) {
+	routes Routes, env infrastructure.Env,
+	logger infrastructure.Logger, validators validators.Validators,
+	taskAsynq tasks.TaskAsynq,
+) {
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application 📛")
 		conn, _ := database.DB.DB()
@@ -63,6 +67,12 @@ func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 	router.Gin.Use(sentrygin.New(sentrygin.Options{
 		Repanic: true,
 	}))
+
+	tasksStruct := tasks.NewTasks(logger, taskAsynq)
+	err := tasksStruct.HandleTasks()
+	if err != nil {
+		logger.Zap.Error("Failed to run asynq handlers:", err)
+	}
 
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {
