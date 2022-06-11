@@ -6,8 +6,8 @@ import (
 	"go.uber.org/fx"
 )
 
-var TasksModules = fx.Options(
-	fx.Provide(NewTasks),
+var Modules = fx.Options(
+	fx.Provide(NewTaskAsynq),
 )
 
 type Task interface {
