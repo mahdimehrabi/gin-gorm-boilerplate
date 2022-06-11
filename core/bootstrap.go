@@ -36,6 +36,7 @@ func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 	routes Routes, env infrastructure.Env,
 	logger infrastructure.Logger, validators validators.Validators,
 	taskAsynq tasks.TaskAsynq,
+	emailTask tasks.EmailTask,
 ) {
 	appStop := func(context.Context) error {
 		logger.Zap.Info("Stopping Application 📛")
@@ -68,7 +69,7 @@ func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 		Repanic: true,
 	}))
 
-	tasksStruct := tasks.NewTasks(logger, taskAsynq)
+	tasksStruct := tasks.NewTasks(logger, taskAsynq, emailTask)
 	err := tasksStruct.HandleTasks()
 	if err != nil {
 		logger.Zap.Error("Failed to run asynq handlers:", err)

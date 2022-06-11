@@ -8,6 +8,7 @@ import (
 
 var Modules = fx.Options(
 	fx.Provide(NewTaskAsynq),
+	fx.Provide(NewEmailTask),
 )
 
 type Task interface {
@@ -17,9 +18,13 @@ type Task interface {
 type Tasks struct {
 	logger    infrastructure.Logger
 	taskAsynq TaskAsynq
+	emailTask EmailTask
 }
 
-func NewTasks(logger infrastructure.Logger, taskAsynq TaskAsynq) Tasks {
+func NewTasks(
+	logger infrastructure.Logger,
+	taskAsynq TaskAsynq,
+	emailTask EmailTask) Tasks {
 	return Tasks{
 		logger:    logger,
 		taskAsynq: taskAsynq,
@@ -27,11 +32,10 @@ func NewTasks(logger infrastructure.Logger, taskAsynq TaskAsynq) Tasks {
 }
 
 func (t *Tasks) HandleTasks() error {
-	emailTask := NewEmailTask(t.logger)
 	serverMux := asynq.NewServeMux()
 	serverMux.HandleFunc(
 		TypeSendVerifyEmail,
-		emailTask.HandleVerifyEmailTask,
+		t.emailTask.HandleVerifyEmailTask,
 	)
 	return t.taskAsynq.Server.Run(serverMux)
 }
