@@ -2,7 +2,6 @@ package controllers
 
 import (
 	authServices "boilerplate/apps/authApp/services"
-	"boilerplate/apps/authApp/tasks"
 	"boilerplate/apps/userApp/repositories"
 	"boilerplate/apps/userApp/services"
 	"boilerplate/core/infrastructure"
@@ -27,7 +26,7 @@ type AuthController struct {
 	userService    services.UserService
 	authService    authServices.AuthService
 	userRepository repositories.UserRepository
-	emailTask      tasks.EmailTask
+	emailTask      tasks2.EmailTask
 	tasks          tasks2.Tasks
 }
 
@@ -37,7 +36,7 @@ func NewAuthController(logger infrastructure.Logger,
 	userService services.UserService,
 	authService authServices.AuthService,
 	userRepository repositories.UserRepository,
-	emailTask tasks.EmailTask,
+	emailTask tasks2.EmailTask,
 	tasks tasks2.Tasks,
 ) AuthController {
 	return AuthController{

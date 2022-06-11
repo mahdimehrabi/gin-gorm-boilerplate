@@ -39,11 +39,3 @@ func NewTasks(
 func (t *Tasks) GetClient() *asynq.Client {
 	return asynq.NewClient(asynq.RedisClientOpt{Addr: t.Env.RedisAddr})
 }
-
-//Add your tasks to this method return
-func (t *Tasks) GetTasks() []Task {
-	return []Task{}
-}
-
-func (t *Tasks) HandleTasks() {
-}
