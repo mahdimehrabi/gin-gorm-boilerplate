@@ -197,7 +197,9 @@ func (as AuthService) FindUserByIdDeviceToken(id string, deviceToken string) (mo
 	return user, err
 }
 
-func (as AuthService) SendRegisterationEmail(user *models.User) error {
+func (as AuthService) SendRegisterationEmail(userID uint) error {
+	user := new(models.User)
+	err := as.db.DB.Model(&models.User{}).First(user).Error
 	ch := make(chan error)
 	htmlFile := as.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
 
@@ -206,7 +208,7 @@ func (as AuthService) SendRegisterationEmail(user *models.User) error {
 		"link": as.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
 	}
 	go as.email.SendEmail(ch, user.Email, "Verify email", htmlFile, data)
-	err := <-ch
+	err = <-ch
 	if err != nil {
 		as.logger.Zap.Error(err)
 		return err

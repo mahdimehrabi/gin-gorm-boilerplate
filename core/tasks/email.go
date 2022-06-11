@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"boilerplate/apps/authApp/services"
 	"boilerplate/core/infrastructure"
 	"context"
 	"encoding/json"
@@ -19,12 +20,16 @@ type emailPayload struct {
 }
 
 type EmailTask struct {
-	Payload emailPayload
-	logger  infrastructure.Logger
+	Payload     emailPayload
+	logger      infrastructure.Logger
+	authService services.AuthService
 }
 
-func NewEmailTask(logger infrastructure.Logger) EmailTask {
-	return EmailTask{logger: logger}
+func NewEmailTask(logger infrastructure.Logger, authService services.AuthService) EmailTask {
+	return EmailTask{
+		logger:      logger,
+		authService: authService,
+	}
 }
 
 func (et *EmailTask) NewVerifyEmailTask(userID uint) (*asynq.Task, error) {
@@ -44,6 +49,6 @@ func (et EmailTask) HandleVerifyEmailTask(ctx context.Context, t *asynq.Task) er
 	if err := json.Unmarshal(t.Payload(), &et.Payload); err != nil {
 		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 	}
-	fmt.Println("Handling verify email")
+	et.authService.SendRegisterationEmail(et.Payload.UserID)
 	return nil
 }
