@@ -67,6 +67,10 @@ func (et EmailTask) HandleVerifyEmailTask(ctx context.Context, t *asynq.Task) er
 
 func (et EmailTask) SendRegisterationEmail(userID uint) error {
 	user, err := et.userRepository.FindByField("id", strconv.Itoa(int(userID)))
+	if err != nil {
+		et.logger.Zap.Error("failed to find user:", err)
+		return err
+	}
 	ch := make(chan error)
 	htmlFile := et.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
 
@@ -81,6 +85,54 @@ func (et EmailTask) SendRegisterationEmail(userID uint) error {
 		return err
 	}
 	err = et.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now())
+	if err != nil {
+		et.logger.Zap.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (et *EmailTask) NewForgotEmailTask(userID uint) (*asynq.Task, error) {
+	et.Payload.UserID = userID
+	payload, err := json.Marshal(et.Payload)
+	if err != nil {
+		return nil, err
+	}
+	return asynq.NewTask(
+		TypeSendForgotEmail,
+		payload,
+		asynq.Timeout(80*time.Second),
+		asynq.MaxRetry(2)), nil
+}
+
+func (et EmailTask) HandleForgotEmailTask(ctx context.Context, t *asynq.Task) error {
+	if err := json.Unmarshal(t.Payload(), &et.Payload); err != nil {
+		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
+	}
+	return et.sendForgotPassowrdEmail(et.Payload.UserID)
+}
+
+func (et EmailTask) sendForgotPassowrdEmail(userID uint) error {
+	user, err := et.userRepository.FindByField("id", strconv.Itoa(int(userID)))
+	if err != nil {
+		et.logger.Zap.Error("failed to find user:", err)
+		return err
+	}
+
+	ch := make(chan error)
+	htmlFile := et.env.BasePath + "/vendors/templates/mail/auth/forgot.tmpl"
+
+	data := map[string]string{
+		"name": user.FirstName,
+		"link": et.env.SiteUrl + "/forgot-password?token=" + user.VerifyEmailToken,
+	}
+	go et.email.SendEmail(ch, user.Email, "Recover password", htmlFile, data)
+	err = <-ch
+	if err != nil {
+		et.logger.Zap.Error(err)
+		return err
+	}
+	err = et.userRepository.UpdateColumn(&user, "last_forgot_email_date", time.Now())
 	if err != nil {
 		et.logger.Zap.Error(err)
 		return err

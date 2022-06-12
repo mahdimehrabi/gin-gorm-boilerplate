@@ -373,30 +373,7 @@ func (ac AuthController) ForgotPassword(c *gin.Context) {
 	ac.userRepository.UpdateColumn(&user, "forgot_password_token", utils.GenerateRandomCode(40))
 
 	responses.JSON(c, http.StatusOK, gin.H{}, "An email contain password recovery link sent to your email")
-	go ac.sendForgotPassowrdEmail(&user)
-}
-
-func (ac AuthController) sendForgotPassowrdEmail(user *models.User) error {
-
-	ch := make(chan error)
-	//htmlFile := ac.env.BasePath + "/vendors/templates/mail/auth/forgot.tmpl"
-	//
-	//data := map[string]string{
-	//	"name": user.FirstName,
-	//	"link": ac.env.SiteUrl + "/forgot-password?token=" + user.VerifyEmailToken,
-	//}
-	//go ac.email.SendEmail(ch, user.Email, "Recover password", htmlFile, data)
-	err := <-ch
-	if err != nil {
-		ac.logger.Zap.Error(err)
-		return err
-	}
-	err = ac.userRepository.UpdateColumn(user, "last_forgot_email_date", time.Now())
-	if err != nil {
-		ac.logger.Zap.Error(err)
-		return err
-	}
-	return nil
+	ac.sendForgotEmail(user)
 }
 
 // @Summary recover-password
@@ -502,6 +479,16 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 
 func (ac AuthController) sendVerifyEmail(user models.User) {
 	task, err := ac.emailTask.NewVerifyEmailTask(uint(user.ID))
+	if err != nil {
+		ac.logger.Zap.Error("Failed to start task for sending registration email", err.Error())
+	}
+	client := ac.tasks.NewClient()
+	defer client.Close()
+	client.Enqueue(task)
+}
+
+func (ac AuthController) sendForgotEmail(user models.User) {
+	task, err := ac.emailTask.NewForgotEmailTask(uint(user.ID))
 	if err != nil {
 		ac.logger.Zap.Error("Failed to start task for sending registration email", err.Error())
 	}

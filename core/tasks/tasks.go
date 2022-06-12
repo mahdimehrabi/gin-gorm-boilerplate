@@ -38,5 +38,9 @@ func (t *Tasks) HandleTasks() error {
 		TypeSendVerifyEmail,
 		t.emailTask.HandleVerifyEmailTask,
 	)
+	serverMux.HandleFunc(
+		TypeSendForgotEmail,
+		t.emailTask.HandleForgotEmailTask,
+	)
 	return t.taskAsynq.Server.Run(serverMux)
 }
