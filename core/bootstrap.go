@@ -69,11 +69,13 @@ func bootstrap(lifecycle fx.Lifecycle, database infrastructure.Database,
 		Repanic: true,
 	}))
 
-	tasksStruct := tasks.NewTasks(logger, taskAsynq, emailTask)
-	err := tasksStruct.HandleTasks()
-	if err != nil {
-		logger.Zap.Error("Failed to run asynq handlers:", err)
-	}
+	go func() {
+		tasksStruct := tasks.NewTasks(logger, taskAsynq, emailTask)
+		err := tasksStruct.HandleTasks()
+		if err != nil {
+			logger.Zap.Error("Failed to run asynq handlers:", err)
+		}
+	}()
 
 	lifecycle.Append(fx.Hook{
 		OnStart: func(context.Context) error {

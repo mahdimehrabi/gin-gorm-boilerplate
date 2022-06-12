@@ -198,8 +198,7 @@ func (as AuthService) FindUserByIdDeviceToken(id string, deviceToken string) (mo
 }
 
 func (as AuthService) SendRegisterationEmail(userID uint) error {
-	user := new(models.User)
-	err := as.db.DB.Model(&models.User{}).First(user).Error
+	user, err := as.userRepository.FindByField("id", strconv.Itoa(int(userID)))
 	ch := make(chan error)
 	htmlFile := as.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
 
@@ -213,7 +212,7 @@ func (as AuthService) SendRegisterationEmail(userID uint) error {
 		as.logger.Zap.Error(err)
 		return err
 	}
-	err = as.userRepository.UpdateColumn(user, "last_verify_email_date", time.Now())
+	err = as.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now())
 	if err != nil {
 		as.logger.Zap.Error(err)
 		return err
