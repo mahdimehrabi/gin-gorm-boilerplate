@@ -103,13 +103,7 @@ func (ac AuthController) Register(c *gin.Context) {
 	}
 	responses.JSON(c, http.StatusOK, gin.H{}, "Your account created successfuly, an verification link sent to your email use that to verify your account")
 
-	task, err := ac.emailTask.NewVerifyEmailTask(uint(user.ID))
-	if err != nil {
-		ac.logger.Zap.Error("Failed to start task for sending registration email", err.Error())
-	}
-	client := ac.tasks.NewClient()
-	defer client.Close()
-	client.Enqueue(task)
+	ac.sendVerifyEmail(user)
 }
 
 // @Summary login
@@ -501,11 +495,17 @@ func (ac AuthController) ResendVerifyEmail(c *gin.Context) {
 		return
 	}
 
-	//err = ac.emailTask.NewVerifyEmailTask(user.ID)
-	//if err != nil {
-	//	ac.logger.Zap.Error("Failed to find user by email  ", err.Error())
-	//	responses.ErrorJSON(c, http.StatusInternalServerError, gin.H{}, "Sorry an error occoured in registering your account!")
-	//	return
-	//}
 	responses.JSON(c, http.StatusOK, gin.H{}, "Verification email sent!")
+
+	ac.sendVerifyEmail(user)
+}
+
+func (ac AuthController) sendVerifyEmail(user models.User) {
+	task, err := ac.emailTask.NewVerifyEmailTask(uint(user.ID))
+	if err != nil {
+		ac.logger.Zap.Error("Failed to start task for sending registration email", err.Error())
+	}
+	client := ac.tasks.NewClient()
+	defer client.Close()
+	client.Enqueue(task)
 }
