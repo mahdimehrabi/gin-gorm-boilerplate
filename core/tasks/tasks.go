@@ -28,6 +28,7 @@ func NewTasks(
 	return Tasks{
 		logger:    logger,
 		taskAsynq: taskAsynq,
+		emailTask: emailTask,
 	}
 }
 
