@@ -62,10 +62,10 @@ func (et EmailTask) HandleVerifyEmailTask(ctx context.Context, t *asynq.Task) er
 	if err := json.Unmarshal(t.Payload(), &et.Payload); err != nil {
 		return fmt.Errorf("json.Unmarshal failed: %v: %w", err, asynq.SkipRetry)
 	}
-	return et.SendRegisterationEmail(et.Payload.UserID)
+	return et.sendRegisterationEmail(et.Payload.UserID)
 }
 
-func (et EmailTask) SendRegisterationEmail(userID uint) error {
+func (et EmailTask) sendRegisterationEmail(userID uint) error {
 	user, err := et.userRepository.FindByField("id", strconv.Itoa(int(userID)))
 	if err != nil {
 		et.logger.Zap.Error("failed to find user:", err)
