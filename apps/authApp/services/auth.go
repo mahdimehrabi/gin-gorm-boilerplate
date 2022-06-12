@@ -196,26 +196,3 @@ func (as AuthService) FindUserByIdDeviceToken(id string, deviceToken string) (mo
 	}
 	return user, err
 }
-
-func (as AuthService) SendRegisterationEmail(userID uint) error {
-	user, err := as.userRepository.FindByField("id", strconv.Itoa(int(userID)))
-	ch := make(chan error)
-	htmlFile := as.env.BasePath + "/vendors/templates/mail/auth/register.tmpl"
-
-	data := map[string]string{
-		"name": user.FirstName,
-		"link": as.env.SiteUrl + "/verify-email?token=" + user.VerifyEmailToken,
-	}
-	go as.email.SendEmail(ch, user.Email, "Verify email", htmlFile, data)
-	err = <-ch
-	if err != nil {
-		as.logger.Zap.Error(err)
-		return err
-	}
-	err = as.userRepository.UpdateColumn(&user, "last_verify_email_date", time.Now())
-	if err != nil {
-		as.logger.Zap.Error(err)
-		return err
-	}
-	return nil
-}
