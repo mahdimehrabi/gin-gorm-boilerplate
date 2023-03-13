@@ -3,7 +3,6 @@
 .env.test
 serviceAccountKey.json
 cloud_sql_proxy
-TODO
 /media
 
 # unintended files
