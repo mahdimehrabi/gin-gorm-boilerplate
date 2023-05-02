@@ -1,2 +1,5 @@
 Add DTO 
 Implement a validation for every TDO 
+new standard testing with benchmark 
+use pgx instead of gorm 
+use one query always (detect not found errors and already exist error by searching string example(strings.contain(err,"now rows")))
