@@ -24,3 +24,5 @@ type userServiceInterface interface {
 
 
 do not create seperate directory and packages for interfaces create interface alongside the original struct 
+
+powerfull zapper customized logger base on bookstore logger 
