@@ -7,10 +7,20 @@ use one query always (detect not found errors and already exist error by searchi
 
 use this approach instead of using dependency injection packages 
 var (
-	UserService userService = userService{}
+	UserService userServiceInterface = &userService{}
 )
 
 type userService struct {
 }
+
+type userServiceInterface interface {
+	CreateUser(users.User) (*users.User, *error2.RestErr)
+	GetUser(int64) (*users.User, *error2.RestErr)
+	UpdateUser(*users.User, bool) (*users.User, *error2.RestErr)
+	DeleteUser(int64) *error2.RestErr
+	FindByStatus(string) (users.Users, *error2.RestErr)
+}
+
+
 
 do not create seperate directory and packages for interfaces create interface alongside the original struct 
