@@ -12,3 +12,5 @@ var (
 
 type userService struct {
 }
+
+do not create seperate directory and packages for interfaces create interface alongside the original struct 
